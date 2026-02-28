@@ -15,19 +15,49 @@ pub struct Zone {
     pub locations: Vec<Location>,
 }
 
+// ---------------------------- Implementations ----------------------------
 
-// ---------------------------- Default behaviors ----------------------------
+impl Location {
+    /// Create Location
+    pub fn new() -> Self {
+        Self {
+            functions: vec![],
+        }
+    }
 
-/// Create empty vector for Location
-impl Default for Location {
-    fn default() -> Self {
-        Self { functions: vec![] }
+    /// Add function into Location
+    pub fn add(mut self, function: AcornFunction) -> Self {
+        self.functions.push(function);
+        self
     }
 }
 
-/// Create empty vector for Location
+impl Zone {
+    /// Create Zone
+    pub fn new() -> Self {
+        Self {
+            locations: vec![],
+        }
+    }
+
+    /// Add Location into Zone
+    pub fn add(&mut self, location: Location) {
+        self.locations.push(location);
+    }
+}
+
+// ---------------------------- Default behaviors ----------------------------
+
+/// Default behavior for Location
+impl Default for Location {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Default behavior for Zone
 impl Default for Zone {
     fn default() -> Self {
-        Self { locations: vec![] }
+        Self::new()
     }
 }
