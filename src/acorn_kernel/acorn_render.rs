@@ -1,17 +1,36 @@
-// src/acorn_kernel/acorn_render/mod.rs
+// src/acorn_kernel/acorn_render.rs
+
 use macroquad::prelude::*;
+use crate::acorn_kernel::acorn_heart::Zone;
 // use bevy_ecs::prelude::World;
 
-pub async fn acorn_loop() { // mut world: World
+/// Main loop of Light Acorn
+pub async fn acorn_loop() {
+    // Create here your Zones (not in loop)
+    let before_2d_zone = Zone::default();
+    let after_2d_zone = Zone::default();
+
     loop {
         clear_background(BLACK);
 
-        // 1. Получаем доступ к низкоуровневому контексту для матриц
-        // let gl = unsafe { get_internal_gl().quad_gl };
+        // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
+        for location in &before_2d_zone.locations {
+            for function in &location.functions {
+                function(); // Call function in strict order
+            }
+        }
 
-        // 2. Здесь будет вызов систем рендеринга
-        // render_system(&mut world, gl);
+        // ---------------------------- Turn on 2D settings ----------------------------
+        set_default_camera(); 
 
+        // after_2d_zone (Ex: UI draw and other Locations)
+        for location in &after_2d_zone.locations {
+            for function in &location.functions {
+                function(); // Call function in strict order
+            }
+        }
+
+        // ---------------------------- Next_frame ----------------------------
         next_frame().await;
     }
 }
