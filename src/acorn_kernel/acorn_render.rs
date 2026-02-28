@@ -1,8 +1,6 @@
 // src/acorn_kernel/acorn_render.rs
-
 use macroquad::prelude::*;
 use crate::acorn_kernel::acorn_heart::Zone;
-// use bevy_ecs::prelude::World;
 
 /// Main loop of Light Acorn
 pub async fn acorn_loop(before_2d_zone: Zone, after_2d_zone: Zone) {
