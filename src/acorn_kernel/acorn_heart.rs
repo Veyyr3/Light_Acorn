@@ -30,6 +30,11 @@ impl Location {
         self.functions.push(function);
         self
     }
+
+    /// Creating Location from vector of functions 
+    pub fn from_fn_vec(functions: Vec<AcornFunction>) -> Self {
+        Self { functions }
+    }
 }
 
 impl Zone {
@@ -43,6 +48,12 @@ impl Zone {
     /// Add Location into Zone
     pub fn add(&mut self, location: Location) {
         self.locations.push(location);
+    }
+
+    /// Creating Zone from vector of Locations
+    pub fn with_locations(mut self, locations: Vec<Location>) -> Self {
+        self.locations = locations;
+        self
     }
 }
 
