@@ -5,11 +5,7 @@ use crate::acorn_kernel::acorn_heart::Zone;
 // use bevy_ecs::prelude::World;
 
 /// Main loop of Light Acorn
-pub async fn acorn_loop() {
-    // Create here your Zones (not in loop)
-    let before_2d_zone = Zone::default();
-    let after_2d_zone = Zone::default();
-
+pub async fn acorn_loop(before_2d_zone: Zone, after_2d_zone: Zone) {
     loop {
         clear_background(BLACK);
 
