@@ -28,7 +28,7 @@ fn acorn_setup() -> (Zone, Zone) {
             // simple function
             acorn_example_greeting,
             // ECS
-            acorn_runtime_spawner, // add new entity
+            acorn_example_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
             acorn_example_query_ecs, // print result
             // add own functions through comma 
@@ -106,7 +106,7 @@ fn acorn_example_update_oaks(world: &mut World) {
 }
 
 // Add this function into location
-fn acorn_runtime_spawner(world: &mut World) {
+fn acorn_example_runtime_spawner(world: &mut World) {
     // create new entity. Press Space!
     if is_key_pressed(KeyCode::Space) {
         world.spawn((
