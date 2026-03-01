@@ -4,7 +4,7 @@ use bevy_ecs::prelude::*;
 // ---------------------------- Heart of Light Acorn ----------------------------
 
 /// Alias of function (alias is pseudonym of data type)
-/// All functions should have World argument but shouldn't use it
+/// All functions should have World argument but not required use it
 pub type AcornFunction = fn(&mut World); 
 
 /// Location is group of functions
