@@ -5,7 +5,7 @@ use acorn_kernel::{
     acorn_heart::{Zone, Location, AcornECS} // import Zone, Location, AcornECS
 };
 use macroquad::prelude::*;
-use bevy_ecs::prelude::World;
+use bevy_ecs::prelude::*;
 
 /// Create here your Zones and Locations. 
 /// Add function to Location, Location to Zone.
@@ -26,6 +26,7 @@ fn acorn_setup() -> (Zone, Zone) {
         // test location
         Location::from_fn_vec(vec![
             acorn_example_greeting,
+            acorn_example_query_ecs
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -48,7 +49,7 @@ fn acorn_setup() -> (Zone, Zone) {
 
 // ---------------------------- Example simple functions ----------------------------
 // Advise: Create functions in other files and import here.
-// All functions should have World argument but shouldn't use it
+// All simple functions should have World argument but shouldn't use it.
 fn acorn_example_greeting(_world: &mut World) {
     print!("Hello, Light Acorn!")
 }
@@ -63,17 +64,41 @@ fn acorn_example_draw_circle(_world: &mut World) {
 }
 
 // ---------------------------- Example ECS functions ----------------------------
-fn acorn_example_change_ecs(world: &mut World) {
+// Advise: Create functions in other files and import here.
+// All ECS functions should have World argument.
+// create component
+#[derive(Component)]
+struct Oaks {x: u8}
 
+// Use spawn entities in fn main
+fn acorn_example_spawn_entity(world: &mut World) {
+    world.spawn((
+        Oaks { x: 100 },
+    ));
+    println!("Entity spawned!");
+}
+
+// Add this function into location
+fn acorn_example_query_ecs(world: &mut World) {
+    // create query
+    let mut query = world.query::<&Oaks>();
+    
+    // cycle for all entities
+    for oaks in query.iter(world) {
+        println!("Entity has: {} oaks", oaks.x);
+    }
 }
 
 #[macroquad::main("Light Acorn test")]
 async fn main() {
-    // Global variable ECS
+    // Global variable ECS. Hand over to acorn_loop.
     let mut acorn_ecs = AcornECS::default();
 
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after) = acorn_setup();
+
+    // Create entities here
+    acorn_example_spawn_entity(&mut acorn_ecs.world);
 
     // main loop
     acorn_loop(before, after, acorn_ecs).await;
