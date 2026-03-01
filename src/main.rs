@@ -25,8 +25,11 @@ fn acorn_setup() -> (Zone, Zone) {
     .with_locations(vec![
         // test location
         Location::from_fn_vec(vec![
+            // simple function
             acorn_example_greeting,
-            acorn_example_query_ecs
+            // ECS
+            acorn_example_update_oaks, // update ECS state
+            acorn_example_query_ecs, // print result
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -68,7 +71,7 @@ fn acorn_example_draw_circle(_world: &mut World) {
 // All ECS functions should have World argument.
 // create component
 #[derive(Component)]
-struct Oaks {x: u8}
+struct Oaks {x: u64}
 
 // Use spawn entities in fn main
 fn acorn_example_spawn_entity(world: &mut World) {
@@ -86,6 +89,18 @@ fn acorn_example_query_ecs(world: &mut World) {
     // cycle for all entities
     for oaks in query.iter(world) {
         println!("Entity has: {} oaks", oaks.x);
+    }
+}
+
+// Add this function into location
+fn acorn_example_update_oaks(world: &mut World) {
+    // create query
+    let mut query = world.query::<&mut Oaks>();
+
+    // cycle for all entities. 
+    // Spoiler: game will over when oaks will be 18 446 744 073 709 551 615 :)
+    for mut oaks in query.iter_mut(world) {
+        oaks.x += 1; 
     }
 }
 
