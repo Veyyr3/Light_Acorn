@@ -2,9 +2,10 @@
 mod acorn_kernel;
 use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
-    acorn_heart::{Zone, Location} // import Zone, Location
+    acorn_heart::{Zone, Location, AcornECS} // import Zone, Location, AcornECS
 };
 use macroquad::prelude::*;
+use bevy_ecs::prelude::World;
 
 /// Create here your Zones and Locations. 
 /// Add function to Location, Location to Zone.
@@ -13,7 +14,7 @@ fn acorn_setup() -> (Zone, Zone) {
     /* 
     Here is example. 
     
-    Locations don't need variables! But you can use variables if you want.
+    Locations don't need variables! But you can use variables if you want:
     Variables of Locations should exists before variables of Zones.
 
     Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
@@ -45,12 +46,14 @@ fn acorn_setup() -> (Zone, Zone) {
     (before_2d_zone, after_2d_zone) 
 }
 
-// Example functions. Advise: Create functions in other files.
-fn acorn_example_greeting() {
+// ---------------------------- Example simple functions ----------------------------
+// Advise: Create functions in other files and import here.
+// All functions should have World argument but shouldn't use it
+fn acorn_example_greeting(_world: &mut World) {
     print!("Hello, Light Acorn!")
 }
 
-fn acorn_example_draw_circle() {
+fn acorn_example_draw_circle(_world: &mut World) {
     draw_circle(
         screen_width()/2.0, 
         screen_height()/2.0, 
@@ -59,11 +62,19 @@ fn acorn_example_draw_circle() {
     )
 }
 
+// ---------------------------- Example ECS functions ----------------------------
+fn acorn_example_change_ecs(world: &mut World) {
+
+}
+
 #[macroquad::main("Light Acorn test")]
 async fn main() {
+    // Global variable ECS
+    let mut acorn_ecs = AcornECS::default();
+
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after) = acorn_setup();
 
     // main loop
-    acorn_loop(before, after).await;
+    acorn_loop(before, after, acorn_ecs).await;
 }

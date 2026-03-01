@@ -1,9 +1,11 @@
 // src/acorn_kernel/acorn_heart.rs
+use bevy_ecs::prelude::*;
 
 // ---------------------------- Heart of Light Acorn ----------------------------
 
 /// Alias of function (alias is pseudonym of data type)
-pub type AcornFunction = fn(); 
+/// All functions should have World argument but shouldn't use it
+pub type AcornFunction = fn(&mut World); 
 
 /// Location is group of functions
 pub struct Location {
@@ -13,6 +15,13 @@ pub struct Location {
 /// Zone is group of Locations
 pub struct Zone {
     pub locations: Vec<Location>,
+}
+
+/// Acorn ECS based on Bevy ECS. 
+/// Use this in fn main to create ECS.
+pub struct AcornECS {
+    pub world: World,
+    pub schedule: Schedule
 }
 
 // ---------------------------- Implementations ----------------------------
@@ -70,5 +79,15 @@ impl Default for Location {
 impl Default for Zone {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/// Default behavior for AcornECS
+impl Default for AcornECS {
+    fn default() -> Self {
+        Self {
+            world: World::new(),
+            schedule: Schedule::default(),
+        }
     }
 }
