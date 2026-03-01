@@ -12,7 +12,7 @@ use bevy_ecs::prelude::*;
 /// Warning: If you want to add new Zone then you should add new cycle "for" in acorn_render (read in docs about this).
 fn acorn_setup() -> (Zone, Zone) {
     /* 
-    Here is example. 
+    Here is an example. 
     
     Locations don't need variables! But you can use variables if you want:
     Variables of Locations should exists before variables of Zones.
@@ -28,6 +28,7 @@ fn acorn_setup() -> (Zone, Zone) {
             // simple function
             acorn_example_greeting,
             // ECS
+            acorn_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
             acorn_example_query_ecs, // print result
             // add own functions through comma 
@@ -101,6 +102,17 @@ fn acorn_example_update_oaks(world: &mut World) {
     // Spoiler: game will over when oaks will be 18 446 744 073 709 551 615 :)
     for mut oaks in query.iter_mut(world) {
         oaks.x += 1; 
+    }
+}
+
+// Add this function into location
+fn acorn_runtime_spawner(world: &mut World) {
+    // create new entity. Press Space!
+    if is_key_pressed(KeyCode::Space) {
+        world.spawn((
+            Oaks { x: 0 }, 
+        ));
+        println!("Runtime Spawn!");
     }
 }
 
