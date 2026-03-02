@@ -12,7 +12,7 @@ Hi!
 
 This main.rs file is the example which you may try and search.
 
-See templates of projects in "tempates" folder.
+See templates of projects in "TEMPLATES" folder.
 
 Memorise: Zone is when, Location is where, Function is atom.
 */
@@ -25,7 +25,9 @@ fn acorn_setup() -> (Zone, Zone) {
     Here is an example. 
     
     Locations don't need variables! But you can use variables if you want:
-    Variables of Locations should exists before variables of Zones.
+    Ex: create variables of Locations for REACORN (when you change functions order in runtime). Read in docs about this.
+
+    Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
 
     Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
     */
@@ -135,7 +137,7 @@ async fn main() {
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after) = acorn_setup();
 
-    // Create entities here (or in runtime by events)
+    // Create entities here (or in runtime by your logic)
     acorn_example_spawn_entity(&mut acorn_ecs.world);
 
     // main loop
