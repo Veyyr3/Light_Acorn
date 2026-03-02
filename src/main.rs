@@ -7,6 +7,16 @@ use acorn_kernel::{
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
+/*
+Hi!
+
+This main.rs file is the example which you may try and search.
+
+See templates of projects in "tempates" folder.
+
+Memorise: Zone is when, Location is where, Function is atom.
+*/
+
 /// Create here your Zones and Locations. 
 /// Add function to Location, Location to Zone.
 /// Warning: If you want to add new Zone then you should add new cycle "for" in acorn_render (read in docs about this).
@@ -70,6 +80,7 @@ fn acorn_example_draw_circle(_world: &mut World) {
 // ---------------------------- Example ECS functions ----------------------------
 // Advise: Create functions in other files and import here.
 // All ECS functions should have World argument.
+
 // create component
 #[derive(Component)]
 struct Oaks {x: u64}
@@ -99,7 +110,7 @@ fn acorn_example_update_oaks(world: &mut World) {
     let mut query = world.query::<&mut Oaks>();
 
     // cycle for all entities. 
-    // Spoiler: game will over when oaks will be 18 446 744 073 709 551 615 :)
+    // Spoiler: game will be over when oaks reach 18 446 744 073 709 551 615 :)
     for mut oaks in query.iter_mut(world) {
         oaks.x += 1; 
     }
@@ -124,7 +135,7 @@ async fn main() {
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after) = acorn_setup();
 
-    // Create entities here
+    // Create entities here (or in runtime by events)
     acorn_example_spawn_entity(&mut acorn_ecs.world);
 
     // main loop
