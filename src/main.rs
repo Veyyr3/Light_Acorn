@@ -70,9 +70,12 @@ fn acorn_setup() -> AcornContext {
     // after_2d_zone (Ex: UI draw and other Locations)
     let after_2d_zone = Zone::default()
     .with_locations(vec![
-        // test location
+        // Lord-Location
         Location::from_fn_vec(vec![
-            acorn_example_draw_circle,
+            acorn_example_add_circle_function
+        ]),
+        // Minor-Location
+        Location::from_fn_vec(vec![
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -156,6 +159,15 @@ fn acorn_example_delete_function(_world: &mut World, contex: &mut AcornContext) 
     if is_key_pressed(KeyCode::Tab) { 
         contex.before_2d_zone.locations[1].functions.remove(0);
         println!("I've killed function! Message from: acorn_example_delete_function");
+    }
+}
+
+// Add this function into Lord-Location
+fn acorn_example_add_circle_function(_world: &mut World, contex: &mut AcornContext) {
+    // press left mouse button to draw your circle!
+    if is_mouse_button_pressed(MouseButton::Left) { 
+        contex.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
+        println!("I've gave birth function! Message from: acorn_example_add_circle_function");
     }
 }
 

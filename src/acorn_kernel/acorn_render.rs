@@ -44,11 +44,28 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
         set_default_camera(); 
 
         // after_2d_zone (Ex: UI draw and other Locations)
-        // for location in &after_2d_zone.locations {
-        //     for function in &location.functions {
-        //         function(&mut acorn_ecs.world); // Call function in strict order
-        //     }
-        // }
+        let len_after_2d_zone = acorn_context.after_2d_zone.locations.len();
+
+        // locations go by order
+        for location_index in 0..len_after_2d_zone {
+            let fn_count = acorn_context
+                .after_2d_zone
+                .locations[location_index]
+                .functions.len();
+
+            // Reverse cycle for protect from panic (101 errors) in runtime
+            // Functions go by reverse order
+            // Warning: You should add new functions from down to top
+            for fn_index in (0..fn_count).rev() {
+                let function = 
+                acorn_context.after_2d_zone
+                    .locations[location_index]
+                    .functions[fn_index];
+                    
+                // Call function in strict order
+                function(&mut acorn_ecs.world, &mut acorn_context);
+            }
+        }
 
         // ---------------------------- Next_frame ----------------------------
         next_frame().await;
