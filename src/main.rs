@@ -2,7 +2,8 @@
 mod acorn_kernel;
 use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
-    acorn_heart::{Zone, Location, AcornECS} // import Zone, Location, AcornECS
+    acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
+    acorn_settings::AcornContext // struct AcornContext 
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -12,37 +13,55 @@ Hi!
 
 This main.rs file is the example which you may try and search.
 
-See templates of projects in "TEMPLATES" folder.
+Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
+BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN template in TEMPLATES" folder.
 
-Memorise: Zone is when, Location is where, Function is atom.
+See other templates of projects in "TEMPLATES" folder.
+
+Memorise: Zone is when, Location is where, Function is time-marker.
 */
 
 /// Create here your Zones and Locations. 
+/// It's your interface. (sorry, code doesn't let me use GUI here)
 /// Add function to Location, Location to Zone.
 /// Warning: If you want to add new Zone then you should add new cycle "for" in acorn_render (read in docs about this).
-fn acorn_setup() -> (Zone, Zone) {
+fn acorn_setup() -> AcornContext {
     /* 
     Here is an example. 
     
-    Locations don't need variables! But you can use variables if you want:
-    Ex: create variables of Locations for REACORN (when you change functions order in runtime). Read in docs about this.
+    Locations don't need variables! But you can use variables if you want.
 
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
 
-    Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
+    Memorise: read code from top to down. Locations, Zones will run by chain.
+    Warning Memorise: Functions will run from down to top (see reason in acorn_render.rs)
+    */
+
+    /*
+    Also I offer to you Lord-Minor achitecture to full control life of functions.
+
+    Lord-Location: here are Lord-Functions which can change other functions order in Minor-Locations.
+    For each Lord-Functions in Lord-Location you should create own Minor-Location.
+
+    Minor-Location: here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
     */
 
     // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
     let before_2d_zone = Zone::default()
     .with_locations(vec![
-        // test location
+        // Lord-Location.
         Location::from_fn_vec(vec![
+            acorn_example_delete_function, // Deleter of functions.
+        ]),
+        // Minor-Location
+        Location::from_fn_vec(vec![
+            // ECS
+            acorn_example_query_ecs, // print Oaks result (press TAB to delete this function)
             // simple function
             acorn_example_greeting,
             // ECS
             acorn_example_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
-            acorn_example_query_ecs, // print result
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -59,18 +78,18 @@ fn acorn_setup() -> (Zone, Zone) {
         // add own locations through comma 
     ]);
 
-    // Return tuple of Zones for Main function
-    (before_2d_zone, after_2d_zone) 
+    // Return AcornContext for Main function
+    AcornContext { before_2d_zone, after_2d_zone }
 }
 
 // ---------------------------- Example simple functions ----------------------------
 // Advise: Create functions in other files and import here.
 // All simple functions should have World argument but shouldn't use it.
-fn acorn_example_greeting(_world: &mut World) {
+fn acorn_example_greeting(_world: &mut World, _context: &mut AcornContext) {
     print!("Hello, Light Acorn!")
 }
 
-fn acorn_example_draw_circle(_world: &mut World) {
+fn acorn_example_draw_circle(_world: &mut World, _context: &mut AcornContext) {
     draw_circle(
         screen_width()/2.0, 
         screen_height()/2.0, 
@@ -88,7 +107,7 @@ fn acorn_example_draw_circle(_world: &mut World) {
 struct Oaks {x: u64}
 
 // Use spawn entities in fn main
-fn acorn_example_spawn_entity(world: &mut World) {
+fn acorn_example_spawn_entity(world: &mut World, _context: &mut AcornContext) {
     world.spawn((
         Oaks { x: 100 },
     ));
@@ -96,7 +115,7 @@ fn acorn_example_spawn_entity(world: &mut World) {
 }
 
 // Add this function into location
-fn acorn_example_query_ecs(world: &mut World) {
+fn acorn_example_query_ecs(world: &mut World, _context: &mut AcornContext) {
     // create query
     let mut query = world.query::<&Oaks>();
     
@@ -107,7 +126,7 @@ fn acorn_example_query_ecs(world: &mut World) {
 }
 
 // Add this function into location
-fn acorn_example_update_oaks(world: &mut World) {
+fn acorn_example_update_oaks(world: &mut World, _context: &mut AcornContext) {
     // create query
     let mut query = world.query::<&mut Oaks>();
 
@@ -119,7 +138,7 @@ fn acorn_example_update_oaks(world: &mut World) {
 }
 
 // Add this function into location
-fn acorn_example_runtime_spawner(world: &mut World) {
+fn acorn_example_runtime_spawner(world: &mut World, _context: &mut AcornContext) {
     // create new entity. Press Space!
     if is_key_pressed(KeyCode::Space) {
         world.spawn((
@@ -129,17 +148,28 @@ fn acorn_example_runtime_spawner(world: &mut World) {
     }
 }
 
+// ---------------------------- Example Lord-Functions ----------------------------
+// Add this function into Lord-Location
+fn acorn_example_delete_function(_world: &mut World, contex: &mut AcornContext) {
+    // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
+    // PRESS TAB!
+    if is_key_pressed(KeyCode::Tab) { 
+        contex.before_2d_zone.locations[1].functions.remove(0);
+        println!("I've killed function! Message from: acorn_example_delete_function");
+    }
+}
+
 #[macroquad::main("Light Acorn test")]
 async fn main() {
     // Global variable ECS. Hand over to acorn_loop.
     let mut acorn_ecs = AcornECS::default();
 
     // Global variable of Zones. Hand over to acorn_loop.
-    let (before, after) = acorn_setup();
+    let mut acorn_context = acorn_setup();
 
     // Create entities here (or in runtime by your logic)
-    acorn_example_spawn_entity(&mut acorn_ecs.world);
+    acorn_example_spawn_entity(&mut acorn_ecs.world, &mut acorn_context);
 
     // main loop
-    acorn_loop(before, after, acorn_ecs).await;
+    acorn_loop(acorn_context, acorn_ecs).await;
 }

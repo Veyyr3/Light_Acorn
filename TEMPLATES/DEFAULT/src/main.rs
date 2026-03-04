@@ -12,20 +12,23 @@ Hi!
 
 This main.rs file is the example which you may try and search.
 
-See templates of projects in "TEMPLATES" folder.
+Right now you are using tempelate ACORN-way 
+(when you put function in strict order. It's not mutable in runtime).
+
+See other templates of projects in "TEMPLATES" folder.
 
 Memorise: Zone is when, Location is where, Function is atom.
 */
 
 /// Create here your Zones and Locations. 
+/// It's your interface. (sorry, code doesn't let me use GUI here)
 /// Add function to Location, Location to Zone.
 /// Warning: If you want to add new Zone then you should add new cycle "for" in acorn_render (read in docs about this).
 fn acorn_setup() -> (Zone, Zone) {
     /* 
     Here is an example. 
     
-    Locations don't need variables! But you can use variables if you want:
-    Ex: create variables of Locations for REACORN (when you change functions order in runtime). Read in docs about this.
+    Locations don't need variables! But you can use variables if you want.
 
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
 
