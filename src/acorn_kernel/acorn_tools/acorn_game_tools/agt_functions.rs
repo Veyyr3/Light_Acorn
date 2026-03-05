@@ -2,7 +2,12 @@
 use macroquad::prelude::*;
 use tobj;
 
-pub fn load_obj_to_mesh(path: &str) -> Mesh {
+/// Load your 3d model and fill with macroquad color.
+/// 
+/// You can use this ONLY IF you don't have .mtl file.
+/// 
+/// Use [u8; 4] RGBA in second argument for control your own color. 
+pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     // Загружаем .obj файл
     // load_obj возвращает (модели, материалы)
     let (models, _materials) = tobj::load_obj(
@@ -40,7 +45,7 @@ pub fn load_obj_to_mesh(path: &str) -> Mesh {
                 } else {
                     vec2(0.0, 0.0)
                 },
-                color: WHITE.into(),
+                color,
                 normal: vec4(0.0, 0.0, 0.0, 1.0)
             });
         }

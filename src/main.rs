@@ -3,7 +3,10 @@ mod acorn_kernel;
 use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
     acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
-    acorn_settings::AcornContext // struct AcornContext 
+    acorn_settings::AcornContext, // struct AcornContext 
+    // suggestions
+    acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
+    acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -62,6 +65,9 @@ fn acorn_setup() -> AcornContext {
             // ECS
             acorn_example_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
+            // game
+            acorn_game_draw_obj,
+            acorn_game_camera,
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -81,9 +87,27 @@ fn acorn_setup() -> AcornContext {
         // add own locations through comma 
     ]);
 
+    let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
+
+    assets_3d.meshes.push(
+        color_and_load_obj_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj", WHITE.into())
+    );
+
     // Return AcornContext for Main function
-    AcornContext { before_2d_zone, after_2d_zone }
+    AcornContext { 
+        before_2d_zone, 
+        after_2d_zone,
+        // suggestion for game
+        assets_3d
+    }
 }
+
+/*
+Here are examples of functions.
+TODO
+Here are also game functions. But you should uncomment suggestions in: file1, file2
+
+*/
 
 // ---------------------------- Example simple functions ----------------------------
 // Advise: Create functions in other files and import here.
@@ -171,6 +195,23 @@ fn acorn_example_add_circle_function(_world: &mut World, contex: &mut AcornConte
         contex.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
         println!("I've gave birth function! Message from: acorn_example_add_circle_function");
     }
+}
+
+// ---------------------------- Example Game Functuions ----------------------------
+// Add to before 2d zone (in after 2d zone it may work incorrect)
+fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
+    // spawn camera
+    set_camera(&Camera3D {
+            position: vec3(5.0, 5.0, 5.0),
+            up: vec3(0.0, 1.0, 0.0),
+            target: vec3(0.0, 0.0, 0.0),
+            ..Default::default()
+        });
+}
+
+// Add to before 2d zone (in after 2d zone it may work incorrect)
+fn acorn_game_draw_obj(_world: &mut World, contex: &mut AcornContext) {
+    draw_mesh(&contex.assets_3d.meshes[0]);
 }
 
 #[macroquad::main("Light Acorn test")]
