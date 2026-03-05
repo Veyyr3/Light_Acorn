@@ -7,6 +7,7 @@ use acorn_kernel::{
     // suggestions
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
     acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
+    acorn_tools::acorn_game_tools::agt_functions::color_mtl_and_load_obj_to_mesh,
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -90,7 +91,7 @@ fn acorn_setup() -> AcornContext {
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
     assets_3d.meshes.push(
-        color_and_load_obj_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj", WHITE.into())
+        color_mtl_and_load_obj_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj", WHITE.into())
     );
 
     // Return AcornContext for Main function

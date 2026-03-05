@@ -58,3 +58,59 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
         texture: None, // Текстуры добавим позже, если решим
     }
 }
+
+/// Load your 3d model and fill with macroquad color.
+/// 
+/// You can use this if you have .mtl file.
+/// 
+/// Use [u8; 4] RGBA in second argument for control your own color. 
+pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
+    let (models, _materials) = tobj::load_obj(
+        path,
+        &tobj::LoadOptions {
+            single_index: true,
+            triangulate: true,
+            ..Default::default()
+        },
+    ).expect("Failed to load OBJ file");
+
+    let mut vertices = Vec::new();
+    let mut indices = Vec::new();
+
+    for m in models {
+        let mesh = &m.mesh;
+        
+        // ВАЖНО: Запоминаем, сколько вершин уже было в векторе до этой модели
+        let vertex_offset = vertices.len() as u16;
+
+        // Наполняем индексы с учетом смещения
+        for &i in &mesh.indices {
+            // Прибавляем смещение, чтобы индекс указывал на новые вершины
+            indices.push(i as u16 + vertex_offset);
+        }
+
+        // Наполняем вершины
+        for i in 0..mesh.positions.len() / 3 {
+            vertices.push(Vertex {
+                position: vec3(
+                    mesh.positions[i * 3],
+                    mesh.positions[i * 3 + 1],
+                    mesh.positions[i * 3 + 2],
+                ),
+                uv: if !mesh.texcoords.is_empty() {
+                    vec2(mesh.texcoords[i * 2], 1.0 - mesh.texcoords[i * 2 + 1])
+                } else {
+                    vec2(0.0, 0.0)
+                },
+                color: color,
+                normal: vec4(0.0, 0.0, 0.0, 1.0)
+            });
+        }
+    }
+
+    Mesh {
+        vertices,
+        indices,
+        texture: None,
+    }
+}
