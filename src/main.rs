@@ -156,6 +156,8 @@ fn acorn_example_runtime_spawner(world: &mut World, _context: &mut AcornContext)
 fn acorn_example_delete_function(_world: &mut World, contex: &mut AcornContext) {
     // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
     // PRESS TAB!
+    // of course you have right to write if/else checking to get rid of 101 error in runtime
+    // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
         contex.before_2d_zone.locations[1].functions.remove(0);
         println!("I've killed function! Message from: acorn_example_delete_function");

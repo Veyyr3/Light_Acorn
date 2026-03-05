@@ -13,7 +13,7 @@ Hi!
 This main.rs file is the example which you may try and search.
 
 Right now you are using tempelate ACORN-way 
-(when you put function in strict order. It's not mutable in runtime).
+(When you put function in strict order. Functions order is not mutable in runtime).
 
 See other templates of projects in "TEMPLATES" folder.
 
