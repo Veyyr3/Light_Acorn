@@ -4,10 +4,10 @@ use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
     acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
     acorn_settings::AcornContext, // struct AcornContext 
-    // suggestions
+    // game suggestions
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
-    acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
-    acorn_tools::acorn_game_tools::agt_functions::color_mtl_and_load_obj_to_mesh,
+    //acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
+    //acorn_tools::acorn_game_tools::agt_functions::color_mtl_and_load_obj_to_mesh,
     acorn_tools::acorn_game_tools::agt_functions::load_obj_with_materials_to_mesh,
 };
 use macroquad::prelude::*;

@@ -7,6 +7,8 @@ use tobj;
 /// You can use this ONLY IF you don't have .mtl file.
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
+/// 
+/// Ex: color_and_load_obj_to_mesh('your/model.obj', WHITE.into())
 pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     // load_obj returns (models, materials)
     let (models, _materials) = tobj::load_obj(
@@ -62,6 +64,8 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
 /// You can use this if you have .mtl file.
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
+///  
+/// Ex: color_mtl_and_load_obj_to_mesh('your/model.obj', WHITE.into())
 pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     let (models, _materials) = tobj::load_obj(
         path,
@@ -112,9 +116,10 @@ pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     }
 }
 
-/// Загружает OBJ и MTL, объединяя всё в один Mesh с цветами вершин для 1 draw call.
+/// Use this function if you have color materials in obj file.
+/// 
+/// Make sure that you have .mtl file near .obj!
 pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
-    // Указываем tobj загружать материалы (.mtl)
     let (models, materials_result) = tobj::load_obj(
         path,
         &tobj::LoadOptions {
@@ -124,7 +129,7 @@ pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
         },
     ).expect("Failed to load OBJ file");
 
-    // Если материалов нет или ошибка загрузки, используем пустой вектор
+    // if there aren't materials or load error, put empty vector
     let materials = materials_result.unwrap_or_default();
 
     let mut vertices = Vec::new();
@@ -136,21 +141,18 @@ pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
 
         // 1. Определяем цвет для этой части меша
         let mat_color = if let Some(id) = mesh.material_id {
-            // Распаковываем Option<[f32; 3]>, если там None - берем белый цвет
+            // Unpack Option<[f32; 3]>, if there is None - take WHITE color
             let d = materials[id].diffuse.unwrap_or([1.0, 1.0, 1.0]);
             Color::new(d[0], d[1], d[2], 1.0)
         } else {
-            WHITE // Если у меша вообще нет ID материала
+            WHITE // if Mesh doesn't have material ID
         };
 
-        // 2. Наполняем индексы с учетом смещения
         for &i in &mesh.indices {
             indices.push(i as u16 + vertex_offset);
         }
 
-        // 3. Наполняем вершины
         for i in 0..mesh.positions.len() / 3 {
-            // Конвертируем Color в [u8; 4], так как в версии 0.4.14 Vertex ждет массив байтов 
             let color_bytes = [
                 (mat_color.r * 255.0) as u8,
                 (mat_color.g * 255.0) as u8,
@@ -170,7 +172,6 @@ pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
                     vec2(0.0, 0.0)
                 },
                 color: color_bytes, 
-                // В твоей версии Macroquad нормали это Vec4 
                 normal: if !mesh.normals.is_empty() {
                     vec4(mesh.normals[i * 3], mesh.normals[i * 3 + 1], mesh.normals[i * 3 + 2], 1.0)
                 } else {
@@ -183,6 +184,6 @@ pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
     Mesh {
         vertices,
         indices,
-        texture: None, // Для 1 draw call с цветами текстура не нужна
+        texture: None,
     }
 }
