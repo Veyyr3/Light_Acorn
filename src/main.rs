@@ -5,9 +5,16 @@ use acorn_kernel::{
     acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
     acorn_settings::AcornContext, // struct AcornContext 
     // game suggestions
-    acorn_tools::acorn_game_tools::agt_heart::*, // Acorn3DAssetDatabase, Entity3DTransform, Entity3DModel
+    acorn_tools::acorn_game_tools::agt_heart::{
+        Acorn3DAssetDatabase, 
+        Entity3DTransform, 
+        Entity3DModel
+    }, 
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
-    acorn_tools::acorn_game_tools::agt_functions::{acorn_game_draw_3d_assets}, // to transformation 3d objects
+    acorn_tools::acorn_game_tools::agt_functions::{
+        acorn_game_draw_3d_assets,
+        acorn_debug_inspector
+    },
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -94,6 +101,7 @@ fn acorn_setup() -> AcornContext {
         ]),
         // Minor-Location
         Location::from_fn_vec(vec![
+            acorn_debug_inspector
             // add own functions through comma 
         ]),
         // add own locations through comma 
