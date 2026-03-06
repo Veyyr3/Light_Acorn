@@ -31,7 +31,9 @@ BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN template in TEMPLATES" 
 
 See other templates of projects in "TEMPLATES" folder.
 
+======================
 Memorise: Zone is when, Location is where, Function is time-marker.
+======================
 */
 
 /// Create here your Zones and Locations. 
@@ -108,10 +110,10 @@ fn acorn_setup() -> AcornContext {
     ]);
 
     // ---------------------------- Game setup ----------------------------
-    // keep 3d models in assets database
+    // Keep 3d models in assets database.
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
-    // add your .obj files with push
+    // Add your .obj files with push.
     // PLEASE, remember index of your 3d models when you add news.
     // It so, because for perfomance. 
     // BUT I leave it to you for organize logic assets keeping.
@@ -128,7 +130,7 @@ fn acorn_setup() -> AcornContext {
     }
 }
 
-/*
+/* ======================
 Here are examples of functions.
 
 Create functions by this template:
@@ -136,10 +138,10 @@ fn name(world: &mut World, context: &mut AcornContext) {
     // your_logic
 }
 
-*/
+Advise: Create functions in other files and import here.
+====================== */
 
 // ---------------------------- Example simple functions ----------------------------
-// Advise: Create functions in other files and import here.
 // All simple functions should have World argument but shouldn't use it.
 fn acorn_example_greeting(_world: &mut World, _context: &mut AcornContext) {
     print!("Hello, Light Acorn!")
@@ -155,10 +157,9 @@ fn acorn_example_draw_circle(_world: &mut World, _context: &mut AcornContext) {
 }
 
 // ---------------------------- Example ECS functions ----------------------------
-// Advise: Create functions in other files and import here.
 // All ECS functions should have World argument.
 
-// create component
+// example component
 #[derive(Component)]
 struct Oaks {x: u64}
 
@@ -275,6 +276,7 @@ fn acorn_example_game_camera(_world: &mut World, _context: &mut AcornContext) {
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_example_game_rotate_acorn(world: &mut World, _context: &mut AcornContext) {
+    // Take all acorns and change rotations
     let mut query = 
         world
         .query_filtered::<&mut Entity3DTransform, With<IsAcorn>>();

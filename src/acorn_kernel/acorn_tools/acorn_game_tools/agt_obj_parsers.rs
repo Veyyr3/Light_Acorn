@@ -139,7 +139,7 @@ pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
         let mesh = &m.mesh;
         let vertex_offset = vertices.len() as u16;
 
-        // 1. Определяем цвет для этой части меша
+        // put color
         let mat_color = if let Some(id) = mesh.material_id {
             // Unpack Option<[f32; 3]>, if there is None - take WHITE color
             let d = materials[id].diffuse.unwrap_or([1.0, 1.0, 1.0]);

@@ -16,12 +16,13 @@ fn acorn_generate_matrix(entity_3d_set: &Entity3DTransform) -> Mat4 {
 fn acorn_get_gl_contex() -> &'static mut QuadGl {
     unsafe {
         let internal_gl = get_internal_gl();
-        // Мы возвращаем ссылку на quad_gl. 
-        // Это безопасно внутри одного кадра.
+        // returns link on quad_gl. 
+        // it is safe in one frame.
         std::mem::transmute(internal_gl.quad_gl)
     }
 }
 
+/// Use this function to draw all your entities with 3D models.
 pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) {
     let gl = acorn_get_gl_contex();
 
@@ -51,7 +52,7 @@ pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) 
 }
 
 // ---------------------------- Debug Functions ----------------------------
-// Functions for inspect number of functions in Zones and Locations
+/// Functions for inspect number of functions in Zones and Locations.
 pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {
     let mut y_offset = 20.0;
     let x_start = 20.0;
