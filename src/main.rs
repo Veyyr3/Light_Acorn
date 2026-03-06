@@ -8,6 +8,7 @@ use acorn_kernel::{
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
     acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
     acorn_tools::acorn_game_tools::agt_functions::color_mtl_and_load_obj_to_mesh,
+    acorn_tools::acorn_game_tools::agt_functions::load_obj_with_materials_to_mesh,
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -102,7 +103,7 @@ fn acorn_setup() -> AcornContext {
 
     // add your .obj files with push
     assets_3d.meshes.push(
-        color_mtl_and_load_obj_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj", WHITE.into())
+        load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
 
     // Return AcornContext for Main function
