@@ -12,12 +12,16 @@ Hi!
 
 This main.rs file is the example which you may try and search.
 
+======================
 Right now you are using tempelate ACORN-way 
 (When you put function in strict order. Functions order is not mutable in runtime).
+======================
 
 See other templates of projects in "TEMPLATES" folder.
 
+======================
 Memorise: Zone is when, Location is where, Function is atom.
+======================
 */
 
 /// Create here your Zones and Locations. 
@@ -30,9 +34,13 @@ fn acorn_setup() -> (Zone, Zone) {
     
     Locations don't need variables! But you can use variables if you want.
 
+    ======================
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
+    ======================
 
+    ======================
     Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
+    ======================
     */
 
     // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
