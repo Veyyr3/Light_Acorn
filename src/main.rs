@@ -6,9 +6,9 @@ use acorn_kernel::{
     acorn_settings::AcornContext, // struct AcornContext 
     // game suggestions
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
-    //acorn_tools::acorn_game_tools::agt_functions::color_and_load_obj_to_mesh,
-    //acorn_tools::acorn_game_tools::agt_functions::color_mtl_and_load_obj_to_mesh,
-    acorn_tools::acorn_game_tools::agt_functions::load_obj_with_materials_to_mesh,
+    //acorn_tools::acorn_game_tools::agt_obj_parser::color_and_load_obj_to_mesh,
+    //acorn_tools::acorn_game_tools::agt_obj_parser::color_mtl_and_load_obj_to_mesh,
+    acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
