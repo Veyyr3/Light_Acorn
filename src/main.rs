@@ -5,10 +5,11 @@ use acorn_kernel::{
     acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
     acorn_settings::AcornContext, // struct AcornContext 
     // game suggestions
-    acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase,
+    acorn_tools::acorn_game_tools::agt_heart::*, // Acorn3DAssetDatabase, Entity3DSet
     //acorn_tools::acorn_game_tools::agt_obj_parser::color_and_load_obj_to_mesh,
     //acorn_tools::acorn_game_tools::agt_obj_parser::color_mtl_and_load_obj_to_mesh,
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
+    acorn_tools::acorn_game_tools::agt_functions::*, // to transformation 3d objects
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -103,6 +104,9 @@ fn acorn_setup() -> AcornContext {
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
     // add your .obj files with push
+    // PLEASE, remember index of your 3d models when you add news.
+    // It so, because for perfomance. 
+    // BUT I leave it to you for organize logic assets keeping.
     assets_3d.meshes.push(
         load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
@@ -213,6 +217,22 @@ fn acorn_example_add_circle_function(_world: &mut World, contex: &mut AcornConte
 }
 
 // ---------------------------- Example Game Functuions ----------------------------
+// 
+fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
+    world.spawn((
+       Entity3DTransform {
+            position: vec3(0.0, 1.0, 0.0),
+            rotation: 0.0,
+            scale: vec3(1.0, 1.0, 1.0)
+       }, 
+       Entity3DModel {
+            // WARNING: you should remember index of your 3d model
+            mesh_id: 0 
+       }
+    ));
+    println!("Entity spawned!");
+}
+
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
     // spawn camera
@@ -225,8 +245,34 @@ fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_draw_obj(_world: &mut World, contex: &mut AcornContext) {
-    draw_mesh(&contex.assets_3d.meshes[0]);
+fn acorn_game_draw_obj(world: &mut World, contex: &mut AcornContext) {
+    let gl = get_gl_contex();
+
+    let mut query = 
+        world.query::<(&Entity3DTransform, &Entity3DModel)>();
+
+    for (transform, mesh) in query.iter(world) {
+        let model_matrix = acorn_generate_matrix(&transform);
+
+        gl.push_model_matrix(model_matrix);
+        
+        /*
+        You may change to if/else branching for safety
+        But I use perfomance mode
+
+        if let Some(mesh) = contex.assets_3d.meshes.get(mesh.mesh_id) {
+            draw_mesh(mesh);
+        } else {
+            println!("oops...")
+        }
+        */
+
+        let model3d = &contex.assets_3d.meshes[mesh.mesh_id];
+
+        draw_mesh(model3d);
+
+        gl.pop_model_matrix();
+    }
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
@@ -244,6 +290,7 @@ async fn main() {
 
     // Create entities here (or in runtime by your logic)
     acorn_example_spawn_entity(&mut acorn_ecs.world, &mut acorn_context);
+    acorn_game_spawn_acorn(&mut acorn_ecs.world, &mut acorn_context);
 
     // main loop
     acorn_loop(acorn_context, acorn_ecs).await;
