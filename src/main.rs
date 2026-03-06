@@ -229,6 +229,7 @@ fn acorn_game_draw_obj(_world: &mut World, contex: &mut AcornContext) {
     draw_mesh(&contex.assets_3d.meshes[0]);
 }
 
+// Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_game_draw_grid(_world: &mut World, _contex: &mut AcornContext) {
     draw_grid(20, 1.0, WHITE, GRAY);
 }
