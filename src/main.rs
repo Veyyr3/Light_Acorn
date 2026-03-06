@@ -77,6 +77,7 @@ fn acorn_setup() -> AcornContext {
             acorn_example_update_oaks, // update ECS state
             // game
             acorn_game_draw_obj,
+            acorn_game_draw_grid,
             acorn_game_camera,
             // add own functions through comma 
         ]),
@@ -226,6 +227,10 @@ fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_game_draw_obj(_world: &mut World, contex: &mut AcornContext) {
     draw_mesh(&contex.assets_3d.meshes[0]);
+}
+
+fn acorn_game_draw_grid(_world: &mut World, _contex: &mut AcornContext) {
+    draw_grid(20, 1.0, WHITE, GRAY);
 }
 
 #[macroquad::main("Light Acorn test")]
