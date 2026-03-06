@@ -7,7 +7,7 @@ use acorn_kernel::{
     // game suggestions
     acorn_tools::acorn_game_tools::agt_heart::*, // Acorn3DAssetDatabase, Entity3DTransform, Entity3DModel
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
-    acorn_tools::acorn_game_tools::agt_functions::*, // to transformation 3d objects
+    acorn_tools::acorn_game_tools::agt_functions::{acorn_game_draw_3d_assets}, // to transformation 3d objects
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
@@ -76,9 +76,10 @@ fn acorn_setup() -> AcornContext {
             acorn_example_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
             // game
-            acorn_game_draw_obj,
-            acorn_game_draw_grid,
-            acorn_game_camera,
+            acorn_game_draw_3d_assets, // to draw yours 3d models
+            acorn_example_game_rotate_acorn,
+            acorn_example_game_draw_grid,
+            acorn_example_game_camera,
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -219,7 +220,12 @@ fn acorn_example_add_circle_function(_world: &mut World, context: &mut AcornCont
 }
 
 // ---------------------------- Example Game Functuions ----------------------------
-// 
+// Use this example ZST in ECS Query to replace if/else branching.
+// In acorn_example_game_rotate_acorn ECS function rotating only entities with IsAcorn.
+#[derive(Component)]
+struct IsAcorn;
+
+// spawner 3d model of acorn.
 fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
     world.spawn((
        Entity3DTransform {
@@ -242,55 +248,36 @@ fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
             AND write like that:
             mesh_id: ACORN_MODEL
             */
-       }
+       },
+       IsAcorn // component-marker
     ));
     println!("Entity spawned!");
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
+fn acorn_example_game_camera(_world: &mut World, _context: &mut AcornContext) {
     // spawn camera
     set_camera(&Camera3D {
             position: vec3(5.0, 5.0, 5.0),
             up: vec3(0.0, 1.0, 0.0),
-            target: vec3(0.0, 0.0, 0.0),
+            target: vec3(0.0, 0.5, 0.0),
             ..Default::default()
         });
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_draw_obj(world: &mut World, context: &mut AcornContext) {
-    let gl = get_gl_contex();
-
+fn acorn_example_game_rotate_acorn(world: &mut World, _context: &mut AcornContext) {
     let mut query = 
-        world.query::<(&Entity3DTransform, &Entity3DModel)>();
+        world
+        .query_filtered::<&mut Entity3DTransform, With<IsAcorn>>();
 
-    for (transform, mesh) in query.iter(world) {
-        let model_matrix = acorn_generate_matrix(&transform);
-
-        gl.push_model_matrix(model_matrix);
-        
-        /*
-        You may change to if/else branching for safety
-        But I use perfomance mode
-
-        if let Some(mesh) = context.assets_3d.meshes.get(mesh.mesh_id) {
-            draw_mesh(mesh);
-        } else {
-            println!("oops...")
-        }
-        */
-
-        let model3d = &context.assets_3d.meshes[mesh.mesh_id];
-
-        draw_mesh(model3d);
-
-        gl.pop_model_matrix();
+    for mut i in query.iter_mut(world) {
+        i.rotation += 0.1;
     }
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_draw_grid(_world: &mut World, _contex: &mut AcornContext) {
+fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext) {
     draw_grid(20, 1.0, WHITE, GRAY);
 }
 
