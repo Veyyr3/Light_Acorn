@@ -197,23 +197,23 @@ fn acorn_example_runtime_spawner(world: &mut World, _context: &mut AcornContext)
 
 // ---------------------------- Example Lord-Functions ----------------------------
 // Add this function into Lord-Location
-fn acorn_example_delete_function(_world: &mut World, contex: &mut AcornContext) {
+fn acorn_example_delete_function(_world: &mut World, context: &mut AcornContext) {
     // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
     // PRESS TAB!
     // of course you have right to write if/else checking to get rid of 101 error in runtime:
-    // if !contex.before_2d_zone.locations[1].functions.is_empty()
+    // if !context.before_2d_zone.locations[1].functions.is_empty()
     // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
-        contex.before_2d_zone.locations[1].functions.remove(0);
+        context.before_2d_zone.locations[1].functions.remove(0);
         println!("I've killed function! Message from: acorn_example_delete_function");
     }
 }
 
 // Add this function into Lord-Location
-fn acorn_example_add_circle_function(_world: &mut World, contex: &mut AcornContext) {
+fn acorn_example_add_circle_function(_world: &mut World, context: &mut AcornContext) {
     // press left mouse button to draw your circle!
     if is_mouse_button_pressed(MouseButton::Left) { 
-        contex.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
+        context.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
         println!("I've gave birth function! Message from: acorn_example_add_circle_function");
     }
 }
@@ -259,7 +259,7 @@ fn acorn_game_camera(_world: &mut World, _contex: &mut AcornContext) {
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_draw_obj(world: &mut World, contex: &mut AcornContext) {
+fn acorn_game_draw_obj(world: &mut World, context: &mut AcornContext) {
     let gl = get_gl_contex();
 
     let mut query = 
@@ -274,14 +274,14 @@ fn acorn_game_draw_obj(world: &mut World, contex: &mut AcornContext) {
         You may change to if/else branching for safety
         But I use perfomance mode
 
-        if let Some(mesh) = contex.assets_3d.meshes.get(mesh.mesh_id) {
+        if let Some(mesh) = context.assets_3d.meshes.get(mesh.mesh_id) {
             draw_mesh(mesh);
         } else {
             println!("oops...")
         }
         */
 
-        let model3d = &contex.assets_3d.meshes[mesh.mesh_id];
+        let model3d = &context.assets_3d.meshes[mesh.mesh_id];
 
         draw_mesh(model3d);
 
