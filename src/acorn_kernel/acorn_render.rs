@@ -5,9 +5,9 @@ use crate::acorn_kernel::{
     acorn_settings::AcornContext
 };
 
-
 /// Main loop of Light Acorn.
 /// You shouldn't touch this. 
+/// 
 /// Warning: If you want to add new Zones you should touch this (read in docs about this).
 pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS) {
     loop {
