@@ -8,13 +8,12 @@ use tobj;
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
 pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
-    // Загружаем .obj файл
-    // load_obj возвращает (модели, материалы)
+    // load_obj returns (models, materials)
     let (models, _materials) = tobj::load_obj(
         path,
         &tobj::LoadOptions {
-            single_index: true,   // Важно для простоты конвертации в макроквод
-            triangulate: true,    // Всегда триангулируем для отрисовки
+            single_index: true, // Leave it for simple convertation
+            triangulate: true,    // It's important! Macroquad use triangles to draw mesh
             ..Default::default()
         },
     ).expect("Failed to load OBJ file");
@@ -22,16 +21,16 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
 
-    // Проходим по всем мешам в файле (обычно он один, но tobj поддерживает много)
+    // cycle for all mesh in .obj
     for m in models {
         let mesh = &m.mesh;
 
-        // Наполняем индексы (u16 для экономии памяти на слабом ПК)
+        // indeces in macroquad have u16 type
         for &i in &mesh.indices {
             indices.push(i as u16);
         }
 
-        // Наполняем вершины
+        // creating vertices
         for i in 0..mesh.positions.len() / 3 {
             vertices.push(Vertex {
                 position: vec3(
@@ -39,7 +38,7 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
                     mesh.positions[i * 3 + 1],
                     mesh.positions[i * 3 + 2],
                 ),
-                // Если есть UV-координаты (текстуры), берем их
+                // if .obj has UV-coordinates then use them
                 uv: if !mesh.texcoords.is_empty() {
                     vec2(mesh.texcoords[i * 2], 1.0 - mesh.texcoords[i * 2 + 1])
                 } else {
@@ -51,11 +50,10 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
         }
     }
 
-    // Собираем итоговый Mesh для macroquad
     Mesh {
         vertices,
         indices,
-        texture: None, // Текстуры добавим позже, если решим
+        texture: None,
     }
 }
 
@@ -80,16 +78,15 @@ pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     for m in models {
         let mesh = &m.mesh;
         
-        // ВАЖНО: Запоминаем, сколько вершин уже было в векторе до этой модели
+        // how many vertices was in .obj
         let vertex_offset = vertices.len() as u16;
 
-        // Наполняем индексы с учетом смещения
+        // indeces in macroquad have u16 type
         for &i in &mesh.indices {
-            // Прибавляем смещение, чтобы индекс указывал на новые вершины
             indices.push(i as u16 + vertex_offset);
         }
 
-        // Наполняем вершины
+        // creating vertices
         for i in 0..mesh.positions.len() / 3 {
             vertices.push(Vertex {
                 position: vec3(

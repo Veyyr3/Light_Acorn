@@ -17,8 +17,10 @@ Hi!
 
 This main.rs file is the example which you may try and search.
 
+======================
 Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
 BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN template in TEMPLATES" folder.
+======================
 
 See other templates of projects in "TEMPLATES" folder.
 
@@ -33,12 +35,16 @@ fn acorn_setup() -> AcornContext {
     /* 
     Here is an example. 
     
+    ======================
     Locations don't need variables! But you can use variables if you want.
-
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
+    ======================
 
+    ======================
     Memorise: read code from top to down. Locations, Zones will run by chain.
+    ======================
     Warning Memorise: Functions will run from down to top (see reason in acorn_render.rs)
+    ======================
     */
 
     /*
@@ -48,6 +54,8 @@ fn acorn_setup() -> AcornContext {
     For each Lord-Functions in Lord-Location you should create own Minor-Location.
 
     Minor-Location: here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
+
+    But YOU are not required to use this architecture. You are Lord of your ideas.
     */
 
     // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
@@ -88,8 +96,11 @@ fn acorn_setup() -> AcornContext {
         // add own locations through comma 
     ]);
 
+    // ---------------------------- Game setup ----------------------------
+    // keep 3d models in assets database
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
+    // add your .obj files with push
     assets_3d.meshes.push(
         color_mtl_and_load_obj_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj", WHITE.into())
     );
@@ -181,7 +192,8 @@ fn acorn_example_runtime_spawner(world: &mut World, _context: &mut AcornContext)
 fn acorn_example_delete_function(_world: &mut World, contex: &mut AcornContext) {
     // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
     // PRESS TAB!
-    // of course you have right to write if/else checking to get rid of 101 error in runtime
+    // of course you have right to write if/else checking to get rid of 101 error in runtime:
+    // if !contex.before_2d_zone.locations[1].functions.is_empty()
     // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
         contex.before_2d_zone.locations[1].functions.remove(0);
