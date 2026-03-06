@@ -5,9 +5,7 @@ use acorn_kernel::{
     acorn_heart::{Zone, Location, AcornECS}, // import Zone, Location, AcornECS
     acorn_settings::AcornContext, // struct AcornContext 
     // game suggestions
-    acorn_tools::acorn_game_tools::agt_heart::*, // Acorn3DAssetDatabase, Entity3DSet
-    //acorn_tools::acorn_game_tools::agt_obj_parser::color_and_load_obj_to_mesh,
-    //acorn_tools::acorn_game_tools::agt_obj_parser::color_mtl_and_load_obj_to_mesh,
+    acorn_tools::acorn_game_tools::agt_heart::*, // Acorn3DAssetDatabase, Entity3DTransform, Entity3DModel
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
     acorn_tools::acorn_game_tools::agt_functions::*, // to transformation 3d objects
 };
@@ -65,12 +63,13 @@ fn acorn_setup() -> AcornContext {
     .with_locations(vec![
         // Lord-Location.
         Location::from_fn_vec(vec![
-            acorn_example_delete_function, // Deleter of functions.
+            // Deleter of functions.
+            acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
         ]),
         // Minor-Location
         Location::from_fn_vec(vec![
             // ECS
-            acorn_example_query_ecs, // print Oaks result (press TAB to delete this function)
+            acorn_example_query_ecs, // print Oaks result
             // simple function
             acorn_example_greeting,
             // ECS
@@ -122,8 +121,11 @@ fn acorn_setup() -> AcornContext {
 
 /*
 Here are examples of functions.
-TODO
-Here are also game functions. But you should uncomment suggestions in: file1, file2
+
+Create functions by this template:
+fn name(world: &mut World, context: &mut AcornContext) {
+    // your_logic
+}
 
 */
 
@@ -228,6 +230,18 @@ fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
        Entity3DModel {
             // WARNING: you should remember index of your 3d model
             mesh_id: 0 
+
+            /*
+            But you can use a trick:
+
+            // src/game_assets.rs
+            pub const ACORN_MODEL: usize = 0;
+            pub const TREE_MODEL: usize = 1;
+            pub const ROCK_MODEL: usize = 2;
+
+            AND write like that:
+            mesh_id: ACORN_MODEL
+            */
        }
     ));
     println!("Entity spawned!");
