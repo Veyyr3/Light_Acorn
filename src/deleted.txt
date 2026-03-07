@@ -1,3 +1,7 @@
+// (c) 2026 Lord of the Light Acorn: Veyyr3.
+// This file is part of Light Acorn and is distributed under the MIT License.
+// See the LICENSES folder in the project root for the full license text.
+
 // ---------------------------- Example simple functions ----------------------------
 // All simple functions should have World argument but shouldn't use it.
 fn acorn_example_greeting(_world: &mut World, _context: &mut AcornContext) {
