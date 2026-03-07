@@ -3,6 +3,16 @@ name = "Light_Acorn"
 version = "0.1.0"
 edition = "2024"
 
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[build]
+rustflags = ["-C", "target-cpu=native"]
+
 [dependencies]
 bevy_ecs = "0.18.0"
 macroquad = "0.4.14"
