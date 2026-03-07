@@ -2,7 +2,7 @@
 // This file is part of Light Acorn and is distributed under the MIT License.
 // See the LICENSES folder in the project root for the full license text.
 
-use macroquad::math::Vec3;
+use macroquad::prelude::*;
 
 // src/acorn_kernel/acorn_heart.rs
 use crate::acorn_kernel::{
@@ -10,6 +10,21 @@ use crate::acorn_kernel::{
     // suggestions
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase
 };
+
+pub struct AcornRenderBuffer {
+    pub vertices: Vec<Vertex>,
+    pub indices: Vec<u16>,
+}
+
+impl AcornRenderBuffer {
+    pub fn new() -> Self {
+        Self {
+            // Резервируем память заранее, чтобы i3 не тупил на реаллокациях
+            vertices: Vec::with_capacity(10000), 
+            indices: Vec::with_capacity(15000),
+        }
+    }
+}
 
 /// Contain here your Zones and global statements 
 /// 
@@ -25,4 +40,5 @@ pub struct AcornContext {
     pub acorns_x: u16,
     pub acorns_y: u16,
     pub acorns_count: u16,
+    pub render_buffer: AcornRenderBuffer,
 }

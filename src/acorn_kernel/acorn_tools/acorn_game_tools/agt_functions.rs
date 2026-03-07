@@ -10,13 +10,13 @@
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
 use macroquad::prelude::*;
 use crate::acorn_kernel::{
-    acorn_settings::AcornContext, 
+    acorn_settings::{AcornContext, AcornRenderBuffer}, 
     acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTransform}
 };
 use bevy_ecs::world::World;
 
 // ---------------------------- 3D transforming ----------------------------
-fn acorn_generate_matrix(entity_3d_set: &Entity3DTransform) -> Mat4 {
+pub fn acorn_generate_matrix(entity_3d_set: &Entity3DTransform) -> Mat4 {
     Mat4::from_translation(entity_3d_set.position)
     *Mat4::from_axis_angle(vec3(0.0, 1.0, 0.0), entity_3d_set.rotation)
     *Mat4::from_scale(entity_3d_set.scale)
@@ -60,6 +60,110 @@ pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) 
     }
 }
 
+pub fn acorn_game_draw_3d_assets_batched(world: &mut World, context: &mut AcornContext) {
+    // 1. Создаем временные буферы для сбора всей геометрии кадра
+    // В идеале их стоит хранить в AcornContext, чтобы не пересоздавать Vec каждый кадр (zero allocation)
+    let mut batched_vertices: Vec<Vertex> = Vec::with_capacity(10000 * 24); // Примерно
+    let mut batched_indices: Vec<u16> = Vec::with_capacity(10000 * 36);
+    let mut last_index_offset = 0;
+
+    let mut query = world.query::<(&Entity3DTransform, &Entity3DModel)>();
+
+    for (transform, model_info) in query.iter(world) {
+        let model_matrix = acorn_generate_matrix(&transform);
+        let source_mesh = &context.assets_3d.meshes[model_info.mesh_id];
+
+        // 2. "Впекаем" трансформацию в вершины прямо на CPU
+        for v in &source_mesh.vertices {
+            let mut new_v = *v;
+            // Умножаем позицию вершины на матрицу сущности
+            let pos_vec4 = model_matrix * vec4(v.position.x, v.position.y, v.position.z, 1.0);
+            new_v.position = vec3(pos_vec4.x, pos_vec4.y, pos_vec4.z);
+            
+            // Если есть нормали, их тоже нужно трансформировать (вращать)
+            // new_v.normal = ...
+            
+            batched_vertices.push(new_v);
+        }
+
+        // 3. Копируем индексы с учетом смещения
+        for i in &source_mesh.indices {
+            batched_indices.push(*i + last_index_offset as u16);
+        }
+
+        last_index_offset += source_mesh.vertices.len();
+    }
+
+    // 4. ОДИН ВЫЗОВ НА ВСЕ 10 000 ЖЕЛУДЕЙ
+    if !batched_vertices.is_empty() {
+        let big_mesh = Mesh {
+            vertices: batched_vertices,
+            indices: batched_indices,
+            texture: None, // Берем текстуру первого желудя
+        };
+        draw_mesh(&big_mesh);
+    }
+}
+
+pub fn acorn_game_draw_3d_assets2(world: &mut World, context: &mut AcornContext) {
+    // 1. Сначала очистим буфер
+    context.render_buffer.vertices.clear();
+    context.render_buffer.indices.clear();
+
+    let mut last_index_offset = 0;
+    const MAX_INDICES: usize = 12000; 
+
+    // 2. Разделяем контекст на части, чтобы Borrow Checker был спокоен
+    // Достаем ссылки на поля отдельно
+    let assets = &context.assets_3d;
+    let buffer = &mut context.render_buffer;
+
+    let mut query = world.query::<(&Entity3DTransform, &Entity3DModel)>();
+
+    for (transform, model_info) in query.iter(world) {
+        let model_matrix = acorn_generate_matrix(&transform);
+        
+        // Берем меш из ассетов
+        let source_mesh = &assets.meshes[model_info.mesh_id];
+
+        // Проверка лимита: если не влезает, рисуем накопленное
+        if buffer.indices.len() + source_mesh.indices.len() > MAX_INDICES {
+            // Передаем ТОЛЬКО буфер, а не весь контекст!
+            flush_batch(buffer); 
+            last_index_offset = 0;
+        }
+
+        // Трансформация на CPU
+        for v in &source_mesh.vertices {
+            let mut new_v = *v;
+            new_v.position = (model_matrix * v.position.extend(1.0)).xyz();
+            buffer.vertices.push(new_v);
+        }
+
+        for i in &source_mesh.indices {
+            buffer.indices.push(*i + last_index_offset as u16);
+        }
+
+        last_index_offset += source_mesh.vertices.len();
+    }
+
+    // 3. Рисуем финальный остаток
+    flush_batch(buffer);
+}
+
+fn flush_batch(buffer: &mut AcornRenderBuffer) {
+    if !buffer.vertices.is_empty() {
+        let batch_mesh = Mesh {
+            vertices: buffer.vertices.clone(), 
+            indices: buffer.indices.clone(),
+            texture: None, 
+        };
+        draw_mesh(&batch_mesh);
+        
+        buffer.vertices.clear();
+        buffer.indices.clear();
+    }
+}
 // ---------------------------- Debug Functions ----------------------------
 /// Functions for inspect number of functions in Zones and Locations.
 pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {
