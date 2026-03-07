@@ -24,4 +24,5 @@ pub struct AcornContext {
     pub pitch: f32,
     pub acorns_x: u16,
     pub acorns_y: u16,
+    pub acorns_count: u16,
 }

@@ -96,7 +96,7 @@ fn acorn_setup() -> AcornContext {
     let after_2d_zone = Zone::default()
     .with_locations(vec![
         Location::from_fn_vec(vec![
-            draw_fps,
+            draw_statistics,
             draw_sight,
             
             // add own functions through comma 
@@ -116,6 +116,10 @@ fn acorn_setup() -> AcornContext {
         load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
 
+    let acorns_x = 1;
+    let acorns_y = 1;
+    let acorns_count = acorns_x*acorns_y;
+
     // Return AcornContext for Main function
     AcornContext { 
         before_2d_zone, 
@@ -125,8 +129,9 @@ fn acorn_setup() -> AcornContext {
         pos: vec3(5.0, 30.0, 5.0),
         yaw: 1.1,
         pitch: 0.0,
-        acorns_x: 1,
-        acorns_y: 1
+        acorns_x,
+        acorns_y,
+        acorns_count
     }
 }
 
@@ -281,6 +286,7 @@ fn add_acorns(world: &mut World, context: &mut AcornContext) {
     }
 
     if changed {
+        context.acorns_count = context.acorns_x*context.acorns_y;
         // despawn old acorns
         let mut query = world.query_filtered::<Entity, With<IsAcorn>>();
         let entities: Vec<Entity> = query.iter(world).collect();
@@ -294,11 +300,18 @@ fn add_acorns(world: &mut World, context: &mut AcornContext) {
     }
 }
 
-fn draw_fps(_world: &mut World, _context: &mut AcornContext) {
+fn draw_statistics(_world: &mut World, context: &mut AcornContext) {
     draw_text(
         &format!("FPS: {}", get_fps()),
         40.0, 
         20.0, 
+        20.0, 
+        YELLOW
+    );
+    draw_text(
+        &format!("Acorns: {}", context.acorns_count),
+        40.0, 
+        40.0, 
         20.0, 
         YELLOW
     );
