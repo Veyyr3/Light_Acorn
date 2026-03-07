@@ -71,6 +71,8 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
             }
         }
 
+        if is_key_pressed(KeyCode::Escape) {break;}
+
         // ---------------------------- Next_frame ----------------------------
         next_frame().await;
     }
