@@ -22,4 +22,6 @@ pub struct AcornContext {
     pub pos: Vec3,
     pub yaw: f32,
     pub pitch: f32,
+    pub acorns_x: u16,
+    pub acorns_y: u16,
 }

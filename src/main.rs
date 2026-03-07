@@ -86,6 +86,7 @@ fn acorn_setup() -> AcornContext {
             acorn_example_game_draw_grid,
             acorn_example_game_camera,
             handle_input,
+            add_acorns,
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -95,7 +96,9 @@ fn acorn_setup() -> AcornContext {
     let after_2d_zone = Zone::default()
     .with_locations(vec![
         Location::from_fn_vec(vec![
-            draw_sight
+            draw_fps,
+            draw_sight,
+            
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -122,6 +125,8 @@ fn acorn_setup() -> AcornContext {
         pos: vec3(5.0, 30.0, 5.0),
         yaw: 1.1,
         pitch: 0.0,
+        acorns_x: 1,
+        acorns_y: 1
     }
 }
 
@@ -157,9 +162,9 @@ fn acorn_example_delete_function(_world: &mut World, context: &mut AcornContext)
 struct IsAcorn;
 
 // spawner 3d model of acorn.
-fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
-    let count_x = 10;
-    let count_z = 10;
+fn acorn_game_spawn_acorn(world: &mut World, context: &mut AcornContext) {
+    let count_x: u16 = context.acorns_x;
+    let count_z: u16 = context.acorns_y;
     let spacing = 10.0;
 
     let offset_x = (count_x as f32 * spacing) / 2.0;
@@ -215,9 +220,10 @@ fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext)
     draw_grid(1000, 2.0, WHITE, GRAY);
 }
 
+// ---------------------------- MY FUNCTIONS ----------------------------
 fn handle_input(_world: &mut World, context: &mut AcornContext) {
     let look_speed = 1.0;
-    let move_speed = 0.1;
+    let move_speed = 0.2;
 
     // 1. rotate
     let mouse_delta = mouse_delta_position();
@@ -255,6 +261,47 @@ fn draw_sight(_world: &mut World, _context: &mut AcornContext) {
         5.0, 
         YELLOW
     )
+}
+
+fn add_acorns(world: &mut World, context: &mut AcornContext) {
+    let mut changed = false;
+
+    if is_key_pressed(KeyCode::Q) {
+        context.acorns_x += 1;
+        changed = true;
+    }
+    if is_key_pressed(KeyCode::E) {
+        context.acorns_y += 1;
+        changed = true;
+    }
+    // delete acorns
+    if is_key_pressed(KeyCode::R) && context.acorns_x > 1 {
+        context.acorns_x -= 1;
+        changed = true;
+    }
+
+    if changed {
+        // despawn old acorns
+        let mut query = world.query_filtered::<Entity, With<IsAcorn>>();
+        let entities: Vec<Entity> = query.iter(world).collect();
+        for entity in entities {
+            world.despawn(entity);
+        }
+
+        acorn_game_spawn_acorn(world, context);
+        
+        println!("Grid resized to: {}x{}", context.acorns_x, context.acorns_y);
+    }
+}
+
+fn draw_fps(_world: &mut World, _context: &mut AcornContext) {
+    draw_text(
+        &format!("FPS: {}", get_fps()),
+        40.0, 
+        20.0, 
+        20.0, 
+        YELLOW
+    );
 }
 
 #[macroquad::main("Light Acorn test")]
