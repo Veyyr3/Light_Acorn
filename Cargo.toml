@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy_ecs = "0.18.0"
-macroquad = "0.4.14"
-tobj = "4.0.3"
+bevy_ecs = "0.18.0" # for ECS logic
+macroquad = "0.4.14" # for main render
+tobj = "4.0.3" # for .obj parser
