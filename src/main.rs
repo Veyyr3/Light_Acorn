@@ -30,7 +30,7 @@ This main.rs file is the example which you may try and search.
 
 ======================
 Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
-BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN template in TEMPLATES" folder.
+BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN WAY template in "TEMPLATES" folder.
 ======================
 
 See other templates of projects in "TEMPLATES" folder.
