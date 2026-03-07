@@ -119,7 +119,7 @@ fn acorn_setup() -> AcornContext {
         after_2d_zone,
         // suggestion for game
         assets_3d,
-        pos: vec3(5.0, 2.0, 5.0),
+        pos: vec3(5.0, 30.0, 5.0),
         yaw: 1.1,
         pitch: 0.0,
     }
@@ -159,8 +159,8 @@ struct IsAcorn;
 // spawner 3d model of acorn.
 fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
     let count_x = 10;
-    let count_z = 2;
-    let spacing = 2.5;
+    let count_z = 10;
+    let spacing = 10.0;
 
     let offset_x = (count_x as f32 * spacing) / 2.0;
     let offset_z = (count_z as f32 * spacing) / 2.0;
@@ -212,7 +212,7 @@ fn acorn_example_game_rotate_acorn(world: &mut World, _context: &mut AcornContex
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext) {
-    draw_grid(20, 1.0, WHITE, GRAY);
+    draw_grid(1000, 2.0, WHITE, GRAY);
 }
 
 fn handle_input(_world: &mut World, context: &mut AcornContext) {
