@@ -17,7 +17,6 @@ use acorn_kernel::{
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
     acorn_tools::acorn_game_tools::agt_functions::{
         acorn_game_draw_3d_assets,
-        acorn_debug_inspector
     },
 };
 use macroquad::prelude::*;
@@ -93,6 +92,7 @@ fn acorn_setup() -> AcornContext {
             acorn_example_game_rotate_acorn,
             acorn_example_game_draw_grid,
             acorn_example_game_camera,
+            handle_input,
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -107,7 +107,7 @@ fn acorn_setup() -> AcornContext {
         ]),
         // Minor-Location
         Location::from_fn_vec(vec![
-            acorn_debug_inspector
+            draw_sight
             // add own functions through comma 
         ]),
         // add own locations through comma 
@@ -130,7 +130,10 @@ fn acorn_setup() -> AcornContext {
         before_2d_zone, 
         after_2d_zone,
         // suggestion for game
-        assets_3d
+        assets_3d,
+        pos: vec3(5.0, 2.0, 5.0),
+        yaw: 1.1,
+        pitch: 0.0,
     }
 }
 
@@ -268,12 +271,12 @@ fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_camera(_world: &mut World, _context: &mut AcornContext) {
+fn acorn_example_game_camera(_world: &mut World, context: &mut AcornContext) {
     // spawn camera
     set_camera(&Camera3D {
-            position: vec3(5.0, 5.0, 5.0),
+            position: context.pos,
             up: vec3(0.0, 1.0, 0.0),
-            target: vec3(0.0, 0.5, 0.0),
+            target: context.pos + get_look_dir(context.yaw, context.pitch),
             ..Default::default()
         });
 }
@@ -293,6 +296,48 @@ fn acorn_example_game_rotate_acorn(world: &mut World, _context: &mut AcornContex
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext) {
     draw_grid(20, 1.0, WHITE, GRAY);
+}
+
+fn handle_input(_world: &mut World, context: &mut AcornContext) {
+    let look_speed = 1.0;
+    let move_speed = 0.1;
+
+    // 1. rotate
+    let mouse_delta = mouse_delta_position();
+    context.yaw -= mouse_delta.x * look_speed; 
+    context.pitch += mouse_delta.y * look_speed;
+    context.pitch = context.pitch.clamp(-1.5, 1.5);
+
+    let look_dir = get_look_dir(context.yaw, context.pitch);
+
+    // 2. move
+    if is_key_down(KeyCode::W) { context.pos += look_dir * move_speed; }
+    if is_key_down(KeyCode::S) { context.pos -= look_dir * move_speed; }
+
+    let right = look_dir.cross(vec3(0.0, 1.0, 0.0)).normalize();
+    if is_key_down(KeyCode::D) { context.pos += right * move_speed; }
+    if is_key_down(KeyCode::A) { context.pos -= right * move_speed; }
+
+    // 3. control mouse cursor
+    if is_key_pressed(KeyCode::C) { set_cursor_grab(false); show_mouse(true); }
+    if is_key_pressed(KeyCode::Z) { set_cursor_grab(true); show_mouse(false); }
+}
+
+fn get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
+    vec3(
+        yaw.cos() * pitch.cos(),
+        pitch.sin(),
+        yaw.sin() * pitch.cos()
+    ).normalize()
+}
+
+fn draw_sight(_world: &mut World, _context: &mut AcornContext) {
+    draw_circle(
+        screen_width()/2.0, 
+        screen_height()/2.0, 
+        5.0, 
+        YELLOW
+    )
 }
 
 #[macroquad::main("Light Acorn test")]
