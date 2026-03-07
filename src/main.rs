@@ -158,31 +158,33 @@ struct IsAcorn;
 
 // spawner 3d model of acorn.
 fn acorn_game_spawn_acorn(world: &mut World, _context: &mut AcornContext) {
-    world.spawn((
-       Entity3DTransform {
-            position: vec3(0.0, 1.0, 0.0),
-            rotation: 0.0,
-            scale: vec3(1.0, 1.0, 1.0)
-       }, 
-       Entity3DModel {
-            // WARNING: you should remember index of your 3d model
-            mesh_id: 0 
+    let count_x = 10;
+    let count_z = 2;
+    let spacing = 2.5;
 
-            /*
-            But you can use a trick:
+    let offset_x = (count_x as f32 * spacing) / 2.0;
+    let offset_z = (count_z as f32 * spacing) / 2.0;
 
-            // src/game_assets.rs
-            pub const ACORN_MODEL: usize = 0;
-            pub const TREE_MODEL: usize = 1;
-            pub const ROCK_MODEL: usize = 2;
+    for x in 0..count_x {
+        for z in 0..count_z {
+            let pos_x = (x as f32 * spacing) - offset_x;
+            let pos_z = (z as f32 * spacing) - offset_z;
 
-            AND write like that:
-            mesh_id: ACORN_MODEL
-            */
-       },
-       IsAcorn // component-marker
-    ));
-    println!("Entity spawned!");
+            world.spawn((
+                Entity3DTransform {
+                    position: vec3(pos_x, 0.0, pos_z),
+                    rotation: 0.0,
+                    scale: vec3(1.0, 1.0, 1.0),
+                },
+                Entity3DModel {
+                    mesh_id: 0 
+                },
+                IsAcorn,
+            ));
+        }
+    }
+    
+    println!("Acorns are {}!", count_x * count_z);
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
