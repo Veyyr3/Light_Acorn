@@ -48,10 +48,9 @@ fn acorn_setup() -> AcornContext {
     /* 
     Here is an example. 
     
-    ======================
+
     Locations don't need variables! But you can use variables if you want.
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
-    ======================
 
     ======================
     Memorise: read code from top to down. Locations, Zones will run by chain.
@@ -61,14 +60,23 @@ fn acorn_setup() -> AcornContext {
     */
 
     /*
+    ======================
     Also I offer to you Lord-Minor achitecture to full control life of functions.
+    ======================
 
     Lord-Location: here are Lord-Functions which can change other functions order in Minor-Locations.
     For each Lord-Functions in Lord-Location you should create own Minor-Location.
 
     Minor-Location: here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
 
+    ======================
+    Example: 
+    if there are 3 Lord-Functions in Lord-Location then 3 Minor-Locations for each Lord-Functions.
+    ======================
+    OR Just Memorise: One Lord-Function = One his Minor-Location.
+    ======================
     But YOU are not required to use this architecture. You are Lord of your ideas.
+    ======================
     */
 
     // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
