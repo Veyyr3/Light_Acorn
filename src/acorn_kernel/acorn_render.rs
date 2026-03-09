@@ -1,6 +1,11 @@
-// (c) 2026 Lord of the Light Acorn: Veyyr3.
-// This file is part of Light Acorn and is distributed under the MIT License.
-// See the LICENSES folder in the project root for the full license text.
+// This Source Code Form is subject to the terms of the Mozilla Public 
+// License, v. 2.0. If a copy of the MPL was not distributed with this 
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+/* Copyright © 2026 Veyyr3
+  Light Acorn Framework: Kernel
+  Lord of the Framework: Veyyr3
+*/
 
 // src/acorn_kernel/acorn_render.rs
 use macroquad::prelude::*;
