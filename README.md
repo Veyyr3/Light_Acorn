@@ -120,6 +120,12 @@ let before_2d_zone = Zone::default()
 
 7. **AI:** For the opportunity to do the impossible.
 
+# If you want clean Acorn architecture
+
+**You can use Pure Acorn:** Everything is like in Light but without Macroquad
+
+[Pure Acorn is foundation for your projects or frameworks. Click here.](https://github.com/Veyyr3/Pure_Acorn)
+
 # License
 
 This project is dual-licensed under the **MIT License** and the **Mozilla Public License 2.0**
