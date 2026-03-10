@@ -1,3 +1,7 @@
+// (c) 2026 Lord of the Light Acorn: Veyyr3.
+// This file is part of Light Acorn and is distributed under the MIT License.
+// See the LICENSES folder in the project root for the full license text.
+
 // src/main.rs
 mod acorn_kernel;
 use acorn_kernel::{
@@ -26,7 +30,7 @@ This main.rs file is the example which you may try and search.
 
 ======================
 Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
-BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN template in TEMPLATES" folder.
+BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN WAY template in "TEMPLATES" folder.
 ======================
 
 See other templates of projects in "TEMPLATES" folder.
@@ -44,10 +48,9 @@ fn acorn_setup() -> AcornContext {
     /* 
     Here is an example. 
     
-    ======================
+
     Locations don't need variables! But you can use variables if you want.
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
-    ======================
 
     ======================
     Memorise: read code from top to down. Locations, Zones will run by chain.
@@ -57,14 +60,23 @@ fn acorn_setup() -> AcornContext {
     */
 
     /*
+    ======================
     Also I offer to you Lord-Minor achitecture to full control life of functions.
+    ======================
 
     Lord-Location: here are Lord-Functions which can change other functions order in Minor-Locations.
     For each Lord-Functions in Lord-Location you should create own Minor-Location.
 
     Minor-Location: here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
 
+    ======================
+    Example: 
+    if there are 3 Lord-Functions in Lord-Location then 3 Minor-Locations for each Lord-Functions.
+    ======================
+    OR Just Memorise: One Lord-Function = One his Minor-Location.
+    ======================
     But YOU are not required to use this architecture. You are Lord of your ideas.
+    ======================
     */
 
     // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
@@ -125,6 +137,7 @@ fn acorn_setup() -> AcornContext {
     AcornContext { 
         before_2d_zone, 
         after_2d_zone,
+        // your Zone through comma
         // suggestion for game
         assets_3d
     }

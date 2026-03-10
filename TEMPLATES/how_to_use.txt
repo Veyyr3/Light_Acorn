@@ -1,10 +1,10 @@
 If you want to use template:
 1. Delete original src from project.
-2. Copy src folder of template (Ex: DEFAULT/src) into project.
+2. Copy src folder of template (Ex: default/src) into project.
 
 Use this template terminal commands for quick copy
-(instead of "TEMPLATES/DEFAULT/" you may use any template):
+(instead of "TEMPLATES/ACORN_WAY/default/" you may use any template):
     Linux:
-rm -rf src && cp -r TEMPLATES/DEFAULT/src ./
+rm -rf src && cp -r TEMPLATES/ACORN_WAY/default/src ./
     Windows:
 Remove-Item -Recurse -Force src; Copy-Item -Recurse TEMPLATES\DEFAULT\src .
