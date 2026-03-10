@@ -4,7 +4,7 @@
 
 <img title="" src="/DOCS/imgs/how_to_add_3D_model/choose_your_model_by_left_click.png" alt="" data-align="center">
 
-#### 2 Step: File --> Export --> Wavefron (.obj)
+#### 2 Step: File --> Export --> Wavefront (.obj)
 
 <img title="" src="/DOCS/imgs/how_to_add_3D_model/export_to_obj.png" alt="" data-align="center">
 
@@ -42,7 +42,7 @@
     }
 ```
 
-Use template REACORN-way code. Add your model with **load_obj_with_materials_to_mesh** function through pushing into **Acorn3DAssetDatabase**.
+Use template REACORN-way code in acorn_setup. Add your model with **load_obj_with_materials_to_mesh** function through pushing into **Acorn3DAssetDatabase**.
 
 **PLEASE**, remember index of your 3d models when you add news. Right now index of model is 0.
 
