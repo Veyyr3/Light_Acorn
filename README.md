@@ -6,7 +6,7 @@ Hi! This was done on an old 2013 X550CC laptop and antiX.
 
 # Features
 
-- **Light Acorn:** A lightweight Zone & Location-based framework for creating games for old PC, powered by Macroquad. 
+- **Light Acorn:** A lightweight Zone & Location-based framework for creating games for old PC, powered by Macroquad and Bevy ECS. 
   
 
 - **Light Acorn is Functional Data-Oriented Framework by design.**
