@@ -137,6 +137,7 @@ fn acorn_setup() -> AcornContext {
     AcornContext { 
         before_2d_zone, 
         after_2d_zone,
+        // your Zone through comma
         // suggestion for game
         assets_3d
     }

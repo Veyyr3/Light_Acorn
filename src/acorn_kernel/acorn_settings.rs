@@ -15,6 +15,7 @@ use crate::acorn_kernel::{
 pub struct AcornContext {
     pub before_2d_zone: Zone,
     pub after_2d_zone: Zone,
+    // add here your Zone trough comma
     // from game tools
-    pub assets_3d: Acorn3DAssetDatabase
+    pub assets_3d: Acorn3DAssetDatabase,
 }
