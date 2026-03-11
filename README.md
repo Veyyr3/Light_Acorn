@@ -2,7 +2,9 @@
 
 <img title="" src="/DOCS/imgs/logo_Light_Acorn.png" alt="" width="168" data-align="center">
 
-Hi! This was done on an old 2013 X550CC laptop and antiX.
+Hi! **Light Acorn is Open Source Project under MIT and MPL licenses.**
+
+This was done on an old 2013 X550CC laptop and antiX.
 
 # Features
 
