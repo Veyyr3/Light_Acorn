@@ -20,7 +20,7 @@ fn name(world: &mut World, context: &mut AcornContext) {
 }
 ```
 
-World to change data. Context to change functions or global states.
+`World` to change data. `Context` to change functions or global states.
 
 ## The Acorn Pipeline
 
@@ -36,7 +36,7 @@ In acorn_setup developer create intial Zones, Locations, Functions. Main functio
 
 **Function should be AcornFunction** but it **can contents anything**: Macroquad functions, bevy_ecs Queries, function of other library or custom function of developer. Of course, developer can add own Zones (see in other doc).
 
-**Actually Light Acorn is Macroquad with architecture.**
+> **Actually Light Acorn is Macroquad with architecture.**
 
 **Features:** Developer can change function's order in locations. Developer can change location's order in zones. Developer can change order of zones. In ACORN-way developer can't reorder functions in runtime. In REACORN-way developer can reorder functions in runtime.
 
@@ -50,11 +50,11 @@ All functions can change data only through ECS-window.
 
 Acorn ECS based on Bevy ECS. Actually ECS here is data base. 
 
-**ECS-Queries are here like SQL-Queries in SQLite.**
+> **ECS-Queries are here like SQL-Queries in SQLite.**
 
 **Close-rooms architecture:** They don't know about each other, don't know who changed data because they aren't linked by data.
 
-**In Acorn in one moment executing only 1 function**. 
+> **In Acorn in one moment executing only 1 function**. 
 
 All functions go by order but nobody can't stop developer: **you can use several parallel ECS-Queries in 1 function**. After this, function ended and acorn loop goes on.
 
@@ -89,13 +89,13 @@ fn acorn_example_update_oaks(world: &mut World, _context: &mut AcornContext) {
 
 **Lord-Location:** here are **Lord-Functions** which can change other functions order in **Minor-Locations**.
 
-**For each Lord-Functions in Lord-Location you should create own Minor-Location.**
+> **For each Lord-Functions in Lord-Location you should create own Minor-Location.**
 
 **Minor-Location:** here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
 
 **Example:** if there are 3 Lord-Functions in Lord-Location then 3 Minor-Locations for each Lord-Functions.
 
-**OR Just Memorise:** ***One Lord-Function = One his Minor-Location.***
+> **OR Just Memorise:** ***One Lord-Function = One his Minor-Location.***
 
 **But YOU are not required to use this architecture. You are Lord of your ideas.**
 
