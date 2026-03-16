@@ -3,7 +3,7 @@
 // See the LICENSES folder in the project root for the full license text.
 
 /*
-Create here your Zones, Locations, Global states. 
+Create here your Zones, Locations. 
 It's your interface. (sorry, code doesn't let me use GUI here)
 
 Below, there are examples of Acorn functions.
@@ -14,7 +14,7 @@ Warning: If you want to add new Zone then you should add new loop "for" in acorn
 */
 
 
-// src/acorn_setup.rs
+// src/acorn_zsetup.rs
 use crate::acorn_kernel::{
     acorn_heart::{Zone, Location}, // import Zone, Location
 };
@@ -123,25 +123,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         before_2d_zone, 
         after_2d_zone,
         // your Zone through comma
-    }
-}
-
-pub fn acorn_global_setup() -> AcornGlobalContext {
-    // ---------------------------- Game setup ----------------------------
-    // Keep 3d models in assets database.
-    let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
-
-    // Add your .obj files with push.
-    // PLEASE, remember index of your 3d models when you add news.
-    // It so, because for perfomance. 
-    // BUT I leave it to you for organize logic assets keeping.
-    assets_3d.meshes.push(
-        load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
-    );
-    
-    AcornGlobalContext { 
-        // suggestion for game
-        assets_3d
     }
 }
 
