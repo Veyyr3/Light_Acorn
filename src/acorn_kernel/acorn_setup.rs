@@ -6,14 +6,16 @@
 use crate::acorn_kernel::{
     acorn_heart::{Zone, Location}, // import Zone, Location
     acorn_settings::AcornContext, // struct AcornContext 
-    // game suggestions
-    acorn_tools::acorn_game_tools::agt_heart::{
+};
+// game suggestions
+use crate::acorn_tools::{
+    acorn_game_tools::agt_heart::{
         Acorn3DAssetDatabase, 
         Entity3DTransform, 
         Entity3DModel
     }, 
-    acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
-    acorn_tools::acorn_game_tools::agt_functions::{
+    acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
+    acorn_game_tools::agt_functions::{
         acorn_game_draw_3d_assets,
         acorn_debug_inspector
     },
@@ -111,7 +113,7 @@ pub fn acorn_setup() -> AcornContext {
     // It so, because for perfomance. 
     // BUT I leave it to you for organize logic assets keeping.
     assets_3d.meshes.push(
-        load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
+        load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
 
     // Return AcornContext for Main function

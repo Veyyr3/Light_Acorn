@@ -5,9 +5,9 @@
 // src/acorn_kernel/acorn_settings.rs
 use crate::acorn_kernel::{
     acorn_heart::Zone, 
-    // suggestions
-    acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase
 };
+// game suggestions
+use crate::acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase;
 
 /// Contain here your Zones and global statements 
 /// 

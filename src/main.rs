@@ -4,6 +4,7 @@
 
 // src/main.rs
 mod acorn_kernel;
+mod acorn_tools;
 use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
     acorn_heart::AcornECS, // import Zone, Location, AcornECS
