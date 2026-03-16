@@ -2,7 +2,7 @@
 // This file is part of Light Acorn and is distributed under the MIT License.
 // See the LICENSES folder in the project root for the full license text.
 
-// src/acorn_kernel/acorn_setup.rs
+// src/acorn_setup.rs
 use crate::acorn_kernel::{
     acorn_heart::{Zone, Location}, // import Zone, Location
 };

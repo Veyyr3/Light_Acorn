@@ -8,7 +8,7 @@ Warning: YOU shouldn't delete this file because other Acorn files use AcornConte
 Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depends on them
 */
 
-// src/acorn_kernel/acorn_settings.rs
+// src/acorn_settings.rs
 use crate::acorn_kernel::{
     acorn_heart::Zone, 
 };
