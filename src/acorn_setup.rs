@@ -157,6 +157,11 @@ fn name(
     // your_logic
 }
 
+Arguments:
+* world - for ECS Queries. This is necessary in order to process thousands of objects.
+* zones - for Lord-Functions. This is necessary for control Minor-Locations.
+* context - for Global States. Example: player score, 3d assets.
+
 Advise: Create functions in other files and import here.
 ====================== */
 
