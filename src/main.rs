@@ -4,17 +4,18 @@
 
 // src/main.rs
 mod acorn_kernel;
+mod acorn_setup;
 mod acorn_tools;
+
 use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
     acorn_heart::AcornECS, // import Zone, Location, AcornECS
-    acorn_setup::{ // import functions from acorn_setup for use in Main
-        acorn_game_spawn_acorn, 
-        acorn_setup, 
-        acorn_example_spawn_entity
-    }
 };
-
+use acorn_setup::{ // import functions from acorn_setup for use in Main
+    acorn_game_spawn_acorn, 
+    acorn_setup, 
+    acorn_example_spawn_entity
+};
 
 /*
 Hi!
