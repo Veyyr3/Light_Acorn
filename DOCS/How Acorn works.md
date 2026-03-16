@@ -4,7 +4,7 @@
 
 <img src="/DOCS/imgs/how_it_works/zone_location.png" title="" alt="" data-align="center">
 
-**The Acorn Architecture** consists of hierarchy: **functions** are the minimum units. **Location** is the container of functions. **Zone** is the container of Locations. In timeline functions execute by order.
+**The Acorn Architecture** consists of hierarchy: **functions** are the minimum units. **Location** is the container of functions. **Zone** is the container of Locations. **In timeline functions execute by order**.
 
 **In code:** Zone, Locations are vectors. Yes, it's simple.
 
