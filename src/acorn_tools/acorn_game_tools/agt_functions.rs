@@ -9,9 +9,7 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
 use macroquad::prelude::*;
-use crate::acorn_kernel::{
-    acorn_settings::AcornContext, 
-};
+use crate::acorn_settings::AcornContext;
 use crate::acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTransform};
 use bevy_ecs::world::World;
 

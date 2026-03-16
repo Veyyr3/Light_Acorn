@@ -11,8 +11,8 @@
 use macroquad::prelude::*;
 use crate::acorn_kernel::{
     acorn_heart::AcornECS, 
-    acorn_settings::AcornContext
 };
+use crate::acorn_settings::AcornContext;
 
 /// Main loop of Light Acorn.
 /// You shouldn't touch this. 

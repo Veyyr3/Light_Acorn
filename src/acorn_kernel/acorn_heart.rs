@@ -9,7 +9,7 @@
 
 // src/acorn_kernel/acorn_heart.rs
 use bevy_ecs::prelude::*;
-use crate::acorn_kernel::acorn_settings::AcornContext;
+use crate::acorn_settings::AcornContext;
 
 // ---------------------------- Heart of Light Acorn ----------------------------
 
@@ -31,7 +31,7 @@ pub struct Zone {
 /// Use this in fn main to create ECS.
 pub struct AcornECS {
     pub world: World,
-    pub schedule: Schedule
+    // pub schedule: Schedule
 }
 
 // ---------------------------- Implementations ----------------------------
@@ -97,7 +97,7 @@ impl Default for AcornECS {
     fn default() -> Self {
         Self {
             world: World::new(),
-            schedule: Schedule::default(),
+            //schedule: Schedule::default(),
         }
     }
 }

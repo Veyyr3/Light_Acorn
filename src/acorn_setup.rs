@@ -5,8 +5,8 @@
 // src/acorn_kernel/acorn_setup.rs
 use crate::acorn_kernel::{
     acorn_heart::{Zone, Location}, // import Zone, Location
-    acorn_settings::AcornContext, // struct AcornContext 
 };
+use crate::acorn_settings::AcornContext; // struct AcornContext 
 // game suggestions
 use crate::acorn_tools::{
     acorn_game_tools::agt_heart::{

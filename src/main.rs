@@ -5,6 +5,8 @@
 // src/main.rs
 mod acorn_kernel;
 mod acorn_setup;
+mod acorn_settings;
+// for game
 mod acorn_tools;
 
 use acorn_kernel::{

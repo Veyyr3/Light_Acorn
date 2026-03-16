@@ -2,6 +2,12 @@
 // This file is part of Light Acorn and is distributed under the MIT License.
 // See the LICENSES folder in the project root for the full license text.
 
+/*
+Warning: YOU shouldn't delete this file because other Acorn files use AcornContext 
+
+Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depends on them
+*/
+
 // src/acorn_kernel/acorn_settings.rs
 use crate::acorn_kernel::{
     acorn_heart::Zone, 
