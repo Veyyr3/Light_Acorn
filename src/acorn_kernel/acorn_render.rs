@@ -23,7 +23,7 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
         clear_background(BLACK);
 
         // Run Schedule
-        acorn_ecs.schedule.run(&mut acorn_ecs.world);
+        //acorn_ecs.schedule.run(&mut acorn_ecs.world);
 
         // before_2d_zone_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
         let len_before_2d_zone = acorn_context.before_2d_zone.locations.len();

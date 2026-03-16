@@ -19,7 +19,7 @@ pub async fn acorn_loop(before_2d_zone: Zone, after_2d_zone: Zone, mut ecs: Acor
         clear_background(BLACK);
 
         // Run Schedule
-        ecs.schedule.run(&mut ecs.world);
+        //ecs.schedule.run(&mut ecs.world);
 
         // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
         for location in &before_2d_zone.locations {
