@@ -3,7 +3,7 @@
 // See the LICENSES folder in the project root for the full license text.
 
 /*
-Warning: YOU shouldn't delete this file because other Acorn files use AcornContext 
+Warning: YOU shouldn't delete this file because other Acorn files use AcornZoneContext 
 
 Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depends on them
 */
@@ -15,13 +15,15 @@ use crate::acorn_kernel::{
 // game suggestions
 use crate::acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase;
 
-/// Contain here your Zones and global statements 
-/// 
-/// Advise: better keep global statements in other struct.
-pub struct AcornContext {
+/// Contain here your Zones
+pub struct AcornZoneContext {
     pub before_2d_zone: Zone,
     pub after_2d_zone: Zone,
     // add here your Zone trough comma
+}
+
+/// Contain here your global statements 
+pub struct AcornGlobalContext {
     // from game tools
     pub assets_3d: Acorn3DAssetDatabase,
 }

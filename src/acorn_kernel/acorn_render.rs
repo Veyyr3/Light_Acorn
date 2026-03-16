@@ -12,13 +12,17 @@ use macroquad::prelude::*;
 use crate::acorn_kernel::{
     acorn_heart::AcornECS, 
 };
-use crate::acorn_settings::AcornContext;
+use crate::acorn_settings::{AcornZoneContext, AcornGlobalContext};
 
 /// Main loop of Light Acorn.
 /// You shouldn't touch this. 
 /// 
 /// Warning: If you want to add new Zones you should touch this (read in docs about this).
-pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS) {
+pub async fn acorn_loop( 
+    mut acorn_ecs: AcornECS,
+    mut acorn_zone_context: AcornZoneContext, 
+    mut acorn_global_context:AcornGlobalContext
+) {
     loop {
         clear_background(BLACK);
 
@@ -26,11 +30,11 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
         //acorn_ecs.schedule.run(&mut acorn_ecs.world);
 
         // before_2d_zone_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
-        let len_before_2d_zone = acorn_context.before_2d_zone.locations.len();
+        let len_before_2d_zone = acorn_zone_context.before_2d_zone.locations.len();
 
         // locations go by order
         for location_index in 0..len_before_2d_zone {
-            let fn_count = acorn_context
+            let fn_count = acorn_zone_context
                 .before_2d_zone
                 .locations[location_index]
                 .functions.len();
@@ -40,12 +44,12 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
             // Warning: You should add new functions from down to top
             for fn_index in (0..fn_count).rev() {
                 let function = 
-                acorn_context.before_2d_zone
+                acorn_zone_context.before_2d_zone
                     .locations[location_index]
                     .functions[fn_index];
                     
                 // Call function in strict order
-                function(&mut acorn_ecs.world, &mut acorn_context);
+                function(&mut acorn_ecs.world, &mut acorn_zone_context, &mut acorn_global_context);
             }
         }
 
@@ -53,11 +57,11 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
         set_default_camera(); 
 
         // after_2d_zone (Ex: UI draw and other Locations)
-        let len_after_2d_zone = acorn_context.after_2d_zone.locations.len();
+        let len_after_2d_zone = acorn_zone_context.after_2d_zone.locations.len();
 
         // locations go by order
         for location_index in 0..len_after_2d_zone {
-            let fn_count = acorn_context
+            let fn_count = acorn_zone_context
                 .after_2d_zone
                 .locations[location_index]
                 .functions.len();
@@ -67,12 +71,12 @@ pub async fn acorn_loop(mut acorn_context: AcornContext, mut acorn_ecs: AcornECS
             // Warning: You should add new functions from down to top
             for fn_index in (0..fn_count).rev() {
                 let function = 
-                acorn_context.after_2d_zone
+                acorn_zone_context.after_2d_zone
                     .locations[location_index]
                     .functions[fn_index];
                     
                 // Call function in strict order
-                function(&mut acorn_ecs.world, &mut acorn_context);
+                function(&mut acorn_ecs.world, &mut acorn_zone_context, &mut acorn_global_context);
             }
         }
 

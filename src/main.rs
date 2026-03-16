@@ -14,8 +14,10 @@ use acorn_kernel::{
     acorn_heart::AcornECS, // import Zone, Location, AcornECS
 };
 use acorn_setup::{ // import functions from acorn_setup for use in Main
-    acorn_game_spawn_acorn, 
-    acorn_setup, 
+    acorn_zone_setup,
+    acorn_global_setup,
+    // other example functions
+    acorn_game_spawn_acorn,  
     acorn_example_spawn_entity
 };
 
@@ -43,13 +45,23 @@ async fn main() {
     // Global variable ECS. Hand over to acorn_loop.
     let mut acorn_ecs = AcornECS::default();
 
-    // Global variable of Zones. Hand over to acorn_loop.
-    let mut acorn_context = acorn_setup();
+    // Contex of Zones. Hand over to acorn_loop.
+    let mut acorn_zone_context = acorn_zone_setup();
+    // Global states. Hand over to acorn_loop.
+    let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    acorn_example_spawn_entity(&mut acorn_ecs.world, &mut acorn_context);
-    acorn_game_spawn_acorn(&mut acorn_ecs.world, &mut acorn_context);
+    acorn_example_spawn_entity(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    acorn_game_spawn_acorn(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
 
     // main loop
-    acorn_loop(acorn_context, acorn_ecs).await;
+    acorn_loop(acorn_ecs, acorn_zone_context, acorn_global_context).await;
 }
