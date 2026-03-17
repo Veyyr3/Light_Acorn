@@ -11,20 +11,20 @@ use crate::acorn_kernel::{
     acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase
 };
 
-pub struct AcornRenderBuffer {
-    pub vertices: Vec<Vertex>,
-    pub indices: Vec<u16>,
-}
+// pub struct AcornRenderBuffer {
+//     pub vertices: Vec<Vertex>,
+//     pub indices: Vec<u16>,
+// }
 
-impl AcornRenderBuffer {
-    pub fn new() -> Self {
-        Self {
-            // Резервируем память заранее, чтобы i3 не тупил на реаллокациях
-            vertices: Vec::with_capacity(10000), 
-            indices: Vec::with_capacity(15000),
-        }
-    }
-}
+// impl AcornRenderBuffer {
+//     pub fn new() -> Self {
+//         Self {
+//             // Резервируем память заранее, чтобы i3 не тупил на реаллокациях
+//             vertices: Vec::with_capacity(10000), 
+//             indices: Vec::with_capacity(15000),
+//         }
+//     }
+// }
 
 /// Contain here your Zones and global statements 
 /// 
@@ -40,5 +40,7 @@ pub struct AcornContext {
     pub acorns_x: u16,
     pub acorns_y: u16,
     pub acorns_count: u16,
-    pub render_buffer: AcornRenderBuffer,
+    // for acorn_game_draw_3d_instanced
+    pub matrix_buffer: Vec<(usize, Mat4)>, // usize is index of 3D asset.
+    // pub render_buffer: AcornRenderBuffer,
 }

@@ -10,7 +10,7 @@
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
 use macroquad::prelude::*;
 use crate::acorn_kernel::{
-    acorn_settings::{AcornContext, AcornRenderBuffer}, 
+    acorn_settings::{AcornContext}, 
     acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTransform}
 };
 use bevy_ecs::world::World;
@@ -20,6 +20,17 @@ pub fn acorn_generate_matrix(entity_3d_set: &Entity3DTransform) -> Mat4 {
     Mat4::from_translation(entity_3d_set.position)
     *Mat4::from_axis_angle(vec3(0.0, 1.0, 0.0), entity_3d_set.rotation)
     *Mat4::from_scale(entity_3d_set.scale)
+}
+
+/// new way to generate matrix.
+/// it can add some perfomance.
+/// but your models won't rotate by X and Z.
+pub fn acorn_generate_matrix_y(entity_3d_set: &Entity3DTransform) -> Mat4 {
+    Mat4::from_scale_rotation_translation(
+        entity_3d_set.scale,
+        Quat::from_rotation_y(entity_3d_set.rotation), 
+        entity_3d_set.position,
+    )
 }
 
 fn acorn_get_gl_contex() -> &'static mut QuadGl {
@@ -60,110 +71,88 @@ pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) 
     }
 }
 
-pub fn acorn_game_draw_3d_assets_batched(world: &mut World, context: &mut AcornContext) {
-    // 1. Создаем временные буферы для сбора всей геометрии кадра
-    // В идеале их стоит хранить в AcornContext, чтобы не пересоздавать Vec каждый кадр (zero allocation)
-    let mut batched_vertices: Vec<Vertex> = Vec::with_capacity(10000 * 24); // Примерно
-    let mut batched_indices: Vec<u16> = Vec::with_capacity(10000 * 36);
-    let mut last_index_offset = 0;
+// -------------------------------------- NEW --------------------------------------
+pub fn acorn_generate_transform(world: &mut World, context: &mut AcornContext) {
+    context.matrix_buffer.clear();
 
     let mut query = world.query::<(&Entity3DTransform, &Entity3DModel)>();
 
-    for (transform, model_info) in query.iter(world) {
-        let model_matrix = acorn_generate_matrix(&transform);
-        let source_mesh = &context.assets_3d.meshes[model_info.mesh_id];
-
-        // 2. "Впекаем" трансформацию в вершины прямо на CPU
-        for v in &source_mesh.vertices {
-            let mut new_v = *v;
-            // Умножаем позицию вершины на матрицу сущности
-            let pos_vec4 = model_matrix * vec4(v.position.x, v.position.y, v.position.z, 1.0);
-            new_v.position = vec3(pos_vec4.x, pos_vec4.y, pos_vec4.z);
-            
-            // Если есть нормали, их тоже нужно трансформировать (вращать)
-            // new_v.normal = ...
-            
-            batched_vertices.push(new_v);
-        }
-
-        // 3. Копируем индексы с учетом смещения
-        for i in &source_mesh.indices {
-            batched_indices.push(*i + last_index_offset as u16);
-        }
-
-        last_index_offset += source_mesh.vertices.len();
-    }
-
-    // 4. ОДИН ВЫЗОВ НА ВСЕ 10 000 ЖЕЛУДЕЙ
-    if !batched_vertices.is_empty() {
-        let big_mesh = Mesh {
-            vertices: batched_vertices,
-            indices: batched_indices,
-            texture: None, // Берем текстуру первого желудя
-        };
-        draw_mesh(&big_mesh);
-    }
-}
-
-pub fn acorn_game_draw_3d_assets2(world: &mut World, context: &mut AcornContext) {
-    // 1. Сначала очистим буфер
-    context.render_buffer.vertices.clear();
-    context.render_buffer.indices.clear();
-
-    let mut last_index_offset = 0;
-    const MAX_INDICES: usize = 12000; 
-
-    // 2. Разделяем контекст на части, чтобы Borrow Checker был спокоен
-    // Достаем ссылки на поля отдельно
-    let assets = &context.assets_3d;
-    let buffer = &mut context.render_buffer;
-
-    let mut query = world.query::<(&Entity3DTransform, &Entity3DModel)>();
-
-    for (transform, model_info) in query.iter(world) {
-        let model_matrix = acorn_generate_matrix(&transform);
+    for (transform, model) in query.iter(world) {
+        // Считаем матрицу (используя твой метод или оптимизированный)
+        let model_matrix = acorn_generate_matrix_y(transform);
         
-        // Берем меш из ассетов
-        let source_mesh = &assets.meshes[model_info.mesh_id];
-
-        // Проверка лимита: если не влезает, рисуем накопленное
-        if buffer.indices.len() + source_mesh.indices.len() > MAX_INDICES {
-            // Передаем ТОЛЬКО буфер, а не весь контекст!
-            flush_batch(buffer); 
-            last_index_offset = 0;
-        }
-
-        // Трансформация на CPU
-        for v in &source_mesh.vertices {
-            let mut new_v = *v;
-            new_v.position = (model_matrix * v.position.extend(1.0)).xyz();
-            buffer.vertices.push(new_v);
-        }
-
-        for i in &source_mesh.indices {
-            buffer.indices.push(*i + last_index_offset as u16);
-        }
-
-        last_index_offset += source_mesh.vertices.len();
+        // Записываем в конец вектора
+        context.matrix_buffer.push((model.mesh_id, model_matrix));
     }
-
-    // 3. Рисуем финальный остаток
-    flush_batch(buffer);
 }
 
-fn flush_batch(buffer: &mut AcornRenderBuffer) {
-    if !buffer.vertices.is_empty() {
-        let batch_mesh = Mesh {
-            vertices: buffer.vertices.clone(), 
-            indices: buffer.indices.clone(),
-            texture: None, 
-        };
-        draw_mesh(&batch_mesh);
+pub fn acorn_game_draw_3d(_world: &mut World, context: &mut AcornContext) {
+    let gl = acorn_get_gl_contex();
+
+    // Проходим по вектору как по конвейеру
+    for (mesh_id, model_matrix) in &context.matrix_buffer {
+        // Устанавливаем матрицу трансформации
+        gl.push_model_matrix(*model_matrix);
         
-        buffer.vertices.clear();
-        buffer.indices.clear();
+        // Рисуем меш, беря его по индексу (usize)
+        draw_mesh(&context.assets_3d.meshes[*mesh_id]);
+
+        // Убираем матрицу
+        gl.pop_model_matrix();
     }
 }
+
+/// This experimental function good for WebGL 1.0/OpenGL ES 2.0
+/// You can use it to increase draw calls (more draw calls = more PC suffer)
+/// 
+/// I leave it because someone can't use higher version OpenGL.
+/// But serious GPU instansing is impossible because vertex buffer in macroquad so few (96 kb).
+/// 
+/// Maybe this function need to refactor because ACORN_GL_100_BATCH_LIMIT depends on vertex number.
+const ACORN_GL_100_BATCH_LIMIT: usize = 2379;
+pub fn acorn_game_draw_3d_instanced(_world: &mut World, context: &mut AcornContext) {
+    // 1 acorn = 62 vertex.
+    // 2379 / 62 = 38 acorns on 1 draw call.
+    // Vertex = 40 bytes.
+    // 2379 * 40 = 95 160 bytes = 93 kb.
+    // it's near with macroquad buffer 96 kb.
+    
+    let mut temp_mesh = Mesh {
+        vertices: Vec::with_capacity(65535),
+        indices: Vec::with_capacity(65535),
+        texture: None,
+    };
+
+    for (mesh_id, model_matrix) in &context.matrix_buffer {
+        let source_mesh = &context.assets_3d.meshes[*mesh_id];
+        
+        if temp_mesh.vertices.len() + source_mesh.vertices.len() > ACORN_GL_100_BATCH_LIMIT {
+            draw_mesh(&temp_mesh);
+            temp_mesh.vertices.clear();
+            temp_mesh.indices.clear();
+        }
+
+        let offset = temp_mesh.vertices.len() as u16;
+
+        // Копируем и трансформируем вершины
+        for v in &source_mesh.vertices {
+            let mut new_vertex = *v;
+            let pos4 = model_matrix.mul_vec4(vec4(v.position.x, v.position.y, v.position.z, 1.0));
+            new_vertex.position = vec3(pos4.x, pos4.y, pos4.z);
+            temp_mesh.vertices.push(new_vertex);
+        }
+
+        // Копируем индексы со смещением
+        for i in &source_mesh.indices {
+            temp_mesh.indices.push(i + offset);
+        }
+    }
+
+    if !temp_mesh.vertices.is_empty() {
+        draw_mesh(&temp_mesh);
+    }
+}
+
 // ---------------------------- Debug Functions ----------------------------
 /// Functions for inspect number of functions in Zones and Locations.
 pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {

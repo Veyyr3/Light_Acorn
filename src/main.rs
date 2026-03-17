@@ -15,14 +15,16 @@ use acorn_kernel::{
         Entity3DModel
     }, 
     acorn_tools::acorn_game_tools::agt_obj_parsers::load_obj_with_materials_to_mesh,
-    /*acorn_tools::acorn_game_tools::agt_functions::{
-        acorn_game_draw_3d_assets2
-    },*/
+    acorn_tools::acorn_game_tools::agt_functions::{
+        acorn_generate_transform,
+        acorn_game_draw_3d,
+        acorn_game_draw_3d_instanced,
+    },
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
-use crate::acorn_kernel::acorn_settings::AcornRenderBuffer;
+// use crate::acorn_kernel::acorn_settings::AcornRenderBuffer;
 
 /*
 Hi!
@@ -83,8 +85,11 @@ fn acorn_setup() -> AcornContext {
         // Minor-Location
         Location::from_fn_vec(vec![
             // game
+            
+            acorn_game_draw_3d_instanced,
+            acorn_generate_transform,
+            // acorn_game_draw_3d,
             // acorn_game_draw_3d_assets, // to draw yours 3d models
-            acorn_kernel::acorn_tools::acorn_game_tools::experimental::acorn_game_draw_3d_assets_3,
 
             acorn_example_game_rotate_acorn,
             acorn_example_game_draw_grid,
@@ -136,7 +141,7 @@ fn acorn_setup() -> AcornContext {
         acorns_x,
         acorns_y,
         acorns_count,
-        render_buffer: AcornRenderBuffer::new()
+        matrix_buffer: Vec::new()
     }
 }
 
