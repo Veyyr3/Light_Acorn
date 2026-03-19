@@ -72,6 +72,7 @@ pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) 
 }
 
 // -------------------------------------- NEW --------------------------------------
+/// this function needs context.matrix_buffer
 pub fn acorn_generate_transform(world: &mut World, context: &mut AcornContext) {
     context.matrix_buffer.clear();
 

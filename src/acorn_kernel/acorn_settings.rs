@@ -40,7 +40,7 @@ pub struct AcornContext {
     pub acorns_x: u16,
     pub acorns_y: u16,
     pub acorns_count: u16,
-    // for acorn_game_draw_3d_instanced
+    // for acorn_generate_transform, acorn_game_draw_3d_instanced
     pub matrix_buffer: Vec<(usize, Mat4)>, // usize is index of 3D asset.
     // pub render_buffer: AcornRenderBuffer,
 }
