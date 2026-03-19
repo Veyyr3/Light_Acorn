@@ -23,6 +23,11 @@ use acorn_kernel::{
 };
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
+use macroquad::miniquad as mq;
+
+use crate::acorn_kernel::acorn_tools::acorn_game_tools::mq_experimental::{AcornMeshInstanceDB, acorn_draw_instanced, acorn_register_for_instancing};
+use crate::acorn_kernel::acorn_tools::acorn_game_tools::shaders::*;
+
 
 // use crate::acorn_kernel::acorn_settings::AcornRenderBuffer;
 
@@ -85,8 +90,8 @@ fn acorn_setup() -> AcornContext {
         // Minor-Location
         Location::from_fn_vec(vec![
             // game
-            
-            acorn_game_draw_3d_instanced,
+            acorn_draw_instanced,
+            // acorn_game_draw_3d_instanced,
             acorn_generate_transform,
             // acorn_game_draw_3d,
             // acorn_game_draw_3d_assets, // to draw yours 3d models
@@ -121,13 +126,77 @@ fn acorn_setup() -> AcornContext {
     // PLEASE, remember index of your 3d models when you add news.
     // It so, because for perfomance. 
     // BUT I leave it to you for organize logic assets keeping.
-    assets_3d.meshes.push(
-        load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
-    );
+    let acorn_mesh = load_obj_with_materials_to_mesh("src/acorn_kernel/acorn_tools/acorn_game_tools/objs/acorn_engine.obj");
+assets_3d.meshes.push(acorn_mesh); // Теперь у желудя индекс 0
 
+// 2. Получаем доступ к контексту для работы с GPU
+let mut internal_gl = unsafe { get_internal_gl() };
+let ctx = internal_gl.quad_context;
+
+// 3. Создаем GPU-базу и регистрируем в ней наш желудь
+let mut instance_assets = AcornMeshInstanceDB { gpu_meshes: Vec::new() };
+// 4. Создаем 1x1 белую текстуру программно
+let white_texture = Texture2D::from_rgba8(1, 1, &[255, 255, 255, 255]);
+let default_tex_id = white_texture.raw_miniquad_id();
+
+// Важно: индекс в instance_assets.gpu_meshes ДОЛЖЕН совпадать 
+// с индексом в assets_3d.meshes (в нашем случае это 0)
+let prepared_acorn = acorn_register_for_instancing(ctx, &assets_3d.meshes[0], default_tex_id);
+instance_assets.gpu_meshes.push(prepared_acorn);
+
+    // подсчет количества желудей
     let acorns_x = 1;
     let acorns_y = 1;
     let acorns_count = acorns_x*acorns_y;
+
+    // 1. Получаем доступ к "железу"
+let mut internal_gl = unsafe { get_internal_gl() };
+let ctx = internal_gl.quad_context;
+
+// 2. Компилируем шейдер (обязательно!)
+let shader = ctx.new_shader(
+    mq::ShaderSource::Glsl {
+        vertex: VERTEX_SHADER_SRC,
+        fragment: FRAGMENT_SHADER_SRC,
+    },
+    mq::ShaderMeta {
+        uniforms: mq::UniformBlockLayout {
+            uniforms: vec![mq::UniformDesc::new("uViewProjection", mq::UniformType::Mat4)],
+        },
+        images: vec!["uTexture".to_string()],
+    },
+).expect("Shader compilation failed");
+
+// 3. Создаем Pipeline
+let instancing_pipeline = ctx.new_pipeline(
+    &[
+        mq::BufferLayout::default(), 
+        mq::BufferLayout {
+            step_func: mq::VertexStep::PerInstance,
+            ..Default::default()
+        },
+    ],
+    &[
+        mq::VertexAttribute::with_buffer("aPos", mq::VertexFormat::Float3, 0),
+        mq::VertexAttribute::with_buffer("aTex", mq::VertexFormat::Float2, 0),
+        mq::VertexAttribute::with_buffer("aCol", mq::VertexFormat::Byte4, 0),
+        mq::VertexAttribute::with_buffer("aNormal", mq::VertexFormat::Float4, 0),
+        mq::VertexAttribute::with_buffer("aModelMat", mq::VertexFormat::Mat4, 1),
+    ],
+    shader,
+    mq::PipelineParams {
+        depth_test: mq::Comparison::LessOrEqual,
+        depth_write: true,
+        ..Default::default()
+    },
+);
+
+// 4. Создаем BufferId для матриц (резервируем место под 10 000 штук)
+let gpu_instance_buffer = ctx.new_buffer(
+    mq::BufferType::VertexBuffer,
+    mq::BufferUsage::Stream,
+    mq::BufferSource::empty::<Mat4>(10_000),
+);
 
     // Return AcornContext for Main function
     AcornContext { 
@@ -135,13 +204,20 @@ fn acorn_setup() -> AcornContext {
         after_2d_zone,
         // suggestion for game
         assets_3d,
-        pos: vec3(5.0, 30.0, 5.0),
+        // camera attributes
+        pos: vec3(5.0, 30.0, 5.0), // camera position
         yaw: 1.1,
         pitch: 0.0,
+        // acorns stats
         acorns_x,
         acorns_y,
         acorns_count,
-        matrix_buffer: Vec::new()
+        // batching
+        matrix_buffer: Vec::new(),
+        // instacing
+        instancing_pipeline,
+        gpu_instance_buffer,
+        instance_assets,
     }
 }
 

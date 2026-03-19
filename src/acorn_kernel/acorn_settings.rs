@@ -8,7 +8,10 @@ use macroquad::prelude::*;
 use crate::acorn_kernel::{
     acorn_heart::Zone, 
     // suggestions
-    acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase
+    acorn_tools::acorn_game_tools::{
+        agt_heart::Acorn3DAssetDatabase, 
+        mq_experimental::AcornMeshInstanceDB
+    }
 };
 
 // pub struct AcornRenderBuffer {
@@ -43,4 +46,7 @@ pub struct AcornContext {
     // for acorn_generate_transform, acorn_game_draw_3d_instanced
     pub matrix_buffer: Vec<(usize, Mat4)>, // usize is index of 3D asset.
     // pub render_buffer: AcornRenderBuffer,
+    pub instancing_pipeline: miniquad::Pipeline, 
+    pub gpu_instance_buffer: miniquad::BufferId,
+    pub instance_assets: AcornMeshInstanceDB,
 }

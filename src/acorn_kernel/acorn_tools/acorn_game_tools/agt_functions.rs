@@ -33,7 +33,7 @@ pub fn acorn_generate_matrix_y(entity_3d_set: &Entity3DTransform) -> Mat4 {
     )
 }
 
-fn acorn_get_gl_contex() -> &'static mut QuadGl {
+pub fn acorn_get_gl_contex() -> &'static mut QuadGl {
     unsafe {
         let internal_gl = get_internal_gl();
         // returns link on quad_gl. 
