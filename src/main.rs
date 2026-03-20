@@ -10,7 +10,10 @@ use acorn_kernel::{
     acorn_render::acorn_loop, // import acorn_loop
     acorn_heart::{Zone, Location, AcornECS} // import Zone, Location, AcornECS
 };
-use crate::acorn_settings::AcornGlobalContext;
+use crate::{
+    acorn_gsetup::acorn_global_setup, 
+    acorn_settings::AcornGlobalContext
+};
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
@@ -170,10 +173,12 @@ async fn main() {
 
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after) = acorn_setup();
+    // Global states. Hand over to acorn_loop.
+    let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    acorn_example_spawn_entity(&mut acorn_ecs.world);
+    acorn_example_spawn_entity(&mut acorn_ecs.world, &mut acorn_global_context);
 
     // main loop
-    acorn_loop(before, after, acorn_ecs).await;
+    acorn_loop(before, after, acorn_ecs, acorn_global_context).await;
 }
