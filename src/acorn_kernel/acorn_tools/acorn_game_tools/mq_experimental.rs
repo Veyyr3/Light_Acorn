@@ -136,6 +136,7 @@ pub struct AcornMeshInstanceDB {
 pub fn acorn_draw_instanced(_world: &mut World, context: &mut AcornContext) {
     let mut internal_gl = unsafe { get_internal_gl() };
 
+    // clear to fix z-buffer
     internal_gl.quad_context.clear(None, Some(1.0), None);
 
 
