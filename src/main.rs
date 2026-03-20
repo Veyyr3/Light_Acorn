@@ -309,7 +309,7 @@ fn acorn_example_game_rotate_acorn(world: &mut World, _context: &mut AcornContex
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
 fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext) {
-    draw_grid(1000, 2.0, WHITE, GRAY);
+    draw_grid(1000, 4.0, WHITE, GRAY);
 }
 
 // ---------------------------- MY FUNCTIONS ----------------------------
