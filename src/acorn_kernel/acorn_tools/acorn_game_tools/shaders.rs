@@ -31,6 +31,15 @@ out vec4 fragColor;
 uniform sampler2D uTexture;
 
 void main() {
-    fragColor = vCol;
+    // 1. Ручная нормализация from Byte4 to Float (раз видеокарта ленится).
+    // Делим на 255.0, чтобы получить диапазон 0.0 - 1.0
+    vec3 linearColor = vCol.rgb / 255.0;
+
+    // 2. Коррекция яркости (Gamma correction).
+    // Переводим из "математического" цвета в "красивый для глаза"
+    vec3 finalColor = pow(linearColor, vec3(0.65)); 
+
+    // 3. Вывод. Альфа 1.0, чтобы не было прозрачности.
+    fragColor = vec4(finalColor, 1.0);
 }
 "#;
