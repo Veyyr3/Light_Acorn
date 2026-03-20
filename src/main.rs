@@ -193,10 +193,11 @@ let instancing_pipeline = ctx.new_pipeline(
 );
 
 // 4. Создаем BufferId для матриц (резервируем место под 10 000 штук)
+let MAX_ACORNS = 50_000;
 let gpu_instance_buffer = ctx.new_buffer(
     mq::BufferType::VertexBuffer,
     mq::BufferUsage::Stream,
-    mq::BufferSource::empty::<Mat4>(10_000),
+    mq::BufferSource::empty::<Mat4>(MAX_ACORNS),
 );
 
     // Return AcornContext for Main function
