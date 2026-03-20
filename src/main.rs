@@ -187,6 +187,7 @@ let instancing_pipeline = ctx.new_pipeline(
     mq::PipelineParams {
         depth_test: mq::Comparison::LessOrEqual,
         depth_write: true,
+        cull_face: mq::CullFace::Nothing, // Чтобы не было проблем с видимостью
         ..Default::default()
     },
 );
