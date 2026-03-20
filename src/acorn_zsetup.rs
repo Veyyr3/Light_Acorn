@@ -1,0 +1,150 @@
+// (c) 2026 Lord of the Light Acorn: Veyyr3.
+// This file is part of Light Acorn and is distributed under the MIT License.
+// See the LICENSES folder in the project root for the full license text.
+
+use crate::acorn_kernel::{
+    acorn_heart::{Zone, Location} // import Zone, Location
+};
+use crate::{
+    acorn_settings::AcornGlobalContext
+};
+use macroquad::prelude::*;
+use bevy_ecs::prelude::*;
+
+/*
+Add here your Functions in acorn_setup().
+
+Functions examples and template are below.
+*/
+
+/// Create here your Zones and Locations. 
+/// It's your interface. (sorry, code doesn't let me use GUI here)
+/// Add function to Location, Location to Zone.
+/// Warning: If you want to add new Zone then you should add new cycle "for" in acorn_render (read in docs about this).
+pub fn acorn_setup() -> (Zone, Zone) {
+    /* 
+    Here is an example. 
+    
+    Locations don't need variables! But you can use variables if you want.
+
+    ======================
+    Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
+    ======================
+
+    ======================
+    Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
+    ======================
+    */
+
+    // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
+    let before_2d_zone = Zone::default()
+    .with_locations(vec![
+        // test location
+        Location::from_fn_vec(vec![
+            // simple function
+            acorn_example_greeting,
+            // ECS
+            acorn_example_runtime_spawner, // add new entity
+            acorn_example_update_oaks, // update ECS state
+            acorn_example_query_ecs, // print result
+            // add own functions through comma 
+        ]),
+        // add own locations through comma 
+    ]);
+
+    // after_2d_zone (Ex: UI draw and other Locations)
+    let after_2d_zone = Zone::default()
+    .with_locations(vec![
+        // test location
+        Location::from_fn_vec(vec![
+            acorn_example_draw_circle,
+            // add own functions through comma 
+        ]),
+        // add own locations through comma 
+    ]);
+
+    // Return tuple of Zones for Main function
+    (before_2d_zone, after_2d_zone) 
+}
+
+/* ======================
+Here are examples of functions.
+
+Create functions by this template:
+fn name(_world: &mut World, _context: &mut AcornGlobalContext) {
+    // your_logic
+}
+
+Arguments:
+* world - for ECS Queries. This is necessary in order to process thousands of objects.
+* context - for Global States. Example: player score, 3d assets.
+
+Advise: Create functions in other files and import here.
+====================== */
+
+
+// ---------------------------- Example simple functions ----------------------------
+// Advise: Create functions in other files and import here.
+// All simple functions should have World argument but shouldn't use it.
+fn acorn_example_greeting(_world: &mut World, _context: &mut AcornGlobalContext) {
+    print!("Hello, Light Acorn!")
+}
+
+fn acorn_example_draw_circle(_world: &mut World, _context: &mut AcornGlobalContext) {
+    draw_circle(
+        screen_width()/2.0, 
+        screen_height()/2.0, 
+        60.0, 
+        BLUE
+    )
+}
+
+// ---------------------------- Example ECS functions ----------------------------
+// Advise: Create functions in other files and import here.
+// All ECS functions should have World argument.
+
+// create component
+#[derive(Component)]
+struct Oaks {x: u64}
+
+// Use spawn entities in fn main
+pub fn acorn_example_spawn_entity(world: &mut World, _context: &mut AcornGlobalContext) {
+    world.spawn((
+        Oaks { x: 100 },
+    ));
+    println!("Entity spawned!");
+}
+
+// Add this function into location
+fn acorn_example_query_ecs(world: &mut World, _context: &mut AcornGlobalContext) {
+    // create query
+    let mut query = world.query::<&Oaks>();
+    
+    // cycle for all entities
+    for oaks in query.iter(world) {
+        println!("Entity has: {} oaks", oaks.x);
+    }
+}
+
+// Add this function into location
+fn acorn_example_update_oaks(world: &mut World, _context: &mut AcornGlobalContext) {
+    // create query
+    let mut query = world.query::<&mut Oaks>();
+
+    // cycle for all entities. 
+    // Spoiler: game will be over when oaks reach 18 446 744 073 709 551 615 :)
+    for mut oaks in query.iter_mut(world) {
+        oaks.x += 1; 
+    }
+}
+
+// Add this function into location
+fn acorn_example_runtime_spawner(world: &mut World, _context: &mut AcornGlobalContext) {
+    // create new entity. Press Space!
+    if is_key_pressed(KeyCode::Space) {
+        world.spawn((
+            Oaks { x: 0 }, 
+        ));
+        println!("Runtime Spawn!");
+    }
+}
