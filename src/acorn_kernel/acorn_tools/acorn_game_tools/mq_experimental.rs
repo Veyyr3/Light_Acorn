@@ -13,6 +13,7 @@ use crate::acorn_kernel::acorn_tools::acorn_game_tools::shaders::*;
 use crate::acorn_kernel::{
     acorn_settings::{AcornContext}
 };
+use crate::get_look_dir;
 use bevy_ecs::world::World;
 
 // pub fn acorn_init_instancing(ctx: &mut dyn RenderingBackend) {
@@ -138,29 +139,39 @@ pub fn acorn_draw_instanced(_world: &mut World, context: &mut AcornContext) {
 
     // clear to fix z-buffer
     internal_gl.quad_context.clear(None, Some(1.0), None);
+    // ПОЛУЧАЕМ ГОТОВУЮ МАТРИЦУ ИЗ MACROQUAD
+    let target = context.pos + get_look_dir(context.yaw, context.pitch);
+    let aspect = screen_width() / screen_height();
+    
+    // ВАЖНО: fovy должен совпадать с тем, что в Camera3D (по умолчанию 45 градусов)
+    let fovy = 45.0_f32.to_radians(); 
+    
+    // Математика из источника camera.txt 
+    let view_proj = Mat4::perspective_rh_gl(fovy, aspect, 0.01, 10000.0)
+                  * Mat4::look_at_rh(context.pos, target, Vec3::Y);
 
 
-    let ctx = internal_gl.quad_context; 
-
+    let ctx = internal_gl.quad_context;
+    
     // 1. Считаем View (Камера)
-    let yaw = context.yaw;
-    let pitch = context.pitch;
-    let x = yaw.cos() * pitch.cos();
-    let y = pitch.sin();
-    let z = yaw.sin() * pitch.cos();
-    let forward = vec3(x, y, z).normalize();
-    let view = Mat4::look_at_rh(context.pos, context.pos + forward, Vec3::Y);
+    // let yaw = context.yaw;
+    // let pitch = context.pitch;
+    // let x = yaw.cos() * pitch.cos();
+    // let y = pitch.sin();
+    // let z = yaw.sin() * pitch.cos();
+    // let forward = vec3(x, y, z).normalize();
+    // let view = Mat4::look_at_rh(context.pos, context.pos + forward, Vec3::Y);
 
-    // 2. Считаем Projection (Линза)
-    let projection = Mat4::perspective_rh_gl(
-        60.0f32.to_radians(), 
-        screen_width() / screen_height(), 
-        0.01, 
-        1000.0
-    );
+    // // 2. Считаем Projection (Линза)
+    // let projection = Mat4::perspective_rh_gl(
+    //     60.0f32.to_radians(), 
+    //     screen_width() / screen_height(), 
+    //     0.01, 
+    //     1000.0
+    // );
 
     // Итоговая матрица для шейдера
-    let view_proj = projection * view;
+    // let view_proj = projection * view;
 
     // 3. Цикл отрисовки
     for (m_id, gpu_mesh) in context.instance_assets.gpu_meshes.iter().enumerate() {
@@ -183,7 +194,7 @@ pub fn acorn_draw_instanced(_world: &mut World, context: &mut AcornContext) {
         ctx.apply_bindings(&bindings);
         
         // ПЕРЕДАЕМ МАТРИЦУ В ШЕЙДЕР
-        ctx.apply_uniforms(mq::UniformsSource::table(&view_proj));
+        ctx.apply_uniforms(mq::UniformsSource::table(&view_proj.to_cols_array()));
 
         ctx.draw(0, gpu_mesh.index_count, current_matrices.len() as i32);
     }
