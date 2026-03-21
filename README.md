@@ -21,17 +21,17 @@ This was done on an old 2013 X550CC laptop and antiX.
   
   
 
-- **Acorn Architecture:** The entire framework skeleton is **built exclusively on vectors and loops**. Not a single unsafe, not a single smart pointer, not a single complex macro in the core. (Only 1 unsafe for GL contex in tools and vec! macros).
+- **Acorn Architecture:** The entire framework skeleton is **built exclusively on vectors and loops**. Not a single unsafe, not a single smart pointer, not a single complex macro, not a single trait in the kernel! (Only 1 unsafe for GL contex in tools and vec! macros).
   
   
 
 - **Bevy ECS include but optional.**
   
 
-- **Zone & Location is unique concept:** The grouping of functions and their order is the basis of the engine. Developer control code's order, grouping functions by Zone (group of Locations) and Location (group of functions). Developer can create own Zones or Locations in Kernel: custom Zones with custom execution order.
+- **Zone & Location is unique concept:** The grouping of functions and their order is the basis of the engine. Developer control code's order, grouping functions by Zone (group of Locations) and Location (group of functions). Developer can create own Zones or Locations in `acorn_zsetup`: custom Zones with custom execution order.
   
 
-- **Developer is owner his code:** You can **change functions order** in Locations. You can change Location's order in Zones. And **YOU CAN do it all in runtime** **WITHOUT**: unsafe blocks, smart pointers, macros and you shouldn't linking your code with Python, Lua (REACORN-way). PS: Only vectors and syntactic sugar macros.
+- **Developer is owner his code:** You can **change functions order** in Locations. You can change Location's order in Zones. And **YOU CAN do it all in runtime** **WITHOUT**: unsafe blocks, smart pointers, macros and you shouldn't linking your code with Python or Lua. *Simple way to Metaprogramming in pure Rust is included in Light Acorn Framework* (REACORN-way). P.S.: Only vectors and syntactic sugar macros.
   
 
 - **Developer has choice of architecture Light Acorn:** predicatable monolith **(ACORN)** OR flexible change of the order of execution of functions **(REACORN)**
@@ -74,7 +74,7 @@ cargo run
 Create Simple function:
 
 ```rust
-fn acorn_example_greeting(_world: &mut World, _context: &mut AcornContext) {
+fn acorn_example_greeting(_world: &mut World, _context: &mut AcornGlobalContext) {
     print!("Hello, Light Acorn!")
 }
 ```
@@ -98,9 +98,7 @@ let before_2d_zone = Zone::default()
 
 # The Light Acorn Future
 
-- Add GPU instansing.
-
-- Integrated UI tools.
+* Integrated UI tools.
 
 **And you can help to improve Light Acorn!**
 
@@ -130,4 +128,8 @@ let before_2d_zone = Zone::default()
 
 # License
 
-This project is dual-licensed under the **MIT License** and the **Mozilla Public License 2.0**
+This project is dual-licensed under the **MIT License** and the **Mozilla Public License 2.0**.
+
+Kernel and Tools are under the **Mozilla Public License 2.0**.
+
+Light Acorn API and `main.rs` under the **MIT License**.
