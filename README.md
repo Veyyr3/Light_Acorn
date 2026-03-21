@@ -17,7 +17,7 @@ This was done on an old 2013 X550CC laptop and antiX.
 - **This Framework is not a Crate. It is a template for your projects.**
   
 
-- **Minimum entry threshold:** you don't need to lifetime fighting 'a and 'b, to know complex macros and smart pointers for begin creating your games.
+- **Minimum entry threshold:** you don't need to fight lifetimes `'a` and `'b`, understand complex macros and smart pointers for begin creating your games.
   
   
 
