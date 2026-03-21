@@ -391,14 +391,14 @@ fn add_acorns(world: &mut World, context: &mut AcornContext) {
 fn draw_statistics(_world: &mut World, context: &mut AcornContext) {
     draw_text(
         &format!("FPS: {}", get_fps()),
-        40.0, 
+        500.0, 
         20.0, 
         20.0, 
         YELLOW
     );
     draw_text(
         &format!("Acorns: {}", context.acorns_count),
-        40.0, 
+        500.0, 
         40.0, 
         20.0, 
         YELLOW
