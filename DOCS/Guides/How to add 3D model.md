@@ -18,38 +18,39 @@
 
 <img title="" src="/DOCS/imgs/how_to_add_3D_model/create_folder.png" alt="" data-align="center">
 
-#### 5 Step: add your model in code.
+#### 5 Step: add your model in code inside `acorn_gsetup.rs`.
 
 ```rust
 // ---------------------------- Game setup ----------------------------
-    // Keep 3d models in assets database.
-    let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
+// Keep 3d models in assets database.
+let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
-    // Add your .obj files with push.
-    // PLEASE, remember index of your 3d models when you add news.
-    // It so, because for perfomance. 
-    // BUT I leave it to you for organize logic assets keeping.
-    assets_3d.meshes.push(
-        load_obj_with_materials_to_mesh("path/to/your_pretty_model.obj")
-    );
+// Add your .obj files with push.
+// PLEASE, remember index of your 3d models when you add news.
+// It so, because for perfomance. 
+// BUT I leave it to you for organize logic assets keeping.
+assets_3d.meshes.push(
+    load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
+);
 
-    // Return AcornContext for Main function
-    AcornContext { 
-        before_2d_zone, 
-        after_2d_zone,
-        // suggestion for game
-        assets_3d
-    }
+AcornGlobalContext { 
+    // suggestion for game
+    assets_3d
+}
 ```
 
-Use template REACORN-way code in acorn_setup. Add your model with **load_obj_with_materials_to_mesh** function through pushing into **Acorn3DAssetDatabase**.
+Add your model with `load_obj_with_materials_to_mesh` function through pushing into `Acorn3DAssetDatabase`.
 
-**PLEASE**, remember index of your 3d models when you add news. Right now index of model is 0.
+**PLEASE**, remember index of your 3d models when you add news OR use a trick below in the code. **Right now index of 3D model is 0.**
 
-#### 6 Step: create function to spawn your entity.
+#### 6 Step: create function to spawn your 3D entity.
 
 ```rust
-fn spawn(world: &mut World, _context: &mut AcornContext) {
+fn spawn(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
     world.spawn((
        Entity3DTransform {
             position: vec3(0.0, 1.0, 0.0),
@@ -77,7 +78,9 @@ fn spawn(world: &mut World, _context: &mut AcornContext) {
 }
 ```
 
-#### 7 Step: add your function in main OR in acorn_setup into Location (if you want to runtime spawn).
+#### 7 Step: add your `spawn` function 
+
+**Into `main` like this:**
 
 ```rust
 #[macroquad::main("Light Acorn test")]
@@ -85,15 +88,33 @@ async fn main() {
     // Global variable ECS. Hand over to acorn_loop.
     let mut acorn_ecs = AcornECS::default();
 
-    // Global variable of Zones. Hand over to acorn_loop.
-    let mut acorn_context = acorn_setup();
+    // Contex of Zones. Hand over to acorn_loop.
+    let mut acorn_zone_context = acorn_zone_setup();
+    // Global states. Hand over to acorn_loop.
+    let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    spawn(&mut acorn_ecs.world, &mut acorn_context);
+    spawn( // <-- YOUR FUNCTION
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
 
     // main loop
-    acorn_loop(acorn_context, acorn_ecs).await;
+    acorn_loop(acorn_ecs, acorn_zone_context, acorn_global_context).await;
 }
+```
+**In `acorn_zone_setup` inside `acorn_zsetup.rs` (if you want to runtime spawn by events):**
+
+```rust
+let before_2d_zone = Zone::default()
+    .with_locations(vec![
+        Location::from_fn_vec(vec![
+            spawn, // <-- your function
+            // add own functions through comma 
+        ]),
+        // add own locations through comma 
+    ]);
 ```
 
 #### 8 Step: see result!
