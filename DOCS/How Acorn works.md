@@ -92,7 +92,7 @@ fn acorn_example_update_oaks(
 }
 ```
 
-## What are ACORN-way and REACORN-way?
+## What is ACORN-way and REACORN-way?
 
 **It's simple:**
 
