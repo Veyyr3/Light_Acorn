@@ -2,7 +2,7 @@
 
 <img title="" src="/DOCS/imgs/logo_Light_Acorn.png" alt="" width="168" data-align="center">
 
-Hi! **Light Acorn is Open Source Project under MIT and MPL licenses.**
+Hi! **Light Acorn is an Open Source Project under MIT and MPL licenses.**
 
 This was done on an old 2013 X550CC laptop and antiX.
 
@@ -25,7 +25,7 @@ This was done on an old 2013 X550CC laptop and antiX.
   
   
 
-- **Bevy ECS include but optional.**
+- **Bevy ECS included but optional.**
   
 
 - **Zone & Location is unique concept:** The grouping of functions and their order is the basis of the engine. Developer control code's order, grouping functions by Zone (group of Locations) and Location (group of functions). Developer can create own Zones or Locations in `acorn_zsetup`: custom Zones with custom execution order.
@@ -97,6 +97,10 @@ let before_2d_zone = Zone::default()
 **All code examples are already in the template!**
 
 # The Light Acorn Future
+
+* Integrated GPU instancing under OpenGL 3.3
+
+* Integrated Vertex Bathching under OpenGL ES 2.0
 
 * Integrated UI tools.
 
