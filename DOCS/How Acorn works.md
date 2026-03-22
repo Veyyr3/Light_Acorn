@@ -44,13 +44,13 @@ In `acorn_gsetup` (acorn global setup) developer create Global States which Func
 
 <img src="/DOCS/imgs/how_it_works/how_to_use.png" title="" alt="" data-align="center">
 
-**Light Acorn Loop** based on **Macroquad async function**. Developer uses in the Light Acorn API 2 zones: **before** and **after** turning on 2d render. Zone is container of own developer's locations. Location is container of own developer's functions. 
+**Light Acorn Loop** based on **Macroquad async function**. Developer uses in the Light Acorn API 2 Zones: **before** and **after** turning on 2d render. Zone is container of own developer's locations. Location is container of own developer's functions. 
 
 **Function should be** `AcornFunction` to run in `acorn_loop`. But it **can contents anything**: Macroquad functions, bevy_ecs Queries, function of other library or custom function of developer. Of course, developer can add own Zones (see in other doc).
 
 > **Actually Light Acorn is Macroquad with architecture.**
 
-**Features:** Developer can change function's order in locations. Developer can change location's order in zones. Developer can change order of zones. In ACORN-way developer can't reorder functions in runtime. In REACORN-way developer can reorder functions in runtime.
+**Features:** Developer can change function's order in locations. Developer can change location's order in Zones. Developer can change order of Zones. In ACORN-way developer can't reorder functions in runtime. In REACORN-way developer can reorder functions in runtime.
 
 ## The Acorn ECS
 
