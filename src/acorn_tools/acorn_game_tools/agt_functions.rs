@@ -9,10 +9,11 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
 use macroquad::prelude::*;
-use crate::acorn_kernel::{
-    acorn_settings::AcornContext, 
-    acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTransform}
+use crate::acorn_settings::{
+    AcornZoneContext,
+    AcornGlobalContext,
 };
+use crate::acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTransform};
 use bevy_ecs::world::World;
 
 // ---------------------------- 3D transforming ----------------------------
@@ -32,7 +33,11 @@ fn acorn_get_gl_contex() -> &'static mut QuadGl {
 }
 
 /// Use this function to draw all your entities with 3D models.
-pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) {
+pub fn acorn_game_draw_3d_assets(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
     let gl = acorn_get_gl_contex();
 
     let mut query = 
@@ -62,7 +67,11 @@ pub fn acorn_game_draw_3d_assets(world: &mut World, context: &mut AcornContext) 
 
 // ---------------------------- Debug Functions ----------------------------
 /// Functions for inspect number of functions in Zones and Locations.
-pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {
+pub fn acorn_debug_inspector(
+    _world: &mut World, 
+    zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
     let mut y_offset = 20.0;
     let x_start = 20.0;
     let font_size = 20.0;
@@ -70,12 +79,12 @@ pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {
     draw_text("--- LIGHT ACORN RUNTIME INSPECTOR ---", x_start, y_offset, font_size, YELLOW);
     y_offset += 30.0;
 
-    let zones = [
-        ("BEFORE_2D_ZONE", &context.before_2d_zone),
-        ("AFTER_2D_ZONE", &context.after_2d_zone),
+    let all_zones = [
+        ("BEFORE_2D_ZONE", &zones.before_2d_zone),
+        ("AFTER_2D_ZONE", &zones.after_2d_zone),
     ];
 
-    for (z_name, zone) in zones.iter() {
+    for (z_name, zone) in all_zones.iter() {
         draw_text(&format!("ZONE: {}", z_name), x_start, y_offset, font_size, ORANGE);
         y_offset += 25.0;
 
@@ -95,8 +104,8 @@ pub fn acorn_debug_inspector(_world: &mut World, context: &mut AcornContext) {
         }
         y_offset += 10.0;
     }
-    let total_funcs = context.before_2d_zone.locations.iter().map(|l| l.functions.len()).sum::<usize>() 
-                    + context.after_2d_zone.locations.iter().map(|l| l.functions.len()).sum::<usize>();
+    let total_funcs = zones.before_2d_zone.locations.iter().map(|l| l.functions.len()).sum::<usize>() 
+                    + zones.after_2d_zone.locations.iter().map(|l| l.functions.len()).sum::<usize>();
     
     draw_text(&format!("TOTAL ACTIVE FUNCTIONS: {}", total_funcs), x_start, y_offset + 10.0, font_size, SKYBLUE);
 }

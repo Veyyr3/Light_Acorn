@@ -2,29 +2,20 @@
 
 ## REACORN-way
 
-**1 Step: open acorn_settings.rs and add Zone**
+**1 Step:** open `acorn_settings.rs` and add Zone:
 
 ```rust
-// src/acorn_kernel/acorn_settings.rs
-use crate::acorn_kernel::{
-    acorn_heart::Zone, 
-    // suggestions
-    acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase
-};
+// src/acorn_settings.rs
 
-/// Contain here your Zones and global statements 
-/// 
-/// Advise: better keep global statements in other struct.
-pub struct AcornContext {
+/// Contain here your Zones
+pub struct AcornZoneContext {
     pub before_2d_zone: Zone,
     pub after_2d_zone: Zone,
     // add here your Zone trough comma
-    // from game tools
-    pub assets_3d: Acorn3DAssetDatabase,
 }
 ```
 
-**2 Step: add new loop in acorn_render.rs into acorn_loop function by this template:**
+**2 Step:** add new loop in `acorn_render.rs` into acorn_loop function by this template:
 
 ```rust
 let len_your_zone = acorn_context.your_zone.locations.len();
@@ -46,10 +37,12 @@ for location_index in 0..len_your_zone {
             .functions[fn_index];
             
         // Call function in strict order
-        function(&mut acorn_ecs.world, &mut acorn_context);
+        function(&mut acorn_ecs.world, &mut acorn_zone_context, &mut acorn_global_context);
     }
 }
 ```
+
+Pay attention that your zone in this code's template is `your_zone`.
 
 **3 Step: in acorn_setup add your Zone**
 
@@ -89,24 +82,34 @@ let your_zone = Zone::default()
 ```rust
 for location in &your_zone.locations {
     for function in &location.functions {
-        function(&mut ecs.world); // Call function in strict order
+        function(&mut ecs.world, &mut context); // Call function in strict order
     }
 }
 ```
 
-**2 Step: update acorn_loop**
+Pay attention that your zone in this code's template is `your_zone`.
+
+**2 Step:** update `acorn_loop` function header
 
 ```rust
-pub async fn acorn_loop(before_2d_zone: Zone, after_2d_zone: Zone, your_zone: Zone, mut ecs: AcornECS)
+pub async fn acorn_loop(
+    before_2d_zone: Zone, 
+    after_2d_zone: Zone, 
+    your_zone: Zone,
+    mut ecs: AcornECS, 
+    mut context: AcornGlobalContext
+)
 ```
 
-**3 Step: update acorn_setup**
+**3 Step:** update `acorn_setup`
 
 ```rust
 fn acorn_setup() -> (Zone, Zone, Zone)
 ```
 
-**4 Step: in acorn_setup add your Zone**
+The third `Zone` is your.
+
+**4 Step:** in `acorn_setup` add your Zone:
 
 ```rust
 let your_zone = Zone::default()
@@ -128,7 +131,7 @@ let your_zone = Zone::default()
 (before_2d_zone, after_2d_zone, your_zone) 
 ```
 
-**5 Step: update main function**
+**5 Step:** update `main` function
 
 ```rust
 #[macroquad::main("Light Acorn test")]
@@ -138,12 +141,12 @@ async fn main() {
 
     // Global variable of Zones. Hand over to acorn_loop.
     let (before, after, your) = acorn_setup();
+    // Global states. Hand over to acorn_loop.
+    let mut acorn_global_context = acorn_global_setup();
 
     // main loop
-    acorn_loop(before, after, your, acorn_ecs).await;
+    acorn_loop(before, after, your, acorn_ecs, acorn_global_context).await;
 }
 ```
 
 **And it's all!**
-
-

@@ -3,9 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /* Copyright © 2026 Veyyr3
-  Light Acorn Framework: Kernel
+  Light Acorn Framework: Game Tools
   Lord of the Framework: Veyyr3
 */
 
-pub mod acorn_render;
-pub mod acorn_heart;
+pub mod acorn_game_tools;
