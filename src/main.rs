@@ -193,7 +193,7 @@ let instancing_pipeline = ctx.new_pipeline(
 );
 
 // 4. Создаем BufferId для матриц (резервируем место под 10 000 штук)
-let MAX_ACORNS = 50_000;
+let MAX_ACORNS = 5_000_000;
 let gpu_instance_buffer = ctx.new_buffer(
     mq::BufferType::VertexBuffer,
     mq::BufferUsage::Stream,
@@ -256,8 +256,8 @@ struct IsAcorn;
 
 // spawner 3d model of acorn.
 fn acorn_game_spawn_acorn(world: &mut World, context: &mut AcornContext) {
-    let count_x: u16 = context.acorns_x;
-    let count_z: u16 = context.acorns_y;
+    let count_x: u64 = context.acorns_x;
+    let count_z: u64 = context.acorns_y;
     let spacing = 10.0;
 
     let offset_x = (count_x as f32 * spacing) / 2.0;
@@ -316,7 +316,7 @@ fn acorn_example_game_draw_grid(_world: &mut World, _context: &mut AcornContext)
 // ---------------------------- MY FUNCTIONS ----------------------------
 fn handle_input(_world: &mut World, context: &mut AcornContext) {
     let look_speed = 1.0;
-    let move_speed = 0.2;
+    let move_speed = 1.0;
 
     // 1. rotate
     let mouse_delta = mouse_delta_position();
