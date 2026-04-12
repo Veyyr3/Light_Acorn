@@ -49,6 +49,35 @@ This was done on an old 2013 X550CC laptop and antiX.
 
 - Tobj (to parse .obj files).
 
+# Experimental
+
+## 📺 Watch Light Acorn in Action
+**250,901 Active 3D Entities Benchmark at 46-50 FPS (Ryzen 7 5700X + GTX 1070)**
+
+[![Light Acorn Benchmark](https://img.youtube.com/vi/3A-OBNc7mZY/maxresdefault.jpg)](https://www.youtube.com/watch?v=3A-OBNc7mZY)
+*Click the image to watch the full benchmark on YouTube.*
+
+**If you want to try the full power of Light Acorn** and its GPU instancing, enter the following commands below.
+
+**⚠️ Warning:** Experimental. This feature is in active development. Current benchmarks (250k entities) are internal and represent the core architecture's potential.
+
+**Clone repository and run:**
+
+```bash
+git clone https://github.com/Veyyr3/Light_Acorn.git
+cd Light_Acorn
+git checkout game_experimental
+cargo run --release
+```
+
+**Control hint:**
+**WASD:** Move the camera.
+**Mouse:** Look around.
+**E / Q:** Increase the acorn grid.
+**R:** Decrease the grid..
+**Z:** hide cursor.
+**C:** show cursor.
+
 # Quick Start
 
 1. Light Acorn is a **template**. To start, clone the repository:
@@ -93,6 +122,8 @@ let before_2d_zone = Zone::default()
 	// add own locations through comma 
 ]);
 ```
+
+`acorn_example_greeting` will be executed frame by frame.
 
 **All code examples are already in the template!**
 
