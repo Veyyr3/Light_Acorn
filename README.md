@@ -59,7 +59,7 @@ This was done on an old 2013 X550CC laptop and antiX.
 
 **If you want to try the full power of Light Acorn** and its GPU instancing, enter the following commands below.
 
-**⚠️ Warning:** Experimental. This feature is in active development. Current benchmarks (250k entities) are internal and represent the core architecture's potential.
+**⚠️ Warning:** `Experimental`. This feature is in active development. Current benchmarks (250k entities) are internal and represent the core architecture's potential.
 
 **Clone repository and run:**
 
@@ -71,12 +71,12 @@ cargo run --release
 ```
 
 **Control hint:**
-**WASD:** Move the camera.
-**Mouse:** Look around.
-**E / Q:** Increase the acorn grid.
-**R:** Decrease the grid..
-**Z:** hide cursor.
-**C:** show cursor.
+* **WASD:** Move the camera.
+* **Mouse:** Look around.
+* **E / Q:** Increase the acorn grid.
+* **R:** Decrease the grid..
+* **Z:** hide cursor.
+* **C:** show cursor.
 
 # Quick Start
 
