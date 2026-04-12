@@ -43,7 +43,7 @@ This was done on an old 2013 X550CC laptop and antiX.
 
 - Rust.
 
-- Macroquad (main render).
+- Macroquad (main render on OpenGL 3.3 / ES 2.0).
 
 - Bevy ECS.
 
