@@ -6,6 +6,8 @@ Hi! **Light Acorn is an Open Source Project under MIT and MPL licenses.**
 
 This was done on an old 2013 X550CC laptop and antiX.
 
+- [Featured on HackerNoon](https://hackernoon.com/rust-opengl-rendering-250000-dynamic-3d-entities-at-50-fps-on-a-single-cpu-thread): **Rust + OpenGL: Rendering 250,000 Dynamic 3D Entities at 50 FPS on a Single CPU Thread.**
+
 # Features
 
 - **Light Acorn is Functional Style Data-Oriented Framework by design.**
