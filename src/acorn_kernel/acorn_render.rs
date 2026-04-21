@@ -30,7 +30,7 @@ pub async fn acorn_loop(
 
         /* 
         ============================ 
-        ui_input_zone (Ex: handle input)
+        ui_input_zone (Ex: handle input, events: victory, failure etc.)
         ============================
         */ 
         let len_ui_input_zone = acorn_zone_context.ui_input_zone.locations.len();

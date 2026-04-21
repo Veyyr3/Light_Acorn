@@ -74,16 +74,14 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     ======================
     */
 
-    // ui_input_zone (Ex: handle input)
+    // ui_input_zone (Ex: handle input, events: victory, failure etc.)
     let ui_input_zone = Zone::default()
     .with_locations(vec![
         // Lord-Location.
         Location::from_fn_vec(vec![
-            // Deleter of functions.
-        ]),
-        // Minor-Location
-        Location::from_fn_vec(vec![
-            // add own functions through comma 
+            acorn_example_add_circle_function, // add blue circle (press left mouse button)
+            acorn_example_runtime_spawner, // add new entity (press Space and see result in console)
+            acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
         ]),
         // add own locations through comma 
     ]);
@@ -91,11 +89,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     // before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations)
     let before_2d_zone = Zone::default()
     .with_locations(vec![
-        // Lord-Location.
-        Location::from_fn_vec(vec![
-            // Deleter of functions.
-            acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
-        ]),
         // Minor-Location
         Location::from_fn_vec(vec![
             // ECS
@@ -103,7 +96,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             // simple function
             acorn_example_greeting,
             // ECS
-            acorn_example_runtime_spawner, // add new entity
             acorn_example_update_oaks, // update ECS state
             // game
             acorn_game_draw_3d_assets, // to draw yours 3d models
@@ -118,10 +110,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     // after_2d_zone (Ex: UI draw and other Locations)
     let after_2d_zone = Zone::default()
     .with_locations(vec![
-        // Lord-Location
-        Location::from_fn_vec(vec![
-            acorn_example_add_circle_function
-        ]),
         // Minor-Location
         Location::from_fn_vec(vec![
             acorn_debug_inspector
@@ -248,19 +236,19 @@ fn acorn_example_runtime_spawner(
 }
 
 // ---------------------------- Example Lord-Functions ----------------------------
-// Add this function into Lord-Location
+// Add this function into Lord-Location in Ui input zone
 fn acorn_example_delete_function(
     _world: &mut World, 
     zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
+    // KILL ANY FUNCTION IN SECOND ZONE!
     // PRESS TAB!
     // of course you have right to write if/else checking to get rid of 101 error in runtime:
-    // if !zones.before_2d_zone.locations[1].functions.is_empty()
+    // if !zones.before_2d_zone.locations[0].functions.is_empty()
     // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
-        zones.before_2d_zone.locations[1].functions.remove(0);
+        zones.before_2d_zone.locations[0].functions.remove(0);
         println!("I've killed function! Message from: acorn_example_delete_function");
     }
 }
@@ -274,7 +262,7 @@ fn acorn_example_add_circle_function(
     // press left mouse button to draw your circle!
     if is_mouse_button_pressed(MouseButton::Left) { 
         zones.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
-        println!("I've gave birth function! Message from: acorn_example_add_circle_function");
+        println!("I've created function! Message from: acorn_example_add_circle_function");
     }
 }
 
