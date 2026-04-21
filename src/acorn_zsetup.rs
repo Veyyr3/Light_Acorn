@@ -74,7 +74,21 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     ======================
     */
 
-    // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
+    // ui_input_zone (Ex: handle input)
+    let ui_input_zone = Zone::default()
+    .with_locations(vec![
+        // Lord-Location.
+        Location::from_fn_vec(vec![
+            // Deleter of functions.
+        ]),
+        // Minor-Location
+        Location::from_fn_vec(vec![
+            // add own functions through comma 
+        ]),
+        // add own locations through comma 
+    ]);
+
+    // before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations)
     let before_2d_zone = Zone::default()
     .with_locations(vec![
         // Lord-Location.
@@ -118,6 +132,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
 
     // Return AcornZoneContext for Main function
     AcornZoneContext { 
+        ui_input_zone,
         before_2d_zone, 
         after_2d_zone,
         // your Zone through comma

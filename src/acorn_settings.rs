@@ -17,6 +17,7 @@ use crate::acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase;
 
 /// Contain here your Zones
 pub struct AcornZoneContext {
+    pub ui_input_zone: Zone,
     pub before_2d_zone: Zone,
     pub after_2d_zone: Zone,
     // add here your Zone trough comma

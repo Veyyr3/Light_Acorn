@@ -97,7 +97,7 @@ impl Default for AcornECS {
     fn default() -> Self {
         Self {
             world: World::new(),
-            //schedule: Schedule::default(),
+            // schedule: Schedule::default(),
         }
     }
 }
