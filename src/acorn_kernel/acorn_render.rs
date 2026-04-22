@@ -18,6 +18,7 @@ use crate::acorn_settings::{AcornZoneContext, AcornGlobalContext};
 /// You shouldn't touch this. 
 /// 
 /// Warning: If you want to add new Zones you should touch this (read in docs about this).
+/// Warning: If you want ot exit loop you should touch this. See code below about Escape button.
 pub async fn acorn_loop( 
     mut acorn_ecs: AcornECS,
     mut acorn_zone_context: AcornZoneContext, 
@@ -124,6 +125,12 @@ pub async fn acorn_loop(
             }
         }
 
+
+        // Example to break loop
+        // press Escape to exit.
+        if is_key_pressed(KeyCode::Escape) {
+            break;
+        }
 
         // ---------------------------- Next_frame ----------------------------
         next_frame().await;
