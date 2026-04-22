@@ -8,5 +8,5 @@
 */
 
 mod acorn_render;
-mod acorn_heart;
+pub mod acorn_heart;
 pub mod prelude;

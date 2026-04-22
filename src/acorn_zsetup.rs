@@ -15,11 +15,12 @@ Warning: If you want to add new Zone then you should add new loop "for" in acorn
 
 
 // src/acorn_zsetup.rs
-use crate::acorn_kernel::prelude::*; // import Zone, Location
 use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
+// sugar macros
+use crate::{zone, location};
 // game suggestions
 use crate::acorn_tools::acorn_game_tools::prelude::*;
 use macroquad::prelude::*;
@@ -64,22 +65,21 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     */
 
     // ui_input_zone (Ex: handle input, events: victory, failure etc.)
-    let ui_input_zone = Zone::default()
-    .with_locations(vec![
+    let ui_input_zone = zone! {
         // Lord-Location.
-        Location::from_fn_vec(vec![
+        location! {
             acorn_example_add_circle_function, // add blue circle (press left mouse button)
             acorn_example_runtime_spawner, // add new entity (press Space and see result in console)
             acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
-        ]),
-        // add own locations through comma 
-    ]);
+            // add own functions through comma
+        }
+        // add own locations through comma
+    };
 
     // before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations)
-    let before_2d_zone = Zone::default()
-    .with_locations(vec![
+    let before_2d_zone = zone! {
         // Minor-Location
-        Location::from_fn_vec(vec![
+        location! {
             // ECS
             acorn_example_query_ecs, // print Oaks result
             // simple function
@@ -91,28 +91,26 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             acorn_example_game_rotate_acorn,
             acorn_example_game_draw_grid,
             acorn_example_game_camera,
-            // add own functions through comma 
-        ]),
-        // add own locations through comma 
-    ]);
+            // add own functions through comma
+        }
+        // add own locations through comma
+    };   
 
     // after_2d_zone (Ex: UI draw and other Locations)
-    let after_2d_zone = Zone::default()
-    .with_locations(vec![
-        // Minor-Location
-        Location::from_fn_vec(vec![
+    let after_2d_zone = zone! {
+        location! {
             acorn_debug_inspector
             // add own functions through comma 
-        ]),
+        }
         // add own locations through comma 
-    ]);
+    };
 
     // Return AcornZoneContext for Main function
     AcornZoneContext { 
         ui_input_zone,
         before_2d_zone, 
         after_2d_zone,
-        // your Zone through comma
+        // your Zone through comma if you have
     }
 }
 
@@ -250,7 +248,7 @@ fn acorn_example_add_circle_function(
 ) {
     // press left mouse button to draw your circle!
     if is_mouse_button_pressed(MouseButton::Left) { 
-        zones.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
+        zones.after_2d_zone.locations[0].functions.push(acorn_example_draw_circle);
         println!("I've created function! Message from: acorn_example_add_circle_function");
     }
 }

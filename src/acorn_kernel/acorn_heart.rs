@@ -101,3 +101,26 @@ impl Default for AcornECS {
         }
     }
 }
+
+// ---------------------------- Sugar macros ----------------------------
+
+#[macro_export]
+/// Ex: location!{ function1, function2}
+macro_rules! location {
+    ($($func:expr),* $(,)?) => {
+        $crate::acorn_kernel::acorn_heart::Location::from_fn_vec(vec![
+            $($func),*
+        ])
+    };
+}
+
+#[macro_export]
+/// Ex: zone!{ location1, location2}
+macro_rules! zone {
+    ($($loc:expr),* $(,)?) => {
+        $crate::acorn_kernel::acorn_heart::Zone::default()
+            .with_locations(vec![
+                $($loc),*
+            ])
+    };
+}
