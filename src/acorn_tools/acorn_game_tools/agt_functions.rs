@@ -79,7 +79,9 @@ pub fn acorn_debug_inspector(
     draw_text("--- LIGHT ACORN RUNTIME INSPECTOR ---", x_start, y_offset, font_size, YELLOW);
     y_offset += 30.0;
 
+    // add here your zone
     let all_zones = [
+        ("UI_INPUT_ZONE", &zones.ui_input_zone),
         ("BEFORE_2D_ZONE", &zones.before_2d_zone),
         ("AFTER_2D_ZONE", &zones.after_2d_zone),
     ];
