@@ -15,9 +15,7 @@ Warning: If you want to add new Zone then you should add new loop "for" in acorn
 
 
 // src/acorn_zsetup.rs
-use crate::acorn_kernel::{
-    acorn_heart::{Zone, Location}, // import Zone, Location
-};
+use crate::acorn_kernel::prelude::*; // import Zone, Location
 use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,

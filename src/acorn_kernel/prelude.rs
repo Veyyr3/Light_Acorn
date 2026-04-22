@@ -7,6 +7,5 @@
   Lord of the Framework: Veyyr3
 */
 
-mod acorn_render;
-mod acorn_heart;
-pub mod prelude;
+pub use crate::acorn_kernel::acorn_heart::*;
+pub use crate::acorn_kernel::acorn_render::*;

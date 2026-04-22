@@ -10,10 +10,7 @@ mod acorn_settings;
 // for game
 mod acorn_tools;
 
-use acorn_kernel::{
-    acorn_render::acorn_loop, // import acorn_loop
-    acorn_heart::AcornECS, // import Zone, Location, AcornECS
-};
+use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
     // other example functions

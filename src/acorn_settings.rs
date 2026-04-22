@@ -9,9 +9,7 @@ Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depend
 */
 
 // src/acorn_settings.rs
-use crate::acorn_kernel::{
-    acorn_heart::Zone, 
-};
+use crate::acorn_kernel::prelude::*; // import Zone
 // game suggestions
 use crate::acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase;
 
