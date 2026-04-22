@@ -7,7 +7,7 @@ mod acorn_kernel;
 mod acorn_zsetup; // zone setup
 mod acorn_gsetup; // global setup
 mod acorn_settings;
-// for game
+// tools
 mod acorn_tools;
 
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS

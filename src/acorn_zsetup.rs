@@ -21,16 +21,7 @@ use crate::acorn_settings::{
     AcornGlobalContext,
 };
 // game suggestions
-use crate::acorn_tools::acorn_game_tools::{
-    agt_heart::{
-        Entity3DTransform, 
-        Entity3DModel,
-    }, 
-    agt_functions::{
-        acorn_game_draw_3d_assets,
-        acorn_debug_inspector,
-    },
-};
+use crate::acorn_tools::acorn_game_tools::prelude::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
