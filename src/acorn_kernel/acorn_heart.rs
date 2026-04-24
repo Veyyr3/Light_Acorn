@@ -105,7 +105,13 @@ impl Default for AcornECS {
 // ---------------------------- Sugar macros ----------------------------
 
 #[macro_export]
-/// Ex: location!{ function1, function2}
+/// Ex: 
+/// ```
+/// location! { 
+///     function1, 
+///     function2,
+/// }
+/// ```
 macro_rules! location {
     ($($func:expr),* $(,)?) => {
         $crate::acorn_kernel::acorn_heart::Location::from_fn_vec(vec![
@@ -115,12 +121,67 @@ macro_rules! location {
 }
 
 #[macro_export]
-/// Ex: zone!{ location1, location2}
+/// Ex: 
+/// ```
+/// zone! { 
+///     location! {
+///         function1, 
+///         function2,
+///     }, 
+///     location! {
+///         function1, 
+///         function2,
+///     },
+/// }
+/// ```
 macro_rules! zone {
     ($($loc:expr),* $(,)?) => {
         $crate::acorn_kernel::acorn_heart::Zone::default()
             .with_locations(vec![
                 $($loc),*
             ])
+    };
+}
+
+#[macro_export]
+/// This sugar macro same like this:
+/// ```
+/// let len_before_2d_zone = acorn_zone_context.before_2d_zone.locations.len();
+/// // locations go by order
+/// for location_index in 0..len_before_2d_zone {
+///     let fn_count = acorn_zone_context
+///         .before_2d_zone
+///         .locations[location_index]
+///         .functions.len();
+///     // Reverse cycle for protect from panic (101 errors) in runtime
+///     // Functions go by reverse order
+///     // Warning: You should add new functions from down to top
+///     for fn_index in (0..fn_count).rev() {
+///         let function = 
+///         acorn_zone_context.before_2d_zone
+///             .locations[location_index]
+///             .functions[fn_index];        
+///         /// Call function in strict order
+///         function(&mut acorn_ecs.world, &mut acorn_zone_context, &mut acorn_global_context);
+///     }
+/// }
+/// ```
+macro_rules! zone_run {
+    ($context:ident, $zone_field:ident, $ecs:ident, $global:ident) => {
+        let __loc_len = $context.$zone_field.locations.len();
+        
+        for __l_idx in 0..__loc_len {
+            let __fn_len = $context.$zone_field.locations[__l_idx].functions.len();
+            
+            for __f_idx in (0..__fn_len).rev() {
+                let function = $context.$zone_field.locations[__l_idx].functions[__f_idx];
+                
+                function(
+                    &mut $ecs.world, 
+                    &mut $context, 
+                    &mut $global
+                );
+            }
+        }
     };
 }
