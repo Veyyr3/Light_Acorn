@@ -300,11 +300,11 @@ fn acorn_example_game_camera(
 ) {
     // spawn camera
     set_camera(&Camera3D {
-            position: vec3(5.0, 5.0, 5.0),
-            up: vec3(0.0, 1.0, 0.0),
-            target: vec3(0.0, 0.5, 0.0),
-            ..Default::default()
-        });
+        position: vec3(5.0, 5.0, 5.0),
+        up: vec3(0.0, 1.0, 0.0),
+        target: vec3(0.0, 0.5, 0.0),
+        ..Default::default()
+    });
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
