@@ -105,7 +105,7 @@ impl Default for AcornECS {
 // ---------------------------- Sugar macros ----------------------------
 
 #[macro_export]
-/// Ex: 
+/// Example: 
 /// ```
 /// location! { 
 ///     function1, 
@@ -133,7 +133,7 @@ macro_rules! location {
 }
 
 #[macro_export]
-/// Ex: 
+/// Example: 
 /// ```
 /// zone! { 
 ///     location! {
@@ -150,11 +150,9 @@ macro_rules! location {
 /// ```
 /// Zone::default()
 /// .with_locations(vec![
-///     // Lord-Location.
 ///     Location::from_fn_vec(vec![
 ///         // functions
 ///     ]),
-///     // Minor-Location
 ///     Location::from_fn_vec(vec![
 ///         // add own functions through comma 
 ///     ]),
