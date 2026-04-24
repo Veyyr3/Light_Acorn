@@ -112,11 +112,23 @@ impl Default for AcornECS {
 ///     function2,
 /// }
 /// ```
+/// This sugar macro is the same as:
+/// ```
+/// let mut temp_vec: Vec<AcornFunction> = vec![
+///     function1 as AcornFunction,
+///     function2 as AcornFunction,
+/// ];
+/// temp_vec.reverse();
+/// Location::from_fn_vec(temp_vec)
+/// ```
 macro_rules! location {
     ($($func:expr),* $(,)?) => {
-        $crate::acorn_kernel::acorn_heart::Location::from_fn_vec(vec![
-            $($func),*
-        ])
+        {
+            let mut temp_vec: Vec<$crate::acorn_kernel::acorn_heart::AcornFunction> = vec![ 
+                $($func as $crate::acorn_kernel::acorn_heart::AcornFunction),* ];
+            temp_vec.reverse();
+            $crate::acorn_kernel::acorn_heart::Location::from_fn_vec(temp_vec)
+        }
     };
 }
 
@@ -134,7 +146,6 @@ macro_rules! location {
 ///     },
 /// }
 /// ```
-/// 
 /// This sugar macro same like this:
 /// ```
 /// Zone::default()
