@@ -134,6 +134,22 @@ macro_rules! location {
 ///     },
 /// }
 /// ```
+/// 
+/// This sugar macro same like this:
+/// ```
+/// Zone::default()
+/// .with_locations(vec![
+///     // Lord-Location.
+///     Location::from_fn_vec(vec![
+///         // functions
+///     ]),
+///     // Minor-Location
+///     Location::from_fn_vec(vec![
+///         // add own functions through comma 
+///     ]),
+///     // add own locations through comma 
+/// ]);
+/// ```
 macro_rules! zone {
     ($($loc:expr),* $(,)?) => {
         $crate::acorn_kernel::acorn_heart::Zone::default()
