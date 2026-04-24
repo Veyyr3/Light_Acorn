@@ -9,7 +9,7 @@ It's your interface. (sorry, code doesn't let me use GUI here)
 Below, there are examples of Acorn functions.
 
 ======================
-Warning: If you want to add new Zone then you should add new loop "for" in acorn_render (read in docs about this).
+Warning: If you want to add new Zone then you should add new zone_run! in acorn_render (read in docs about this).
 ======================
 */
 
@@ -38,9 +38,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
 
     ======================
-    Memorise: read code from top to down. Locations, Zones will run by chain.
-    ======================
-    Warning Memorise: Functions will run from down to top (see reason in acorn_render.rs)
+    Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
     ======================
     */
 
@@ -80,6 +78,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
+            acorn_example_game_camera,
             // ECS
             acorn_example_query_ecs, // print Oaks result
             // simple function
@@ -89,8 +88,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             // game
             acorn_game_draw_3d_assets, // to draw yours 3d models
             acorn_example_game_rotate_acorn,
-            acorn_example_game_draw_grid,
-            acorn_example_game_camera,
+            acorn_example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         }
         // add own locations through comma
@@ -98,6 +96,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
 
     // after_2d_zone (Ex: UI draw and other Locations)
     let after_2d_zone = zone! {
+        // Minor-Location
         location! {
             acorn_debug_inspector
             // add own functions through comma 

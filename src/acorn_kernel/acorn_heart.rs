@@ -169,7 +169,14 @@ macro_rules! zone {
 }
 
 #[macro_export]
+/// Run a Zone in the `acorn_render.rs`. 
+/// 
+/// Example:
+/// 
+/// ```zone_run!(acorn_zone_context, your_zone_name, acorn_ecs, acorn_global_context);```
+/// 
 /// This sugar macro same like this:
+/// 
 /// ```
 /// let len_before_2d_zone = acorn_zone_context.before_2d_zone.locations.len();
 /// // locations go by order
