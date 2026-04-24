@@ -78,16 +78,16 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            acorn_example_game_camera,
+            acorn_example_game_camera, // camera should be here first!
             // ECS
             acorn_example_query_ecs, // print Oaks result
             // simple function
-            acorn_example_greeting,
-            // ECS
-            acorn_example_update_oaks, // update ECS state
+            acorn_example_greeting, // print 'Hello, Light Acorn!'
+            // ECS But you can be sure this function also is in acorn_esetup.rs
+            // acorn_example_update_oaks, // update ECS state. 
             // game
             acorn_game_draw_3d_assets, // to draw yours 3d models
-            acorn_example_game_rotate_acorn,
+            acorn_example_game_rotate_acorn, // ECS
             acorn_example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         }
@@ -161,7 +161,7 @@ fn acorn_example_draw_circle(
 
 // example component
 #[derive(Component)]
-struct Oaks {x: u64}
+pub struct Oaks {pub x: u64}
 
 // Use spawn entities in fn main
 pub fn acorn_example_spawn_entity(
@@ -191,6 +191,7 @@ fn acorn_example_query_ecs(
 }
 
 // Add this function into location
+// But you can be sure this function also is in acorn_esetup.rs
 fn acorn_example_update_oaks(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 

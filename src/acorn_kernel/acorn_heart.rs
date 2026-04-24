@@ -31,7 +31,7 @@ pub struct Zone {
 /// Use this in fn main to create ECS.
 pub struct AcornECS {
     pub world: World,
-    // pub schedule: Schedule
+    pub schedule: Schedule
 }
 
 // ---------------------------- Implementations ----------------------------
@@ -97,7 +97,7 @@ impl Default for AcornECS {
     fn default() -> Self {
         Self {
             world: World::new(),
-            // schedule: Schedule::default(),
+            schedule: Schedule::default(),
         }
     }
 }

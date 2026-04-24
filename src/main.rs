@@ -3,12 +3,13 @@
 // See the LICENSES folder in the project root for the full license text.
 
 // src/main.rs
-mod acorn_kernel;
-mod acorn_zsetup; // zone setup
+mod acorn_kernel; // Zone, Location, AcornFunction
+mod acorn_zsetup; // zones, locations, functions setup
 mod acorn_gsetup; // global setup
-mod acorn_settings;
+mod acorn_settings; // to setup your global statements, zone and etc.
+mod acorn_esetup; // to setup multithread systems through Bevy
 // tools
-mod acorn_tools;
+mod acorn_tools; // game tools
 
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
@@ -18,6 +19,7 @@ use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_example_spawn_entity
 };
 use acorn_gsetup::acorn_global_setup;
+use acorn_esetup::acorn_ecs_setup;
 
 /*
 Hi!
@@ -41,10 +43,14 @@ Memorise: Zone is when, Location is where, Function is time-marker.
 #[macroquad::main("Light Acorn test")]
 async fn main() {
     // Global variable ECS. Hand over to acorn_loop.
-    let mut acorn_ecs = AcornECS::default();
+    let mut acorn_ecs = acorn_ecs_setup();
+
+    // WARNING: if you don't need Bevy multithreading then use that:
+    // let mut acorn_ecs = AcornECS::default();
 
     // Contex of Zones. Hand over to acorn_loop.
     let mut acorn_zone_context = acorn_zone_setup();
+
     // Global states. Hand over to acorn_loop.
     let mut acorn_global_context = acorn_global_setup();
 

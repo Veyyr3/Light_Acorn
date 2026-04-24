@@ -45,7 +45,7 @@ pub async fn acorn_loop(
         // It is necessary for multithreading (but you pay some overhead).
         ============================
         */ 
-        // acorn_ecs.schedule.run(&mut acorn_ecs.world);
+        acorn_ecs.schedule.run(&mut acorn_ecs.world);
 
 
         /* 
