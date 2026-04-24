@@ -8,6 +8,13 @@ use crate::acorn_kernel::prelude::AcornECS;
 // only for example
 use crate::acorn_zsetup::Oaks;
 
+/*
+Use this file to add Bevy systems for multithreading.
+
+If you don't want then it's optional. 
+*/
+
+/// Add here your Bevy Systems
 pub fn acorn_ecs_setup() -> AcornECS {
     let mut acorn_ecs = AcornECS::default();
 
@@ -19,7 +26,7 @@ pub fn acorn_ecs_setup() -> AcornECS {
     acorn_ecs
 }
 
-/// An Example of Bevy ECS system
+/// An Example of Bevy System
 fn acorn_example_bevy_system(mut query: Query<&mut Oaks>) {
     // loop for all entities with Oaks. 
     // Spoiler: game will be over when oaks reach 18 446 744 073 709 551 615 :)
