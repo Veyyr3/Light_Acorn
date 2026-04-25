@@ -8,12 +8,17 @@ use macroquad::math::vec3;
 use crate::acorn_settings::{
     AcornGlobalContext,
 };
+use macroquad::prelude::*;
 // game suggestions
 use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase
 
 /// Create here your Global States.
 pub fn acorn_global_setup() -> AcornGlobalContext {
     // ---------------------------- Game setup ----------------------------
+
+    // it's important thing. The speed of the camera and objects will not depend on FPS.
+    let fps_delta = get_frame_time();
+
     // Keep 3d models in assets database.
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
 
@@ -29,6 +34,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     
     AcornGlobalContext { 
         // suggestion for game
+        fps_delta,
         assets_3d,
         camera,
     }
