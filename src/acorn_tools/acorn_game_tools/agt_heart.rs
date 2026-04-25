@@ -21,7 +21,7 @@ pub struct Acorn3DAssetDatabase {
 #[derive(Component)]
 /// A Bevy component. Keep here transform of your 3D models.
 /// 
-/// Example:
+/// ## Example:
 /// ```
 /// world.spawn((
 ///     Entity3DTransform {

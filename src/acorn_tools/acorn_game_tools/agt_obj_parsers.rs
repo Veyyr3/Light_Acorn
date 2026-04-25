@@ -18,7 +18,7 @@ use tobj;
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
 /// 
-/// Example: 
+/// ## Example: 
 /// ```
 /// color_and_load_obj_to_mesh('your/model.obj', WHITE.into())
 /// ```
@@ -79,7 +79,7 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
 ///  
-/// Example: 
+/// ## Example: 
 /// ```
 /// color_mtl_and_load_obj_to_mesh('your/model.obj', WHITE.into())
 /// ```
@@ -140,7 +140,7 @@ pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub assets_3d: Acorn3DAssetDatabase,`
 /// 
-/// Example: 
+/// ## Example: 
 /// ```
 /// assets_3d.meshes.push(
 ///     load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")

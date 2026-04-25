@@ -105,7 +105,7 @@ impl Default for AcornECS {
 // ---------------------------- Sugar macros ----------------------------
 
 #[macro_export]
-/// Example: 
+/// ## Example: 
 /// ```
 /// location! { 
 ///     function1, 
@@ -133,7 +133,7 @@ macro_rules! location {
 }
 
 #[macro_export]
-/// Example: 
+/// ## Example: 
 /// ```
 /// zone! { 
 ///     location! {
@@ -171,7 +171,7 @@ macro_rules! zone {
 #[macro_export]
 /// Run a Zone in the `acorn_render.rs`. 
 /// 
-/// Example:
+/// ## Example:
 /// 
 /// ```zone_run!(acorn_zone_context, your_zone_name, acorn_ecs, acorn_global_context);```
 /// 
