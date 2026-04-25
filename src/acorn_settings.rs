@@ -25,4 +25,5 @@ pub struct AcornZoneContext {
 pub struct AcornGlobalContext {
     // from game tools
     pub assets_3d: Acorn3DAssetDatabase,
+    pub camera: AcornCamera,
 }

@@ -2,6 +2,8 @@
 // This file is part of Light Acorn and is distributed under the MIT License.
 // See the LICENSES folder in the project root for the full license text.
 
+use macroquad::math::vec3;
+
 // src/acorn_gsetup.rs
 use crate::acorn_settings::{
     AcornGlobalContext,
@@ -22,9 +24,12 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     assets_3d.meshes.push(
         load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
+
+    let camera = AcornCamera::create(vec3(5.0, 5.0, 5.0));
     
     AcornGlobalContext { 
         // suggestion for game
-        assets_3d
+        assets_3d,
+        camera,
     }
 }
