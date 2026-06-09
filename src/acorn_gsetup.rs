@@ -5,19 +5,36 @@
 use macroquad::math::vec3;
 
 // src/acorn_gsetup.rs
+
 use crate::acorn_settings::{
     AcornGlobalContext,
 };
 use macroquad::prelude::*;
 // game suggestions
-use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase
+use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DGameBase, Acorn3DAssetDatabase
 
 /// Create here your Global States.
 pub fn acorn_global_setup() -> AcornGlobalContext {
     // ---------------------------- Game setup ----------------------------
 
+    // setup base 
+    let game_base_preset = Acorn3DGameBase {
+        // camera
+        camera_3d_look_speed: 1.0,
+        camera_3d_move_speed: 1.0,
+    };
+
+    // ###########################################
+
     // it's important thing. The speed of the camera and objects will not depend on FPS.
     let frame_delta = get_frame_time();
+
+    // ###########################################
+
+    // create camera
+    let camera = Acorn3DCamera::create(vec3(5.0, 5.0, 5.0));
+
+    // ###########################################
 
     // Keep 3d models in assets database.
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
@@ -30,10 +47,12 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
 
-    let camera = Acorn3DCamera::create(vec3(5.0, 5.0, 5.0));
+    // ###########################################
     
+    // return global context
     AcornGlobalContext { 
         // suggestion for game
+        game_base_preset,
         frame_delta,
         assets_3d,
         camera,

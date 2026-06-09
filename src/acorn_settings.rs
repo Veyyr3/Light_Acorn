@@ -24,7 +24,8 @@ pub struct AcornZoneContext {
 /// Contain here your global statements 
 pub struct AcornGlobalContext {
     // from game tools
+    pub game_base_preset: Acorn3DGameBase,
     pub frame_delta: f32, // it's important thing. The speed of the camera and objects will not depend on FPS.
-    pub assets_3d: Acorn3DAssetDatabase,
-    pub camera: Acorn3DCamera,
+    pub assets_3d: Acorn3DAssetDatabase, // 3D meshes
+    pub camera: Acorn3DCamera, // 3D camera
 }

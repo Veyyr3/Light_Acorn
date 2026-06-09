@@ -11,8 +11,8 @@
 
 /// ## Description
 /// Base preset to build games.
-struct AcornGameBase {
+pub struct Acorn3DGameBase {
     // camera
-    camera_3d_look_speed: f32,
-    camera_3d_move_speed: f32,
+    pub camera_3d_look_speed: f32,
+    pub camera_3d_move_speed: f32,
 }
