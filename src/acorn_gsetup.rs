@@ -20,7 +20,8 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // setup base 
     let game_base_preset = Acorn3DGameBase {
         // camera
-        camera_3d_look_speed: 1.0,
+        camera: Acorn3DCamera::create(vec3(5.0, 5.0, 5.0)),
+        camera_3d_look_speed: 1.0, // mouse look sensitivity
         camera_3d_move_speed: 1.0,
     };
     // =================================
@@ -30,13 +31,6 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // =================================
     // it's important thing. The speed of the camera and objects will not depend on FPS.
     let frame_delta = get_frame_time();
-    // =================================
-
-
-
-    // =================================
-    // create camera
-    let camera = Acorn3DCamera::create(vec3(5.0, 5.0, 5.0));
     // =================================
 
 
@@ -62,6 +56,5 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         game_base_preset,
         frame_delta,
         assets_3d,
-        camera,
     }
 }
