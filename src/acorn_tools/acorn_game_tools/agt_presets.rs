@@ -7,10 +7,12 @@
   Lord of the Framework: Veyyr3
 */
 
-pub use crate::acorn_tools::acorn_game_tools::{
-  agt_functions::*, 
-  agt_heart::*, 
-  agt_obj_parsers::*,
-  agt_camera::*,
-  agt_presets::*,
-};
+// src/acorn_kernel/acorn_tools/acorn_game_tools/agt_presets.rs
+
+/// ## Description
+/// Base preset to build games.
+struct AcornGameBase {
+    // camera
+    camera_3d_look_speed: f32,
+    camera_3d_move_speed: f32,
+}

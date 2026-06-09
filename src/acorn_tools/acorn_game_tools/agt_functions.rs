@@ -8,6 +8,7 @@
 */
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
+
 use macroquad::prelude::*;
 use crate::acorn_settings::{
     AcornZoneContext,
@@ -17,6 +18,7 @@ use crate::acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, Entity3DTra
 use bevy_ecs::world::World;
 
 // ---------------------------- 3D transforming ----------------------------
+
 fn acorn_generate_matrix(entity_3d_set: &Entity3DTransform) -> Mat4 {
     Mat4::from_translation(entity_3d_set.position)
     *Mat4::from_axis_angle(vec3(0.0, 1.0, 0.0), entity_3d_set.rotation)
@@ -66,6 +68,7 @@ pub fn acorn_game_draw_3d_assets(
 }
 
 // ---------------------------- Debug Functions ----------------------------
+
 /// Functions for inspect number of functions in Zones and Locations.
 pub fn acorn_debug_inspector(
     _world: &mut World, 
