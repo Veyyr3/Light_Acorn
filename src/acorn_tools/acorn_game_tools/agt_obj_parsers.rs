@@ -12,6 +12,7 @@ use macroquad::prelude::*;
 use tobj;
 
 #[allow(dead_code)] // delete this if you use
+/// ## Description
 /// Load your 3d model and fill with macroquad color.
 /// 
 /// You can use this ONLY IF you don't have .mtl file.
@@ -73,6 +74,7 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
 }
 
 #[allow(dead_code)] // delete this if you use
+/// ## Description
 /// Load your 3d model and fill with macroquad color.
 /// 
 /// You can use this if you have .mtl file.
@@ -133,6 +135,7 @@ pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     }
 }
 
+/// ## Description
 /// Use this function if you have color materials in obj file.
 /// 
 /// Make sure that you have .mtl file near .obj!

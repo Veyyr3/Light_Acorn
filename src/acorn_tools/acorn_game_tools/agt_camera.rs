@@ -48,6 +48,13 @@ fn acorn_game_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
 
 // ---------------------------- Public Functions ----------------------------
 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub camera: Acorn3DCamera,`
+/// 
+/// Example: 
+/// ```
+///
+/// ```
 pub fn acorn_game_camera_free_fly(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
