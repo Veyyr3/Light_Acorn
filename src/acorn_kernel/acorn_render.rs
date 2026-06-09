@@ -31,7 +31,7 @@ pub async fn acorn_loop(
         clear_background(BLACK);
 
         // it's important thing. The speed of the camera and objects will not depend on FPS.
-        acorn_global_context.fps_delta = get_frame_time();
+        acorn_global_context.frame_delta = get_frame_time();
 
         /* 
         ============================ 

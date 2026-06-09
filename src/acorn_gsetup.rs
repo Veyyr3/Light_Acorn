@@ -17,7 +17,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // ---------------------------- Game setup ----------------------------
 
     // it's important thing. The speed of the camera and objects will not depend on FPS.
-    let fps_delta = get_frame_time();
+    let frame_delta = get_frame_time();
 
     // Keep 3d models in assets database.
     let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
@@ -34,7 +34,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     
     AcornGlobalContext { 
         // suggestion for game
-        fps_delta,
+        frame_delta,
         assets_3d,
         camera,
     }
