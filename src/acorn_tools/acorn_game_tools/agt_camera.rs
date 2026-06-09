@@ -16,7 +16,7 @@ use bevy_ecs::prelude::*;
 
 // ---------------------------- Structs ----------------------------
 
-pub struct AcornCamera {
+pub struct Acorn3DCamera {
     // look settings
     pub position: Vec3,
     pub yaw: f32,
@@ -25,7 +25,7 @@ pub struct AcornCamera {
 
 // ---------------------------- Implementations ----------------------------
 
-impl AcornCamera {
+impl Acorn3DCamera {
     /// Create camera
     pub fn create(position: Vec3) -> Self {
         Self { 

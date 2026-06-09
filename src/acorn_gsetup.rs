@@ -30,7 +30,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
     );
 
-    let camera = AcornCamera::create(vec3(5.0, 5.0, 5.0));
+    let camera = Acorn3DCamera::create(vec3(5.0, 5.0, 5.0));
     
     AcornGlobalContext { 
         // suggestion for game
