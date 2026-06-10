@@ -68,26 +68,27 @@ pub fn acorn_game_camera_3d_control_free_fly(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-    // take context
-    let ctx = &mut context.game_base_preset;
+    // take from context
+    let camera = &mut context.game_base_preset.camera;
+    let frame_delta = &mut context.frame_delta;
 
     // 1. rotate
     let mouse_delta = mouse_delta_position();
-    ctx.camera.yaw -= mouse_delta.x * ctx.camera.look_speed; 
-    ctx.camera.pitch += mouse_delta.y * ctx.camera.look_speed;
-    ctx.camera.pitch = ctx.camera.pitch.clamp(-1.5, 1.5);
+    camera.yaw -= mouse_delta.x * camera.look_speed; 
+    camera.pitch += mouse_delta.y * camera.look_speed;
+    camera.pitch = camera.pitch.clamp(-1.5, 1.5);
 
-    let look_dir = acorn_game_camera_get_look_dir(ctx.camera.yaw, ctx.camera.pitch);
-
-    // set look for camera (camera_pos Vec3 + camera_look Vec3)
-    ctx.camera.look = ctx.camera.position + look_dir;
-
-    // 2. move
-    // Here: position += look_dir * camera_3d_move_speed * frame_delta
-    if is_key_down(KeyCode::W) { ctx.camera.position += look_dir * ctx.camera.move_speed; }
-    if is_key_down(KeyCode::S) { ctx.camera.position -= look_dir * ctx.camera.move_speed; }
-
+    // 2. calculate look dir
+    let look_dir = acorn_game_camera_get_look_dir(camera.yaw, camera.pitch);
     let right = look_dir.cross(vec3(0.0, 1.0, 0.0)).normalize();
-    if is_key_down(KeyCode::D) { ctx.camera.position += right * ctx.camera.move_speed; }
-    if is_key_down(KeyCode::A) { ctx.camera.position -= right * ctx.camera.move_speed; }
+
+    // 3. move
+    if is_key_down(KeyCode::W) { camera.position += look_dir * camera.move_speed * *frame_delta; }
+    if is_key_down(KeyCode::S) { camera.position -= look_dir * camera.move_speed * *frame_delta; }
+
+    if is_key_down(KeyCode::D) { camera.position += right * camera.move_speed * *frame_delta; }
+    if is_key_down(KeyCode::A) { camera.position -= right * camera.move_speed * *frame_delta; }
+
+    // set look for camera
+    camera.look = camera.position + look_dir;
 }
