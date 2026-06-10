@@ -75,6 +75,9 @@ pub async fn acorn_loop(
             break;
         }
 
+        if is_key_pressed(KeyCode::C) { set_cursor_grab(false); show_mouse(true); }
+        if is_key_pressed(KeyCode::Z) { set_cursor_grab(true); show_mouse(false); }
+
         // ---------------------------- Next_frame ----------------------------
         next_frame().await;
     }

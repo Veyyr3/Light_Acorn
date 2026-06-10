@@ -78,13 +78,13 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            acorn_example_game_camera, // camera should be here first!
+            acorn_game_camera_3d_control_free_fly, // update camera position and look
+            acorn_game_camera, // camera should be here first!
             // ECS
             acorn_example_query_ecs, // print Oaks result
             // simple function
             acorn_example_greeting, // print 'Hello, Light Acorn!'
-            // ECS But you can be sure this function also is in acorn_esetup.rs
-            // acorn_example_update_oaks, // update ECS state. 
+            // acorn_example_update_oaks, // update ECS state. But this function also is in acorn_esetup.rs. 
             // game
             acorn_game_draw_3d_assets, // to draw yours 3d models
             acorn_example_game_rotate_acorn, // ECS
@@ -293,7 +293,7 @@ pub fn acorn_game_spawn_acorn(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_camera(
+fn acorn_example_game_simple_camera(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -303,6 +303,21 @@ fn acorn_example_game_camera(
         position: vec3(5.0, 5.0, 5.0),
         up: vec3(0.0, 1.0, 0.0),
         target: vec3(0.0, 0.5, 0.0),
+        ..Default::default()
+    });
+}
+
+// Add to before 2d zone (in after 2d zone it may work incorrect)
+fn acorn_game_camera(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // spawn camera
+    set_camera(&Camera3D {
+        position: context.game_base_preset.camera.position,
+        up: vec3(0.0, 1.0, 0.0),
+        target: context.game_base_preset.camera.look,
         ..Default::default()
     });
 }

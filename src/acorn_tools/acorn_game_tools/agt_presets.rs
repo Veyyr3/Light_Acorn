@@ -14,8 +14,6 @@ use crate::acorn_tools::acorn_game_tools::agt_camera::Acorn3DCamera;
 /// ## Description
 /// Base preset to build games.
 pub struct Acorn3DGameBase {
-    // camera
-    pub camera: Acorn3DCamera, // 3D camera
-    pub camera_3d_look_speed: f32, // mouse look sensitivity
-    pub camera_3d_move_speed: f32,
+  // camera
+  pub camera: Acorn3DCamera, // 3D camera
 }
