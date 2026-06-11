@@ -56,12 +56,19 @@ fn agt_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
 
 // ---------------------------- Public Functions ----------------------------
 
+/// ## Description
+/// Allows your camera to fly freely.
+/// 
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase,`
 /// 
-/// Example: 
+/// ## Example: 
 /// ```
-///
+/// let ui_input_zone = zone! {
+///     location! {
+///         agt_camera_3d_control_free_fly, // update camera position and look
+///     }
+/// };
 /// ```
 pub fn agt_camera_3d_control_free_fly(
     _world: &mut World, 
@@ -89,6 +96,6 @@ pub fn agt_camera_3d_control_free_fly(
     if is_key_down(KeyCode::D) { camera.position += right * camera.move_speed * *frame_delta; }
     if is_key_down(KeyCode::A) { camera.position -= right * camera.move_speed * *frame_delta; }
 
-    // set look for camera
+    // 4. set look for camera
     camera.look = camera.position + look_dir;
 }

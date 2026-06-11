@@ -62,7 +62,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     ======================
     */
 
-    // ui_input_zone (Ex: handle input, events: victory, failure etc.)
+    // ui_input_zone (Ex: handle input, events: victory, failure and etc.)
     let ui_input_zone = zone! {
         // Lord-Location.
         location! {
@@ -70,6 +70,10 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             example_runtime_spawner, // add new entity (press Space and see result in console)
             example_delete_function, // (press TAB to delete functions in Minor-Location)
             // add own functions through comma
+        },
+        // Location for UI input
+        location! {
+            agt_camera_3d_control_free_fly, // update camera position and look
         }
         // add own locations through comma
     };
@@ -78,7 +82,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            agt_camera_3d_control_free_fly, // update camera position and look
             agt_camera, // camera should be here first!
             // ECS
             example_query_ecs, // print Oaks result
