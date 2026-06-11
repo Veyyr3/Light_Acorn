@@ -2,6 +2,8 @@
 // This file is part of Light Acorn and is distributed under the MIT License.
 // See the LICENSES folder in the project root for the full license text.
 
+// src/acorn_esetup.rs
+
 // necessary imports
 use bevy_ecs::prelude::*;
 use crate::acorn_kernel::prelude::AcornECS;

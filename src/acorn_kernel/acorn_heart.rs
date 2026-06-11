@@ -8,6 +8,7 @@
 */
 
 // src/acorn_kernel/acorn_heart.rs
+
 use bevy_ecs::prelude::*;
 use crate::acorn_settings::{AcornZoneContext, AcornGlobalContext};
 
