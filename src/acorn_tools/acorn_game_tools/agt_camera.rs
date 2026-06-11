@@ -54,7 +54,7 @@ fn agt_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
     ).normalize()
 }
 
-// ---------------------------- Public Functions ----------------------------
+// ---------------------------- Acorn Functions ----------------------------
 
 /// ## Description
 /// Allows your camera to fly freely.
