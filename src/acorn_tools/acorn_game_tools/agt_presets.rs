@@ -11,6 +11,12 @@
 
 use crate::acorn_tools::acorn_game_tools::agt_camera::Acorn3DCamera;
 
+/*
+This file contains frequent fields used in game development.
+
+This is necessary for brevity and composition.
+*/
+
 /// ## Description
 /// Base preset to build games.
 pub struct Acorn3DGameBase {
