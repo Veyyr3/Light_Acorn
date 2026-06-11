@@ -4,7 +4,6 @@
 
 // src/acorn_gsetup.rs
 
-use macroquad::math::vec3;
 use crate::acorn_settings::{
     AcornGlobalContext,
 };
@@ -20,11 +19,8 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // setup base 
     let game_base_preset = Acorn3DGameBase {
         // camera
-        camera: Acorn3DCamera::create(
-            vec3(5.0, 5.0, 5.0),
-            1.0,
-            10.0
-        )
+        camera_physical: Acorn3DCameraPhysical::default(),
+        ..Default::default()
     };
     // =================================
 

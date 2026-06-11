@@ -9,7 +9,7 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_presets.rs
 
-use crate::acorn_tools::acorn_game_tools::agt_camera::Acorn3DCamera;
+use crate::acorn_tools::acorn_game_tools::agt_camera::*;
 
 /*
 This file contains frequent fields used in game development.
@@ -17,9 +17,13 @@ This file contains frequent fields used in game development.
 This is necessary for brevity and composition.
 */
 
+// ---------------------------- Structs ----------------------------
+
+#[derive(Default)]
 /// ## Description
 /// Base preset to build games.
 pub struct Acorn3DGameBase {
-  // camera
+  // cameras
   pub camera: Acorn3DCamera, // 3D camera
+  pub camera_physical: Acorn3DCameraPhysical, // 3D camera with physic
 }
