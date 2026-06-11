@@ -35,7 +35,7 @@ fn acorn_get_gl_contex() -> &'static mut QuadGl {
 }
 
 /// Use this function to draw all your entities with 3D models.
-pub fn acorn_game_draw_3d_assets(
+pub fn agt_draw_3d_assets(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext

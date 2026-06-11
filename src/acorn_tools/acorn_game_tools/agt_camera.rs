@@ -37,7 +37,7 @@ impl Acorn3DCamera {
             position, 
             look_speed,
             move_speed,
-            look: position + acorn_game_camera_get_look_dir(0.0, 0.0),
+            look: position + agt_camera_get_look_dir(0.0, 0.0),
             yaw: 0.0, 
             pitch: 0.0 
         }
@@ -46,7 +46,7 @@ impl Acorn3DCamera {
 
 // ---------------------------- Functions ----------------------------
 
-fn acorn_game_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
+fn agt_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
     vec3(
         yaw.cos() * pitch.cos(),
         pitch.sin(),
@@ -63,7 +63,7 @@ fn acorn_game_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
 /// ```
 ///
 /// ```
-pub fn acorn_game_camera_3d_control_free_fly(
+pub fn agt_camera_3d_control_free_fly(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -79,7 +79,7 @@ pub fn acorn_game_camera_3d_control_free_fly(
     camera.pitch = camera.pitch.clamp(-1.5, 1.5);
 
     // 2. calculate look dir
-    let look_dir = acorn_game_camera_get_look_dir(camera.yaw, camera.pitch);
+    let look_dir = agt_camera_get_look_dir(camera.yaw, camera.pitch);
     let right = look_dir.cross(vec3(0.0, 1.0, 0.0)).normalize();
 
     // 3. move

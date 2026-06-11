@@ -19,7 +19,7 @@ pub fn acorn_ecs_setup() -> AcornECS {
     let mut acorn_ecs = AcornECS::default();
 
     acorn_ecs.schedule.add_systems((
-        acorn_example_bevy_system,
+        example_bevy_system,
         // add systems here
     ));
 
@@ -27,7 +27,7 @@ pub fn acorn_ecs_setup() -> AcornECS {
 }
 
 /// An Example of Bevy System
-fn acorn_example_bevy_system(mut query: Query<&mut Oaks>) {
+fn example_bevy_system(mut query: Query<&mut Oaks>) {
     // loop for all entities with Oaks. 
     // Spoiler: game will be over when oaks reach 18 446 744 073 709 551 615 :)
     for mut oaks in &mut query {

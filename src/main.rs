@@ -15,8 +15,8 @@ use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
     // other example functions
-    acorn_game_spawn_acorn,  
-    acorn_example_spawn_entity
+    example_spawn_acorn,  
+    example_spawn_entity
 };
 use acorn_gsetup::acorn_global_setup;
 use acorn_esetup::acorn_ecs_setup;
@@ -55,12 +55,12 @@ async fn main() {
     let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    acorn_example_spawn_entity(
+    example_spawn_entity(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context
     );
-    acorn_game_spawn_acorn(
+    example_spawn_acorn(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context

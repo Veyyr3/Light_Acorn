@@ -66,9 +66,9 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let ui_input_zone = zone! {
         // Lord-Location.
         location! {
-            acorn_example_add_circle_function, // add blue circle (press left mouse button)
-            acorn_example_runtime_spawner, // add new entity (press Space and see result in console)
-            acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
+            example_add_circle_function, // add blue circle (press left mouse button)
+            example_runtime_spawner, // add new entity (press Space and see result in console)
+            example_delete_function, // (press TAB to delete functions in Minor-Location)
             // add own functions through comma
         }
         // add own locations through comma
@@ -78,17 +78,17 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            acorn_game_camera_3d_control_free_fly, // update camera position and look
-            acorn_game_camera, // camera should be here first!
+            agt_camera_3d_control_free_fly, // update camera position and look
+            agt_camera, // camera should be here first!
             // ECS
-            acorn_example_query_ecs, // print Oaks result
+            example_query_ecs, // print Oaks result
             // simple function
-            acorn_example_greeting, // print 'Hello, Light Acorn!'
-            // acorn_example_update_oaks, // update ECS state. But this function also is in acorn_esetup.rs. 
+            example_greeting, // print 'Hello, Light Acorn!'
+            // example_update_oaks, // update ECS state. But this function also is in acorn_esetup.rs. 
             // game
-            acorn_game_draw_3d_assets, // to draw yours 3d models
-            acorn_example_game_rotate_acorn, // ECS
-            acorn_example_game_draw_grid, // press TAB and this function will be deleted first
+            agt_draw_3d_assets, // to draw yours 3d models
+            example_game_rotate_acorn, // ECS
+            example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         }
         // add own locations through comma
@@ -135,7 +135,7 @@ Advise: Create functions in other files and import here.
 
 // ---------------------------- Example simple functions ----------------------------
 // All simple functions should have World argument but shouldn't use it.
-fn acorn_example_greeting(
+fn example_greeting(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -143,7 +143,7 @@ fn acorn_example_greeting(
     print!("Hello, Light Acorn!");
 }
 
-fn acorn_example_draw_circle(
+fn example_draw_circle(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -164,7 +164,7 @@ fn acorn_example_draw_circle(
 pub struct Oaks {pub x: u64}
 
 // Use spawn entities in fn main
-pub fn acorn_example_spawn_entity(
+pub fn example_spawn_entity(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -176,7 +176,7 @@ pub fn acorn_example_spawn_entity(
 }
 
 // Add this function into location
-fn acorn_example_query_ecs(
+fn example_query_ecs(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -192,7 +192,7 @@ fn acorn_example_query_ecs(
 
 // Add this function into location
 // But you can be sure this function also is in acorn_esetup.rs
-fn acorn_example_update_oaks(
+fn example_update_oaks(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -208,7 +208,7 @@ fn acorn_example_update_oaks(
 }
 
 // Add this function into location
-fn acorn_example_runtime_spawner(
+fn example_runtime_spawner(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -224,7 +224,7 @@ fn acorn_example_runtime_spawner(
 
 // ---------------------------- Example Lord-Functions ----------------------------
 // Add this function into Lord-Location in Ui input zone
-fn acorn_example_delete_function(
+fn example_delete_function(
     _world: &mut World, 
     zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -236,31 +236,31 @@ fn acorn_example_delete_function(
     // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
         zones.before_2d_zone.locations[0].functions.remove(0);
-        println!("I've killed function! Message from: acorn_example_delete_function");
+        println!("I've killed function! Message from: example_delete_function");
     }
 }
 
 // Add this function into Lord-Location
-fn acorn_example_add_circle_function(
+fn example_add_circle_function(
     _world: &mut World, 
     zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
     // press left mouse button to draw your circle!
     if is_mouse_button_pressed(MouseButton::Left) { 
-        zones.after_2d_zone.locations[0].functions.push(acorn_example_draw_circle);
-        println!("I've created function! Message from: acorn_example_add_circle_function");
+        zones.after_2d_zone.locations[0].functions.push(example_draw_circle);
+        println!("I've created function! Message from: example_add_circle_function");
     }
 }
 
 // ---------------------------- Example Game Functuions ----------------------------
 // Use this example ZST in ECS Query to replace if/else branching.
-// In acorn_example_game_rotate_acorn ECS function rotating only entities with IsAcorn.
+// In example_game_rotate_acorn ECS function rotating only entities with IsAcorn.
 #[derive(Component)]
 struct IsAcorn;
 
 // spawner 3d model of acorn.
-pub fn acorn_game_spawn_acorn(
+pub fn example_spawn_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -293,7 +293,7 @@ pub fn acorn_game_spawn_acorn(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_simple_camera(
+fn example_game_simple_camera(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -308,7 +308,7 @@ fn acorn_example_game_simple_camera(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_game_camera(
+fn agt_camera(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -323,7 +323,7 @@ fn acorn_game_camera(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_rotate_acorn(
+fn example_game_rotate_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -339,7 +339,7 @@ fn acorn_example_game_rotate_acorn(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_draw_grid(
+fn example_game_draw_grid(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
