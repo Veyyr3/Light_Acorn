@@ -37,6 +37,7 @@ pub struct AcornECS {
 
 // ---------------------------- Implementations ----------------------------
 
+#[allow(dead_code)]
 impl Location {
     /// Create Location
     pub fn new() -> Self {
@@ -57,6 +58,7 @@ impl Location {
     }
 }
 
+#[allow(dead_code)]
 impl Zone {
     /// Create Zone
     pub fn new() -> Self {
