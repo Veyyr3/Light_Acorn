@@ -15,6 +15,7 @@ Warning: If you want to add new Zone then you should add new zone_run! in acorn_
 
 
 // src/acorn_zsetup.rs
+
 use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
@@ -82,7 +83,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            agt_camera, // camera should be here first!
+            agt_camera_physical, // camera should be here first!
             // ECS
             example_query_ecs, // print Oaks result
             // simple function
@@ -306,21 +307,6 @@ fn example_game_simple_camera(
         position: vec3(5.0, 5.0, 5.0),
         up: vec3(0.0, 1.0, 0.0),
         target: vec3(0.0, 0.5, 0.0),
-        ..Default::default()
-    });
-}
-
-// Add to before 2d zone (in after 2d zone it may work incorrect)
-fn agt_camera(
-    _world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    context: &mut AcornGlobalContext
-) {
-    // spawn camera
-    set_camera(&Camera3D {
-        position: context.game_base_preset.camera.position,
-        up: vec3(0.0, 1.0, 0.0),
-        target: context.game_base_preset.camera.look,
         ..Default::default()
     });
 }

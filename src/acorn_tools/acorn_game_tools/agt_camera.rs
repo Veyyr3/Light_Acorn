@@ -18,6 +18,7 @@ use bevy_ecs::prelude::*;
 
 // ---------------------------- Structs ----------------------------
 
+#[allow(dead_code)]
 pub struct Acorn3DCamera {
     pub position: Vec3,
     pub look_speed: f32, // mouse look sensitivity
@@ -28,6 +29,7 @@ pub struct Acorn3DCamera {
     pub pitch: f32,
 }
 
+#[allow(dead_code)]
 pub struct Acorn3DCameraPhysical {
     pub position: Vec3,
     pub look_speed: f32, // mouse look sensitivity
@@ -46,6 +48,7 @@ pub struct Acorn3DCameraPhysical {
 
 // ---------------------------- Implementations ----------------------------
 
+#[allow(dead_code)]
 impl Acorn3DCamera {
     /// Create camera
     pub fn create(position: Vec3, look_speed: f32, move_speed: f32) -> Self {
@@ -60,6 +63,7 @@ impl Acorn3DCamera {
     }
 }
 
+#[allow(dead_code)]
 impl Acorn3DCameraPhysical {
     /// Create camera
     pub fn create(
@@ -130,13 +134,51 @@ fn agt_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
     ).normalize()
 }
 
-// ---------------------------- Acorn Functions ----------------------------
+// ---------------------------- Acorn Before 2D Zone Functions ----------------------------
 
+#[allow(dead_code)]
+/// Add to before 2d zone (in after 2d zone it may work incorrect)
+pub fn agt_camera(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // spawn camera
+    set_camera(&Camera3D {
+        position: context.game_base_preset.camera.position,
+        up: vec3(0.0, 1.0, 0.0),
+        target: context.game_base_preset.camera.look,
+        ..Default::default()
+    });
+}
+
+#[allow(dead_code)]
+/// Add to before 2d zone (in after 2d zone it may work incorrect)
+pub fn agt_camera_physical(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // spawn camera
+    set_camera(&Camera3D {
+        position: context.game_base_preset.camera_physical.position,
+        up: vec3(0.0, 1.0, 0.0),
+        target: context.game_base_preset.camera_physical.look,
+        ..Default::default()
+    });
+}
+
+// ---------------------------- Acorn UI Functions ----------------------------
+
+#[allow(dead_code)]
 /// ## Description
 /// Allows your camera to fly freely.
 /// 
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase,`
+/// 
+/// ## Necessary functions in Zones for full functionality:
+/// * `agt_camera` in `before_2d_zone`
 /// 
 /// ## Example: 
 /// ```
@@ -144,6 +186,12 @@ fn agt_camera_get_look_dir(yaw: f32, pitch: f32) -> Vec3 {
 ///     location! {
 ///         agt_camera_3d_control_free_fly, // update camera position and look
 ///     }
+/// };
+/// 
+/// let before_2d_zone = zone! {
+///    location! {
+///        agt_camera, // camera should be here first in this Zone!
+///    }
 /// };
 /// ```
 pub fn agt_camera_3d_control_free_fly(
@@ -176,33 +224,57 @@ pub fn agt_camera_3d_control_free_fly(
     camera.look = camera.position + look_dir;
 }
 
+#[allow(dead_code)]
+/// ## Description
+/// Allows your camera walk and jump.
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase,`
+/// 
+/// ## Necessary functions in Zones for full functionality:
+/// * `agt_camera_physical` in `before_2d_zone`
+/// 
+/// ## Example: 
+/// ```
+/// let ui_input_zone = zone! {
+///     location! {
+///         agt_camera_3d_control_fps,
+///     }
+/// };
+/// 
+/// let before_2d_zone = zone! {
+///    location! {
+///        agt_camera_physical, // camera should be here first in this Zone!
+///    }
+/// };
+/// ```
 pub fn agt_camera_3d_control_fps(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
+    // take from context
     let camera = &mut context.game_base_preset.camera_physical;
     let frame_delta = &mut context.frame_delta;
 
-    // 1. Вращение (остается прежним)
+    // 1. rotate
     let mouse_delta = mouse_delta_position();
     camera.yaw -= mouse_delta.x * camera.look_speed; 
     camera.pitch += mouse_delta.y * camera.look_speed;
     camera.pitch = camera.pitch.clamp(-1.5, 1.5);
 
-    // 2. Расчет векторов направления
+    // 2. calculate look dir
     let look_dir = agt_camera_get_look_dir(camera.yaw, camera.pitch);
     
-    // Проекция вектора движения на плоскость XZ (чтобы не летать вверх/вниз)
+    // so as not to fly up/down
     let mut move_dir = vec3(look_dir.x, 0.0, look_dir.z);
     if move_dir.length_squared() > 0.0 {
         move_dir = move_dir.normalize();
     }
     
-    // Вектор «вправо» для стрейфа
     let right = move_dir.cross(vec3(0.0, 1.0, 0.0)).normalize();
 
-    // 3. Горизонтальное перемещение (W, S, A, D)
+    // 3. move
     let mut input_move = vec3(0.0, 0.0, 0.0);
     if is_key_down(KeyCode::W) { input_move += move_dir; }
     if is_key_down(KeyCode::S) { input_move -= move_dir; }
@@ -213,9 +285,9 @@ pub fn agt_camera_3d_control_fps(
         camera.position += input_move.normalize() * camera.move_speed * *frame_delta;
     }
 
-    // 4. Вертикальная физика (Гравитация и Прыжок)
+    // 4. physic + jumping
     
-    // Проверка: на земле ли мы?
+    // on the ground?
     if camera.position.y <= camera.look_height {
         camera.position.y = camera.look_height;
         camera.velocity_y = 0.0;
@@ -224,27 +296,27 @@ pub fn agt_camera_3d_control_fps(
         camera.is_grounded = false;
     }
 
-    // Прыжок (доступен только на земле)
+    // jump if on the ground
     if camera.is_grounded && is_key_pressed(KeyCode::Space) {
         camera.velocity_y = camera.jump_force;
         camera.is_grounded = false;
     }
 
-    // Применяем гравитацию, если мы в воздухе
+    // if camera fly
     if !camera.is_grounded {
         camera.velocity_y -= camera.gravity_force * *frame_delta;
     }
 
-    // Применяем вертикальную скорость к позиции
+    // vertical speed
     camera.position.y += camera.velocity_y * *frame_delta;
 
-    // Повторная проверка коллизии после изменения позиции (чтобы не провалиться на этом кадре)
+    // on the ground? Again!
     if camera.position.y < camera.look_height {
         camera.position.y = camera.look_height;
         camera.velocity_y = 0.0;
         camera.is_grounded = true;
     }
 
-    // 5. Обновление точки взгляда
+    // 5. set look for camera
     camera.look = camera.position + look_dir;
 }
