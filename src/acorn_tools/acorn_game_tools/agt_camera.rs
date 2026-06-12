@@ -227,7 +227,7 @@ pub fn agt_camera_3d_control_free_fly(
 
 #[allow(dead_code)]
 /// ## Description
-/// Allows your camera walk and jump.
+/// Allows your camera walk and jump through objects.
 /// 
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase,`
