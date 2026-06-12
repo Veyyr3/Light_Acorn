@@ -14,6 +14,7 @@ use bevy_ecs::prelude::*;
 
 // ---------------------------- Structs ----------------------------
 
+/// ## Description
 /// It is vector of your 3D models.
 /// 
 /// Add this into `AcornGlobalContext` in `acorn_settings.rs`
@@ -22,6 +23,7 @@ pub struct Acorn3DAssetDatabase {
 }
 
 #[derive(Component)]
+/// ## Description
 /// A Bevy component. Keep here transform of your 3D models.
 /// 
 /// ## Example:
@@ -41,8 +43,10 @@ pub struct Entity3DTransform {
 }
 
 #[derive(Component)]
-/// A Bevy component. Keep here index of Mesh which you want to add for your 3D entity 
-/// like this:
+/// ## Description
+/// A Bevy component. Keep here index of Mesh (3D model) from Acorn3DAssetDatabase which you want to add for your 3D entity.
+/// 
+/// ## Example
 /// ```
 /// world.spawn((
 ///     Entity3DModel {
@@ -68,6 +72,7 @@ pub struct Entity3DModel {
 }
 
 #[derive(Clone, Copy, Debug, Component)]
+/// ## Description
 /// A simple stucture for collisions. Entities have a "box" for intersection to each other.
 pub struct AcornAABB {
     pub min: Vec3,
