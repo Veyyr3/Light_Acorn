@@ -68,7 +68,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // Lord-Location.
         location! {
             example_add_circle_function, // add blue circle (press left mouse button)
-            example_runtime_spawner, // add new entity (press Space and see result in console)
+            example_runtime_spawner, // add new entity (press F and see result in console)
             example_delete_function, // (press TAB to delete functions in Minor-Location)
             // add own functions through comma
         },
@@ -155,7 +155,7 @@ fn example_draw_circle(
     draw_circle(
         screen_width()/2.0, 
         screen_height()/2.0, 
-        60.0, 
+        5.0, 
         BLUE
     )
 }
@@ -217,8 +217,8 @@ fn example_runtime_spawner(
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    // create new entity. Press Space!
-    if is_key_pressed(KeyCode::Space) {
+    // create new entity. Press F!
+    if is_key_pressed(KeyCode::F) {
         world.spawn((
             Oaks { x: 0 }, 
         ));
