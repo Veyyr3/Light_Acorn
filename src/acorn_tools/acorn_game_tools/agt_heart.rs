@@ -89,3 +89,11 @@ impl AcornAABB {
         self.min.z <= other.max.z && self.max.z >= other.min.z
     }
 }
+
+// ---------------------------- Functions ----------------------------
+
+pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
+    first.min.x <= second.max.x && first.max.x >= second.min.x &&
+    first.min.y <= second.max.y && first.max.y >= second.min.y &&
+    first.min.z <= second.max.z && first.max.z >= second.min.z
+}
