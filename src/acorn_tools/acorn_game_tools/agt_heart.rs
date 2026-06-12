@@ -73,7 +73,7 @@ pub struct Entity3DModel {
 
 #[derive(Clone, Copy, Debug, Component)]
 /// ## Description
-/// A simple stucture for collisions. Entities have a "box" for intersection to each other.
+/// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
 pub struct AcornAABB {
     pub min: Vec3,
     pub max: Vec3,
