@@ -12,6 +12,8 @@
 use macroquad::{math::Vec3, models::Mesh};
 use bevy_ecs::prelude::*;
 
+// ---------------------------- Structs ----------------------------
+
 /// It is vector of your 3D models.
 /// 
 /// Add this into `AcornGlobalContext` in `acorn_settings.rs`
@@ -63,4 +65,22 @@ pub struct Entity3DTransform {
 /// ```
 pub struct Entity3DModel {
     pub mesh_id: usize // instead of Mesh
+}
+
+#[derive(Clone, Copy, Debug, Component)]
+/// A simple stucture for collisions. Entity have a "box" for intersection to each other.
+pub struct AcornAABB {
+    pub min: Vec3,
+    pub max: Vec3,
+}
+
+// ---------------------------- Implementations ----------------------------
+
+impl AcornAABB {
+    /// intersect between two entities with AABB
+    pub fn intersects(&self, other: &AcornAABB) -> bool {
+        self.min.x <= other.max.x && self.max.x >= other.min.x &&
+        self.min.y <= other.max.y && self.max.y >= other.min.y &&
+        self.min.z <= other.max.z && self.max.z >= other.min.z
+    }
 }

@@ -14,6 +14,7 @@ use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
+use crate::acorn_tools::acorn_game_tools::prelude::*; // AABB
 use bevy_ecs::prelude::*;
 
 // ---------------------------- Structs ----------------------------
@@ -318,5 +319,135 @@ pub fn agt_camera_3d_control_fps(
     }
 
     // 5. set look for camera
+    camera.look = camera.position + look_dir;
+}
+
+/// experimental
+pub fn agt_camera_3d_control_fps_collision_experimental(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let camera = &mut context.game_base_preset.camera_physical;
+    let a = &mut context.frame_delta;
+    let dt = *a;
+
+    // --- ДЛЯ ТЕСТА: Создадим пару кубов-препятствий (в реальной игре они будут в _zones) ---
+    let environment_walls = vec![
+        // Куб в центре карты размером 2x2x2 метра
+        AcornAABB { min: vec3(-1.0, 0.0, -5.0), max: vec3(1.0, 2.0, -3.0) },
+        // Длинная стена справа
+        AcornAABB { min: vec3(4.0, 0.0, -10.0), max: vec3(5.0, 3.0, 10.0) },
+    ];
+    // ----------------------------------------------------------------------------------
+
+    // 1. Вращение
+    let mouse_delta = mouse_delta_position();
+    camera.yaw -= mouse_delta.x * camera.look_speed; 
+    camera.pitch += mouse_delta.y * camera.look_speed;
+    camera.pitch = camera.pitch.clamp(-1.5, 1.5);
+
+    // 2. Расчет векторов направления
+    let look_dir = agt_camera_get_look_dir(camera.yaw, camera.pitch);
+    let mut move_dir = vec3(look_dir.x, 0.0, look_dir.z);
+    if move_dir.length_squared() > 0.0 {
+        move_dir = move_dir.normalize();
+    }
+    let right = move_dir.cross(vec3(0.0, 1.0, 0.0)).normalize();
+
+    // 3. Расчет желаемого горизонтального смещения
+    let mut input_move = vec3(0.0, 0.0, 0.0);
+    if is_key_down(KeyCode::W) { input_move += move_dir; }
+    if is_key_down(KeyCode::S) { input_move -= move_dir; }
+    if is_key_down(KeyCode::D) { input_move += right; }
+    if is_key_down(KeyCode::A) { input_move -= right; }
+
+    let horizontal_displacement = if input_move.length_squared() > 0.0 {
+        input_move.normalize() * camera.move_speed * dt
+    } else {
+        vec3(0.0, 0.0, 0.0)
+    };
+
+    // Вспомогательная лямбда: строит AABB игрока вокруг заданной позиции Y-координата ног игрока = position.y - look_height
+    let get_player_aabb = |pos: Vec3| -> AcornAABB {
+        let radius = 0.3; // Ширина игрока (0.6 метра суммарно)
+        AcornAABB {
+            min: vec3(pos.x - radius, pos.y - camera.look_height, pos.z - radius),
+            max: vec3(pos.x + radius, pos.y, pos.z + radius),
+        }
+    };
+
+    // --- ДВИЖЕНИЕ И КОЛЛИЗИИ ПО ОСИ X ---
+    if horizontal_displacement.x != 0.0 {
+        camera.position.x += horizontal_displacement.x;
+        let player_aabb = get_player_aabb(camera.position);
+        
+        // Если пересеклись со стеной — отменяем шаг по X
+        for wall in &environment_walls {
+            if player_aabb.intersects(wall) {
+                camera.position.x -= horizontal_displacement.x;
+                break;
+            }
+        }
+    }
+
+    // --- ДВИЖЕНИЕ И КОЛЛИЗИИ ПО ОСИ Z ---
+    if horizontal_displacement.z != 0.0 {
+        camera.position.z += horizontal_displacement.z;
+        let player_aabb = get_player_aabb(camera.position);
+        
+        // Если пересеклись со стеной — отменяем шаг по Z
+        for wall in &environment_walls {
+            if player_aabb.intersects(wall) {
+                camera.position.z -= horizontal_displacement.z;
+                break;
+            }
+        }
+    }
+
+    // 4. Вертикальная физика (Гравитация, Прыжок и Коллизии по Y)
+    
+    // Прыжок (доступен только если мы стоим на земле)
+    if camera.is_grounded && is_key_pressed(KeyCode::Space) {
+        camera.velocity_y = camera.jump_force;
+        camera.is_grounded = false;
+    }
+
+    // Применяем гравитацию
+    if !camera.is_grounded {
+        camera.velocity_y -= camera.gravity_force * dt;
+    }
+
+    // Применяем вертикальный сдвиг
+    camera.position.y += camera.velocity_y * dt;
+    camera.is_grounded = false; // Сбрасываем флаг перед проверками
+
+    // Проверка коллизии по Y со стенами (потолками/платформами)
+    let player_aabb = get_player_aabb(camera.position);
+    for wall in &environment_walls {
+        if player_aabb.intersects(wall) {
+            // Если летели вниз — приземляемся НА объект
+            if camera.velocity_y < 0.0 {
+                camera.position.y = wall.max.y + camera.look_height;
+                camera.velocity_y = 0.0;
+                camera.is_grounded = true;
+            } 
+            // Если летели вверх — бьемся головой об ПОТОЛОК объекта
+            else if camera.velocity_y > 0.0 {
+                camera.position.y = wall.min.y - 0.01; // Смещаем чуть ниже потолка
+                camera.velocity_y = 0.0;
+            }
+            break;
+        }
+    }
+
+    // Самая базовая проверка «пола по умолчанию» на высоте 0 (твой старый код)
+    if camera.position.y < camera.look_height {
+        camera.position.y = camera.look_height;
+        camera.velocity_y = 0.0;
+        camera.is_grounded = true;
+    }
+
+    // 5. Обновление точки взгляда
     camera.look = camera.position + look_dir;
 }

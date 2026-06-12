@@ -19,7 +19,10 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // setup base 
     let game_base_preset = Acorn3DGameBase {
         // camera
-        camera_physical: Acorn3DCameraPhysical::default(),
+        camera_physical: Acorn3DCameraPhysical{
+            jump_force: 20.0,
+            ..Default::default()
+        },
         ..Default::default()
     };
     // =================================
