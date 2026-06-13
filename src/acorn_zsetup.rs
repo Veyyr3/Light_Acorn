@@ -26,6 +26,8 @@ use crate::{zone, location};
 use crate::acorn_tools::acorn_game_tools::prelude::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
+use std::fs::File;
+use std::io::{Read, BufReader, BufRead};
 
 /// Create here your Zones and Locations. 
 /// Add function to Location, Location to Zone.
@@ -145,6 +147,21 @@ fn example_greeting(
     _context: &mut AcornGlobalContext
 ) {
     print!("Hello, Light Acorn!");
+	if let Ok(file) = File::open("/proc/self/statm") {
+        let mut reader = BufReader::new(file);
+        let mut line = String::new();
+        if reader.read_line(&mut line).is_ok() {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() > 1 {
+                // Второе число — это Resident Set Size в страницах
+                if let Ok(pages) = parts[1].parse::<usize>() {
+                    // Обычно размер страницы равен 4096 байт (4 КБ)
+                    let memory_kb = (pages * 4096) / 1024;
+                    println!("Потребление памяти (Linux): {} КБ", memory_kb);
+                }
+            }
+        }
+    }
 }
 
 fn example_draw_circle(
