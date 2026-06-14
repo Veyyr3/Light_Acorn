@@ -5,8 +5,10 @@
 // src/acorn_esetup.rs
 
 // necessary imports
+use std::collections::HashMap; // new
 use bevy_ecs::prelude::*;
 use crate::acorn_kernel::prelude::AcornECS;
+use crate::acorn_tools::acorn_game_tools::prelude::*;
 // only for example
 use crate::acorn_zsetup::Oaks;
 
@@ -14,6 +16,11 @@ use crate::acorn_zsetup::Oaks;
 Use this file to add Bevy systems for multithreading.
 
 If you don't want then it's optional. 
+
+=======
+
+Some advise how to use Bevy resource from AcornGlobalContext:
+acorn_ecs.world.insert_resource(acorn_global_context.clone());
 */
 
 /// Add here your Bevy Systems
@@ -21,6 +28,9 @@ pub fn acorn_ecs_setup() -> AcornECS {
     let mut acorn_ecs = AcornECS::default();
 
     // Resources
+    acorn_ecs.world.insert_resource(AcornDynamicSpatialHash { // new
+        grid: HashMap::new(),
+    });
     /*
     acorn_ecs.world.insert_resource(GameSettings {
         max_oaks: 18_446_744_073_709_551_615, 
@@ -30,6 +40,9 @@ pub fn acorn_ecs_setup() -> AcornECS {
     // Systems
     acorn_ecs.schedule.add_systems((
         example_bevy_system,
+        acorn_system_populate_spatial_hash, // new
+        acorn_system_apply_push, // new
+        acorn_system_find_collisions, // new
         // add systems here
     ));
 
@@ -44,7 +57,3 @@ fn example_bevy_system(mut query: Query<&mut Oaks>) {
         oaks.x += 1; 
     }
 }
-
-
-// some advise how to use Bevy resource from AcornGlobalContext
-// acorn_ecs.world.insert_resource(acorn_global_context.clone());

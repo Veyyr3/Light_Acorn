@@ -12,4 +12,5 @@ pub mod agt_obj_parsers;
 pub mod agt_functions;
 pub mod agt_camera;
 pub mod agt_presets;
+pub mod agt_systems;
 pub mod prelude;

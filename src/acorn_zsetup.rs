@@ -102,7 +102,8 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let after_2d_zone = zone! {
         // Minor-Location
         location! {
-            acorn_debug_inspector
+            acorn_debug_inspector,
+            example_move_acorn,
             // add own functions through comma 
         }
         // add own locations through comma 
@@ -263,6 +264,10 @@ fn example_add_circle_function(
 #[derive(Component)]
 struct IsAcorn;
 
+// new
+#[derive(Component)]
+struct CanAcornMove;
+
 // spawner 3d model of acorn.
 pub fn example_spawn_acorn(
     world: &mut World, 
@@ -270,12 +275,12 @@ pub fn example_spawn_acorn(
     _context: &mut AcornGlobalContext
 ) {
     world.spawn((
-       Entity3DTransform {
+        Entity3DTransform {
             position: vec3(0.0, 1.0, 0.0),
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
-       }, 
-       Entity3DModel {
+        }, 
+        Entity3DModel {
             // WARNING: you should remember index of your 3d model
             mesh_id: 0 
 
@@ -290,10 +295,68 @@ pub fn example_spawn_acorn(
             AND write like that:
             mesh_id: ACORN_MODEL
             */
-       },
-       IsAcorn // component-marker
+        },
+        AcornSimpleAABB { // new
+            half_extents: vec3(1.0, 1.0, 1.0)
+        },
+        IsAcorn, // component-marker
     ));
     println!("Entity spawned!");
+}
+
+// new
+pub fn example_spawn_acorn_move(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    let mut i: f32 = 0.0;
+    while i  < 3.0 {
+        i += 1.0;
+        world.spawn((
+        Entity3DTransform {
+                position: vec3(i, 1.0, 0.0),
+                rotation: 0.0,
+                scale: vec3(1.0, 1.0, 1.0)
+        }, 
+        Entity3DModel {
+                // WARNING: you should remember index of your 3d model
+                mesh_id: 0 
+
+                /*
+                But you can use a trick:
+
+                // src/game_assets.rs
+                pub const ACORN_MODEL: usize = 0;
+                pub const TREE_MODEL: usize = 1;
+                pub const ROCK_MODEL: usize = 2;
+
+                AND write like that:
+                mesh_id: ACORN_MODEL
+                */
+        },
+        AcornSimpleAABB {
+            half_extents: vec3(1.0, 1.0, 1.0)
+        },
+        CanAcornMove, // component-marker
+        ));
+        println!("Entity spawned!");
+    }
+}
+
+// new
+fn example_move_acorn(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    let mut query = world.query_filtered::<&mut Entity3DTransform, With<CanAcornMove>>();
+
+    for mut i in query.iter_mut(world) {
+        if is_key_down(KeyCode::Right){
+            i.position.x -= 0.1;
+        }
+    }
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)

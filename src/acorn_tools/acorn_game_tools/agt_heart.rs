@@ -9,8 +9,9 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_heart.rs
 
-use macroquad::{math::Vec3, models::Mesh};
+use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
+use std::collections::HashMap;
 
 // ---------------------------- Structs ----------------------------
 
@@ -77,6 +78,25 @@ pub struct Entity3DModel {
 pub struct AcornAABB {
     pub min: Vec3,
     pub max: Vec3,
+}
+
+// new
+#[derive(Component)]
+pub struct AcornSimpleAABB {
+    pub half_extents: Vec3
+}
+
+// new
+#[derive(Resource, Default)]
+pub struct AcornDynamicSpatialHash {
+    // Карта: Координата клетки -> Список ID сущностей, которые в ней находятся
+    pub grid: HashMap<IVec3, Vec<Entity>>,
+}
+
+// new
+#[derive(Component, Default)]
+pub struct CollisionPush {
+    pub vector: Vec3,
 }
 
 #[derive(Component)]

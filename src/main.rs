@@ -21,6 +21,8 @@ use acorn_zsetup::{ // import functions from acorn_setup for use in Main
 use acorn_gsetup::acorn_global_setup;
 use acorn_esetup::acorn_ecs_setup;
 
+use crate::acorn_zsetup::example_spawn_acorn_move;
+
 /*
 Hi!
 
@@ -61,6 +63,12 @@ async fn main() {
         &mut acorn_global_context
     );
     example_spawn_acorn(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    // new
+    example_spawn_acorn_move( 
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context
