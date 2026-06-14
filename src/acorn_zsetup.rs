@@ -74,7 +74,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         // Location for UI input
         location! {
-            agt_camera_3d_control_fps_collision_experimental, // update camera position and look
+            agt_camera_3d_control_fps, // update camera position and look
         }
         // add own locations through comma
     };
