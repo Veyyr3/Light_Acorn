@@ -90,8 +90,9 @@ impl AcornAABB {
     }
 }
 
-// ---------------------------- Functions ----------------------------
+// ---------------------------- Public Functions ----------------------------
 
+#[allow(dead_code)]
 pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
     first.min.x <= second.max.x && first.max.x >= second.min.x &&
     first.min.y <= second.max.y && first.max.y >= second.min.y &&
