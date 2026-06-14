@@ -79,6 +79,16 @@ pub struct AcornAABB {
     pub max: Vec3,
 }
 
+#[derive(Component)]
+pub struct CollisionFlags {
+    pub can_move_pos_x: bool,
+    pub can_move_neg_x: bool,
+    pub can_move_pos_y: bool,
+    pub can_move_neg_y: bool,
+    pub can_move_pos_z: bool,
+    pub can_move_neg_z: bool,
+}
+
 // ---------------------------- Implementations ----------------------------
 
 impl AcornAABB {
