@@ -92,7 +92,7 @@ impl Acorn3DCameraPhysical {
     }
 }
 
-// ---------------------------- Implementations Default ----------------------------
+// ---------------------------- Default behaviors ----------------------------
 
 impl Default for Acorn3DCamera {
     fn default() -> Self {
@@ -322,8 +322,8 @@ pub fn agt_camera_3d_control_fps(
     camera.look = camera.position + look_dir;
 }
 
-/// experimental
-pub fn agt_camera_3d_control_fps_collision_experimental(
+// experimental
+/*pub fn agt_camera_3d_control_fps_collision_experimental(
     _world: &mut World, 
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -450,4 +450,4 @@ pub fn agt_camera_3d_control_fps_collision_experimental(
 
     // 5. Обновление точки взгляда
     camera.look = camera.position + look_dir;
-}
+}*/

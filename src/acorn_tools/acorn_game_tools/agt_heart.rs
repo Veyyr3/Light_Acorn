@@ -9,8 +9,9 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_heart.rs
 
-use macroquad::{math::Vec3, models::Mesh};
+use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
+use std::collections::HashSet;
 
 // ---------------------------- Structs ----------------------------
 
@@ -71,30 +72,73 @@ pub struct Entity3DModel {
     pub mesh_id: usize // instead of Mesh
 }
 
-#[derive(Clone, Copy, Debug, Component)]
-/// ## Description
-/// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
+#[derive(Component)]
+pub struct CollisionFlags {
+    pub can_move_pos_x: bool,
+    pub can_move_neg_x: bool,
+    pub can_move_pos_y: bool,
+    pub can_move_neg_y: bool,
+    pub can_move_pos_z: bool,
+    pub can_move_neg_z: bool,
+}
+
+#[derive(Component)]
 pub struct AcornAABB {
-    pub min: Vec3,
-    pub max: Vec3,
+    pub radius_size: Vec3,
+}
+
+// #[derive(Clone, Copy, Debug, Component)]
+// /// ## Description
+// /// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
+// pub struct AcornAABB {
+//     pub min: Vec3,
+//     pub max: Vec3,
+// }
+
+// ---------------------------- Struct (Resources) ----------------------------
+
+#[derive(Resource, Default)]
+pub struct AcornPhysicsWorld {
+    // Храним координаты занятых блоков (например, как в Minecraft или сетке уровня)
+    pub solid_blocks: HashSet<IVec3>, 
 }
 
 // ---------------------------- Implementations ----------------------------
 
-impl AcornAABB {
-    /// intersect between two entities with AABB
-    pub fn intersects(&self, other: &AcornAABB) -> bool {
-        self.min.x <= other.max.x && self.max.x >= other.min.x &&
-        self.min.y <= other.max.y && self.max.y >= other.min.y &&
-        self.min.z <= other.max.z && self.max.z >= other.min.z
+// impl AcornAABB {
+//     /// intersect between two entities with AABB
+//     pub fn intersects(&self, other: &AcornAABB) -> bool {
+//         self.min.x <= other.max.x && self.max.x >= other.min.x &&
+//         self.min.y <= other.max.y && self.max.y >= other.min.y &&
+//         self.min.z <= other.max.z && self.max.z >= other.min.z
+//     }
+// }
+
+impl AcornPhysicsWorld {
+    // Проверка одной точки: занята ли она? Время выполнения: O(1)
+    pub fn is_solid(&self, pos: Vec3) -> bool {
+        let grid_pos = IVec3::new(pos.x.round() as i32, pos.y.round() as i32, pos.z.round() as i32);
+        self.solid_blocks.contains(&grid_pos)
+    }
+}
+
+// ---------------------------- Default behaviors ----------------------------
+
+impl Default for CollisionFlags {
+    fn default() -> Self {
+        Self {
+            can_move_pos_x: true, can_move_neg_x: true,
+            can_move_pos_y: true, can_move_neg_y: true,
+            can_move_pos_z: true, can_move_neg_z: true,
+        }
     }
 }
 
 // ---------------------------- Public Functions ----------------------------
 
-#[allow(dead_code)]
-pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
-    first.min.x <= second.max.x && first.max.x >= second.min.x &&
-    first.min.y <= second.max.y && first.max.y >= second.min.y &&
-    first.min.z <= second.max.z && first.max.z >= second.min.z
-}
+// #[allow(dead_code)]
+// pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
+//     first.min.x <= second.max.x && first.max.x >= second.min.x &&
+//     first.min.y <= second.max.y && first.max.y >= second.min.y &&
+//     first.min.z <= second.max.z && first.max.z >= second.min.z
+// }
