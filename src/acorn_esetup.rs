@@ -20,6 +20,14 @@ If you don't want then it's optional.
 pub fn acorn_ecs_setup() -> AcornECS {
     let mut acorn_ecs = AcornECS::default();
 
+    // Resources
+    /*
+    acorn_ecs.world.insert_resource(GameSettings {
+        max_oaks: 18_446_744_073_709_551_615, 
+    });
+    */
+
+    // Systems
     acorn_ecs.schedule.add_systems((
         example_bevy_system,
         // add systems here
