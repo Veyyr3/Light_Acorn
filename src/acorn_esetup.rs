@@ -40,9 +40,7 @@ pub fn acorn_ecs_setup() -> AcornECS {
     // Systems
     acorn_ecs.schedule.add_systems((
         example_bevy_system,
-        acorn_system_populate_spatial_hash, // new
-        acorn_system_apply_push, // new
-        acorn_system_find_collisions, // new
+
         // add systems here
     ));
 

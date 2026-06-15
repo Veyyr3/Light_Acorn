@@ -72,20 +72,6 @@ pub struct Entity3DModel {
     pub mesh_id: usize // instead of Mesh
 }
 
-#[derive(Clone, Copy, Debug, Component)]
-/// ## Description
-/// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
-pub struct AcornAABB {
-    pub min: Vec3,
-    pub max: Vec3,
-}
-
-// new
-#[derive(Component)]
-pub struct AcornSimpleAABB {
-    pub half_extents: Vec3
-}
-
 // new
 #[derive(Resource, Default)]
 pub struct AcornDynamicSpatialHash {
@@ -97,34 +83,4 @@ pub struct AcornDynamicSpatialHash {
 #[derive(Component, Default)]
 pub struct CollisionPush {
     pub vector: Vec3,
-}
-
-#[derive(Component)]
-pub struct CollisionFlags {
-    pub can_move_pos_x: bool,
-    pub can_move_neg_x: bool,
-    pub can_move_pos_y: bool,
-    pub can_move_neg_y: bool,
-    pub can_move_pos_z: bool,
-    pub can_move_neg_z: bool,
-}
-
-// ---------------------------- Implementations ----------------------------
-
-impl AcornAABB {
-    /// intersect between two entities with AABB
-    pub fn intersects(&self, other: &AcornAABB) -> bool {
-        self.min.x <= other.max.x && self.max.x >= other.min.x &&
-        self.min.y <= other.max.y && self.max.y >= other.min.y &&
-        self.min.z <= other.max.z && self.max.z >= other.min.z
-    }
-}
-
-// ---------------------------- Public Functions ----------------------------
-
-#[allow(dead_code)]
-pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
-    first.min.x <= second.max.x && first.max.x >= second.min.x &&
-    first.min.y <= second.max.y && first.max.y >= second.min.y &&
-    first.min.z <= second.max.z && first.max.z >= second.min.z
 }

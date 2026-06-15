@@ -7,10 +7,17 @@
   Lord of the Framework: Veyyr3
 */
 
+// src/acorn_kernel/acorn_tools/acorn_game_tools/agt_systems.rs
+
 use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
-use crate::acorn_tools::acorn_game_tools::agt_heart::{AcornDynamicSpatialHash, AcornSimpleAABB, CollisionPush, Entity3DTransform};
+use crate::acorn_tools::acorn_game_tools::{agt_collisions::AcornSimpleAABB, agt_heart::{AcornDynamicSpatialHash, CollisionPush, Entity3DTransform}};
 
+/*
+Here are Bevy systems for acorn_esetup.
+*/
+
+#[allow(dead_code)]
 pub fn acorn_system_populate_spatial_hash(
     query: Query<(Entity, &Entity3DTransform, &AcornSimpleAABB)>,
     mut spatial_hash: ResMut<AcornDynamicSpatialHash>,
@@ -35,6 +42,7 @@ pub fn acorn_system_populate_spatial_hash(
     }
 }
 
+#[allow(dead_code)]
 pub fn acorn_system_find_collisions(
     mut commands: Commands,
     // Читаем позиции всех сущностей без мутаций
@@ -84,6 +92,7 @@ pub fn acorn_system_find_collisions(
     }
 }
 
+#[allow(dead_code)]
 pub fn acorn_system_apply_push(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Entity3DTransform, &CollisionPush)>,

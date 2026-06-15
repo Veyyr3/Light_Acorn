@@ -13,5 +13,6 @@ pub use crate::acorn_tools::acorn_game_tools::{
   agt_obj_parsers::*,
   agt_camera::*,
   agt_presets::*,
+  agt_collisions::*,
   agt_systems::*,
 };

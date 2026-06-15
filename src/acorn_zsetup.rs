@@ -85,15 +85,20 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_camera_physical, // camera should be here first!
             // ECS
-            example_query_ecs, // print Oaks result
+            // example_query_ecs, // print Oaks result
             // simple function
-            example_greeting, // print 'Hello, Light Acorn!'
+            // example_greeting, // print 'Hello, Light Acorn!'
             // example_update_oaks, // update ECS state. But this function also is in acorn_esetup.rs. 
             // game
             agt_draw_3d_assets, // to draw yours 3d models
             example_game_rotate_acorn, // ECS
             example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
+        },
+        location! {
+            agt_grid_create,
+            agt_grid_check_collision,
+            agt_grid_clear,
         }
         // add own locations through comma
     };   
@@ -296,8 +301,9 @@ pub fn example_spawn_acorn(
             mesh_id: ACORN_MODEL
             */
         },
-        AcornSimpleAABB { // new
-            half_extents: vec3(1.0, 1.0, 1.0)
+        AcornAABB {
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
         },
         IsAcorn, // component-marker
     ));
@@ -335,8 +341,9 @@ pub fn example_spawn_acorn_move(
                 mesh_id: ACORN_MODEL
                 */
         },
-        AcornSimpleAABB {
-            half_extents: vec3(1.0, 1.0, 1.0)
+        AcornAABB {
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
         },
         CanAcornMove, // component-marker
         ));
