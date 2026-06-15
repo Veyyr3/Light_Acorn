@@ -353,13 +353,13 @@ pub fn example_spawn_acorn_move(
 fn example_move_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
+    context: &mut AcornGlobalContext
 ) {
     let mut query = world.query_filtered::<&mut Entity3DTransform, With<CanAcornMove>>();
 
     for mut i in query.iter_mut(world) {
         if is_key_down(KeyCode::Right){
-            i.position.x -= 1.0;
+            i.position.x -= 1.0 * context.frame_delta;
         }
     }
 }
