@@ -96,7 +96,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             // add own functions through comma
         },
         location! {
-            agt_grid_create,
+            agt_2d_grid_create,
             agt_grid_check_collision,
             agt_grid_clear,
         }

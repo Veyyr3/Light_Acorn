@@ -80,7 +80,7 @@ impl Default for Acorn2DWorldGrid {
 
 // ---------------------------- Acorn Functions ----------------------------
 
-pub fn agt_grid_create(
+pub fn agt_2d_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -93,13 +93,12 @@ pub fn agt_grid_create(
         .query_filtered::<(Entity, &Entity3DTransform), With<AcornAABB>>();
 
     for (entity, transform) in query.iter(world) {
-        // Вычисляем координаты клетки на основе позиции
         let cell_x = (transform.position.x / cell_size).floor() as i32;
         let cell_y = (transform.position.y / cell_size).floor() as i32;
 
         let coord = CellCoordinates { x: cell_x, y: cell_y };
 
-        // Добавляем ID сущности в соответствующую клетку
+        // Add the entity ID to the corresponding cell
         grid.cells.entry(coord).or_insert_with(Vec::new).push(entity);
     }
 }
@@ -109,32 +108,29 @@ pub fn agt_grid_check_collision(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-    let grid = &context.game_base_preset.world_collision_grid; // Хватит и обычной ссылки &
+    let grid = &context.game_base_preset.world_collision_grid;
 
-    // Создаем QueryState на основе структуры мира
     let mut query = world.query::<(&Entity3DTransform, &AcornAABB)>();
 
-    // Фильтруем клетки, где хотя бы 2 сущности
+    // Take cells where there are at least 2 entities
     for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         
-        // Декартово произведение
+        // Check everyone with everyone (Cartesian product)
         for i in 0..entities.len() {
             for j in (i + 1)..entities.len() {
                 let entity_a = entities[i];
                 let entity_b = entities[j];
 
-                // ВАЖНО: передаем `world` как первый аргумент в метод get!
                 if let (Ok((trans_a, aabb_a)), Ok((trans_b, aabb_b))) = 
                     (query.get(world, entity_a), query.get(world, entity_b)) 
                 {
-                    // Переводим локальные AABB в мировые координаты
+                    // Local AABB to World Coordinates
                     let world_min_a = trans_a.position + aabb_a.min;
                     let world_max_a = trans_a.position + aabb_a.max;
-                    
                     let world_min_b = trans_b.position + aabb_b.min;
                     let world_max_b = trans_b.position + aabb_b.max;
 
-                    // Проверка пересечения AABB в 3D пространстве
+                    // AABB collisions
                     let is_colliding = 
                         world_min_a.x <= world_max_b.x && world_max_a.x >= world_min_b.x &&
                         world_min_a.y <= world_max_b.y && world_max_a.y >= world_min_b.y &&
@@ -142,7 +138,7 @@ pub fn agt_grid_check_collision(
 
                     if is_colliding {
                         println!(
-                            "[Grid] Столкновение в клетке ({}, {}): {:?} и {:?}", 
+                            "[Grid] collision in ({}, {}): {:?} and {:?}", 
                             coord.x, coord.y, entity_a, entity_b
                         );
                     }
@@ -157,6 +153,7 @@ pub fn agt_grid_clear(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
+    // Clear cells every frame (Sparse Spatial Grid)
     context.game_base_preset.world_collision_grid.cells.clear(); 
 }
 
