@@ -148,6 +148,165 @@ pub fn agt_grid_check_collision(
     }
 }
 
+pub fn agt_grid_do_collision_v1(
+    world: &mut World,
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+
+    // ВАЖНО: теперь нам нужен ТАКЖЕ извлекать &mut Entity3DTransform, 
+    // поэтому используем query_mut() вместо query()
+    let mut query = world.query::<(&mut Entity3DTransform, &AcornAABB)>();
+
+    // Фильтруем клетки, где хотя бы 2 сущности
+    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        
+        // Декартово произведение
+        for i in 0..entities.len() {
+            for j in (i + 1)..entities.len() {
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                // Используем get_many_mut, чтобы безопасно получить изменяемые компоненты двух РАЗНЫХ сущностей одновременно
+                if let Ok([(mut trans_a, aabb_a), (mut trans_b, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    // Переводим локальные AABB в мировые координаты
+                    let world_min_a = trans_a.position + aabb_a.min;
+                    let world_max_a = trans_a.position + aabb_a.max;
+                    let world_min_b = trans_b.position + aabb_b.min;
+                    let world_max_b = trans_b.position + aabb_b.max;
+
+                    // Вычисляем величину перекрытия (overlap) по каждой оси
+                    let overlap_x = (world_max_a.x.min(world_max_b.x)) - (world_min_a.x.max(world_min_b.x));
+                    let overlap_y = (world_max_a.y.min(world_max_b.y)) - (world_min_a.y.max(world_min_b.y));
+                    let overlap_z = (world_max_a.z.min(world_max_b.z)) - (world_min_a.z.max(world_min_b.z));
+
+                    // Если по всем осям overlap > 0, значит коллизия есть
+                    if overlap_x > 0.0 && overlap_y > 0.0 && overlap_z > 0.0 {
+                        
+                        // Ищем ось Минимального Выталкивания (MTV)
+                        if overlap_x < overlap_y && overlap_x < overlap_z {
+                            // Коллизия по оси X
+                            // Определяем направление (в какую сторону толкать)
+                            let sign = if trans_a.position.x < trans_b.position.x { -1.0 } else { 1.0 };
+                            let push_amount = overlap_x * 0.5 * sign;
+                            
+                            trans_a.position.x += push_amount;
+                            trans_b.position.x -= push_amount;
+                            
+                        } else if overlap_y < overlap_x && overlap_y < overlap_z {
+                            // Коллизия по оси Y (например, пол/потолок или прыжки)
+                            let sign = if trans_a.position.y < trans_b.position.y { -1.0 } else { 1.0 };
+                            let push_amount = overlap_y * 0.5 * sign;
+                            
+                            trans_a.position.y += push_amount;
+                            trans_b.position.y -= push_amount;
+                            
+                        } else {
+                            // Коллизия по оси Z
+                            let sign = if trans_a.position.z < trans_b.position.z { -1.0 } else { 1.0 };
+                            let push_amount = overlap_z * 0.5 * sign;
+                            
+                            trans_a.position.z += push_amount;
+                            trans_b.position.z -= push_amount;
+                        }
+
+                        println!(
+                            "[Grid] Collision resolved in ({}, {}): {:?} and {:?}", 
+                            coord.x, coord.y, entity_a, entity_b
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn agt_grid_do_collision(
+    world: &mut World,
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+
+    // Храним запланированные сдвиги для сущностей, чтобы не двигать их прямо во время итерации сетки
+    // Это решает проблему "домино", когда один сдвиг ломает проверку с третьим объектом
+    let mut pending_displacements: std::collections::HashMap<Entity, Vec3> = std::collections::HashMap::new();
+
+    // 1. ФАЗА ДЕТЕКЦИИ: Считаем, кого и куда нужно сдвинуть
+    let mut query = world.query::<(&Entity3DTransform, &AcornAABB)>();
+
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in (i + 1)..entities.len() {
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let (Ok((trans_a, aabb_a)), Ok((trans_b, aabb_b))) = 
+                    (query.get(world, entity_a), query.get(world, entity_b)) 
+                {
+                    let world_min_a = trans_a.position + aabb_a.min;
+                    let world_max_a = trans_a.position + aabb_a.max;
+                    let world_min_b = trans_b.position + aabb_b.min;
+                    let world_max_b = trans_b.position + aabb_b.max;
+
+                    // Величина перекрытия
+                    let overlap_x = (world_max_a.x.min(world_max_b.x)) - (world_min_a.x.max(world_min_b.x));
+                    let overlap_y = (world_max_a.y.min(world_max_b.y)) - (world_min_a.y.max(world_min_b.y));
+                    let overlap_z = (world_max_a.z.min(world_max_b.z)) - (world_min_a.z.max(world_min_b.z));
+
+                    if overlap_x > 0.0 && overlap_y > 0.0 && overlap_z > 0.0 {
+                        
+                        // Вычисляем вектор выталкивания для А относительно Б
+                        let mut push_vector = Vec3::ZERO;
+
+                        if overlap_x < overlap_y && overlap_x < overlap_z {
+                            // Выталкиваем по X: смотрим, какая грань ближе к выходу
+                            let sign = if (world_max_a.x - world_min_b.x).abs() < (world_max_b.x - world_min_a.x).abs() {
+                                -1.0
+                            } else {
+                                1.0
+                            };
+                            push_vector.x = overlap_x * sign;
+                        } else if overlap_y < overlap_x && overlap_y < overlap_z {
+                            // Выталкиваем по Y
+                            let sign = if (world_max_a.y - world_min_b.y).abs() < (world_max_b.y - world_min_a.y).abs() {
+                                -1.0
+                            } else {
+                                1.0
+                            };
+                            push_vector.y = overlap_y * sign;
+                        } else {
+                            // Выталкиваем по Z
+                            let sign = if (world_max_a.z - world_min_b.z).abs() < (world_max_b.z - world_min_a.z).abs() {
+                                -1.0
+                            } else {
+                                1.0
+                            };
+                            push_vector.z = overlap_z * sign;
+                        }
+
+                        // Разделяем сдвиг поровну между двумя объектами (0.5)
+                        // Объект А толкаем по вектору, Объект Б — в противоположную сторону
+                        *pending_displacements.entry(entity_a).or_insert(Vec3::ZERO) += push_vector * 0.5;
+                        *pending_displacements.entry(entity_b).or_insert(Vec3::ZERO) -= push_vector * 0.5;
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. ФАЗА РАЗРЕШЕНИЯ: Применяем накопленные сдвиги к позициям объектов
+    let mut trans_query = world.query::<&mut Entity3DTransform>();
+    for (entity, displacement) in pending_displacements {
+        if let Ok(mut trans) = trans_query.get_mut(world, entity) {
+            trans.position += displacement;
+        }
+    }
+}
+
 pub fn agt_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 

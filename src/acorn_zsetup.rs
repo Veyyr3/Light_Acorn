@@ -97,7 +97,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         location! {
             agt_2d_grid_create,
-            agt_grid_check_collision,
+            agt_grid_do_collision,
             agt_grid_clear,
         }
         // add own locations through comma
@@ -316,12 +316,10 @@ pub fn example_spawn_acorn_move(
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    let mut i: f32 = 0.0;
-    while i  < 3.0 {
-        i += 1.0;
-        world.spawn((
+
+    world.spawn((
         Entity3DTransform {
-                position: vec3(i, 1.0, 0.0),
+                position: vec3(1.0, 1.0, 0.0),
                 rotation: 0.0,
                 scale: vec3(1.0, 1.0, 1.0)
         }, 
@@ -346,9 +344,9 @@ pub fn example_spawn_acorn_move(
             max: vec3(1.0, 1.0, 1.0)
         },
         CanAcornMove, // component-marker
-        ));
-        println!("Entity spawned!");
-    }
+    ));
+    println!("Entity spawned!");
+
 }
 
 // new
@@ -361,7 +359,7 @@ fn example_move_acorn(
 
     for mut i in query.iter_mut(world) {
         if is_key_down(KeyCode::Right){
-            i.position.x -= 0.1;
+            i.position.x -= 1.0;
         }
     }
 }
