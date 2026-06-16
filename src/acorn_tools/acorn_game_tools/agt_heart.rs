@@ -50,7 +50,7 @@ pub struct AcornEntity3DTransform {
 /// ## Example
 /// ```
 /// world.spawn((
-///     Entity3DModel {
+///     AcornEntity3DModel {
 ///         // WARNING: you should remember index of your 3d model
 ///         mesh_id: 0 
 
@@ -68,7 +68,7 @@ pub struct AcornEntity3DTransform {
 ///     },
 /// ));
 /// ```
-pub struct Entity3DModel {
+pub struct AcornEntity3DModel {
     pub mesh_id: usize // instead of Mesh
 }
 

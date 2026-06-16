@@ -14,7 +14,7 @@ use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
-use crate::acorn_tools::acorn_game_tools::agt_heart::{Entity3DModel, AcornEntity3DTransform};
+use crate::acorn_tools::acorn_game_tools::agt_heart::{AcornEntity3DModel, AcornEntity3DTransform};
 use bevy_ecs::world::World;
 // for debug
 use std::fs::File;
@@ -62,7 +62,7 @@ pub fn agt_draw_3d_assets(
     let gl = acorn_get_gl_contex();
 
     let mut query = 
-        world.query::<(&AcornEntity3DTransform, &Entity3DModel)>();
+        world.query::<(&AcornEntity3DTransform, &AcornEntity3DModel)>();
 
     for (transform, mesh) in query.iter(world) {
         let model_matrix = acorn_generate_matrix(&transform);

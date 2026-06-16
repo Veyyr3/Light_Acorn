@@ -285,7 +285,7 @@ pub fn example_spawn_acorn(
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
-        Entity3DModel {
+        AcornEntity3DModel {
             // WARNING: you should remember index of your 3d model
             mesh_id: 0 
 
@@ -323,7 +323,7 @@ pub fn example_spawn_acorn_move(
                 rotation: 0.0,
                 scale: vec3(1.0, 1.0, 1.0)
         }, 
-        Entity3DModel {
+        AcornEntity3DModel {
                 // WARNING: you should remember index of your 3d model
                 mesh_id: 0 
 
