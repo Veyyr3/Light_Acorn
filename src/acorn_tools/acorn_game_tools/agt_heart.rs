@@ -30,14 +30,14 @@ pub struct Acorn3DAssetDatabase {
 /// ## Example:
 /// ```
 /// world.spawn((
-///     Entity3DTransform {
+///     AcornEntity3DTransform {
 ///         position: vec3(0.0, 1.0, 0.0),
 ///         rotation: 0.0,
 ///         scale: vec3(1.0, 1.0, 1.0)
 ///     }, 
 /// ));
 /// ```
-pub struct Entity3DTransform {
+pub struct AcornEntity3DTransform {
     pub position: Vec3,
     pub rotation: f32,
     pub scale: Vec3,

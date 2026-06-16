@@ -280,7 +280,7 @@ pub fn example_spawn_acorn(
     _context: &mut AcornGlobalContext
 ) {
     world.spawn((
-        Entity3DTransform {
+        AcornEntity3DTransform {
             position: vec3(0.0, 1.0, 0.0),
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
@@ -318,7 +318,7 @@ pub fn example_spawn_acorn_move(
 ) {
 
     world.spawn((
-        Entity3DTransform {
+        AcornEntity3DTransform {
                 position: vec3(1.0, 1.0, 0.0),
                 rotation: 0.0,
                 scale: vec3(1.0, 1.0, 1.0)
@@ -355,7 +355,7 @@ fn example_move_acorn(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-    let mut query = world.query_filtered::<&mut Entity3DTransform, With<CanAcornMove>>();
+    let mut query = world.query_filtered::<&mut AcornEntity3DTransform, With<CanAcornMove>>();
 
     for mut i in query.iter_mut(world) {
         if is_key_down(KeyCode::Right){
@@ -388,7 +388,7 @@ fn example_game_rotate_acorn(
     // Take all acorns and change rotations
     let mut query = 
         world
-        .query_filtered::<&mut Entity3DTransform, With<IsAcorn>>();
+        .query_filtered::<&mut AcornEntity3DTransform, With<IsAcorn>>();
 
     for mut i in query.iter_mut(world) {
         i.rotation += 0.1;

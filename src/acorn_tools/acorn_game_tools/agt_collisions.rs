@@ -90,7 +90,7 @@ pub fn agt_2d_grid_create(
     let grid = &mut context.game_base_preset.world_collision_grid;
 
     let mut query = world
-        .query_filtered::<(Entity, &Entity3DTransform), With<AcornAABB>>();
+        .query_filtered::<(Entity, &AcornEntity3DTransform), With<AcornAABB>>();
 
     for (entity, transform) in query.iter(world) {
         let cell_x = (transform.position.x / cell_size).floor() as i32;
@@ -110,7 +110,7 @@ pub fn agt_grid_check_collision(
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
 
-    let mut query = world.query::<(&Entity3DTransform, &AcornAABB)>();
+    let mut query = world.query::<(&AcornEntity3DTransform, &AcornAABB)>();
 
     // Take cells where there are at least 2 entities
     for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
@@ -155,9 +155,9 @@ pub fn agt_grid_do_collision_v1(
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
 
-    // ВАЖНО: теперь нам нужен ТАКЖЕ извлекать &mut Entity3DTransform, 
+    // ВАЖНО: теперь нам нужен ТАКЖЕ извлекать &mut AcornEntity3DTransform, 
     // поэтому используем query_mut() вместо query()
-    let mut query = world.query::<(&mut Entity3DTransform, &AcornAABB)>();
+    let mut query = world.query::<(&mut AcornEntity3DTransform, &AcornAABB)>();
 
     // Фильтруем клетки, где хотя бы 2 сущности
     for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
@@ -236,7 +236,7 @@ pub fn agt_grid_do_collision(
     let mut pending_displacements: std::collections::HashMap<Entity, Vec3> = std::collections::HashMap::new();
 
     // 1. ФАЗА ДЕТЕКЦИИ: Считаем, кого и куда нужно сдвинуть
-    let mut query = world.query::<(&Entity3DTransform, &AcornAABB)>();
+    let mut query = world.query::<(&AcornEntity3DTransform, &AcornAABB)>();
 
     for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
@@ -299,7 +299,7 @@ pub fn agt_grid_do_collision(
     }
 
     // 2. ФАЗА РАЗРЕШЕНИЯ: Применяем накопленные сдвиги к позициям объектов
-    let mut trans_query = world.query::<&mut Entity3DTransform>();
+    let mut trans_query = world.query::<&mut AcornEntity3DTransform>();
     for (entity, displacement) in pending_displacements {
         if let Ok(mut trans) = trans_query.get_mut(world, entity) {
             trans.position += displacement;

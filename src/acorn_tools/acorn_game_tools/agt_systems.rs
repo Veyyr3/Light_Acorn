@@ -11,7 +11,7 @@
 
 use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
-use crate::acorn_tools::acorn_game_tools::{agt_collisions::AcornSimpleAABB, agt_heart::{AcornDynamicSpatialHash, CollisionPush, Entity3DTransform}};
+use crate::acorn_tools::acorn_game_tools::{agt_collisions::AcornSimpleAABB, agt_heart::{AcornDynamicSpatialHash, CollisionPush, AcornEntity3DTransform}};
 
 /*
 Here are Bevy systems for acorn_esetup.
@@ -19,7 +19,7 @@ Here are Bevy systems for acorn_esetup.
 
 #[allow(dead_code)]
 pub fn acorn_system_populate_spatial_hash(
-    query: Query<(Entity, &Entity3DTransform, &AcornSimpleAABB)>,
+    query: Query<(Entity, &AcornEntity3DTransform, &AcornSimpleAABB)>,
     mut spatial_hash: ResMut<AcornDynamicSpatialHash>,
 ) {
     spatial_hash.grid.clear(); // Очищаем старые данные кадра
@@ -46,7 +46,7 @@ pub fn acorn_system_populate_spatial_hash(
 pub fn acorn_system_find_collisions(
     mut commands: Commands,
     // Читаем позиции всех сущностей без мутаций
-    query: Query<(Entity, &Entity3DTransform, &AcornSimpleAABB)>,
+    query: Query<(Entity, &AcornEntity3DTransform, &AcornSimpleAABB)>,
     spatial_hash: Res<AcornDynamicSpatialHash>,
 ) {
     for (entity, transform, aabb) in query.iter() {
@@ -95,7 +95,7 @@ pub fn acorn_system_find_collisions(
 #[allow(dead_code)]
 pub fn acorn_system_apply_push(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut Entity3DTransform, &CollisionPush)>,
+    mut query: Query<(Entity, &mut AcornEntity3DTransform, &CollisionPush)>,
 ) {
     for (entity, mut transform, push) in query.iter_mut() {
         transform.position += push.vector;
