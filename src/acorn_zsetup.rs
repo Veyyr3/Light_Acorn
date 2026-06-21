@@ -98,7 +98,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_2d_grid_create,
             agt_grid_do_collision,
-            agt_grid_clear,
+            agt_2d_grid_clear,
         }
         // add own locations through comma
     };   

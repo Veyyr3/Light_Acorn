@@ -307,7 +307,7 @@ pub fn agt_grid_do_collision(
     }
 }
 
-pub fn agt_grid_clear(
+pub fn agt_2d_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
