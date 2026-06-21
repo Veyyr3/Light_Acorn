@@ -75,6 +75,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // Location for UI input
         location! {
             agt_camera_3d_control_fps, // update camera position and look
+            example_speed_acorn,
         }
         // add own locations through comma
     };
@@ -97,8 +98,9 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         location! {
             agt_2d_grid_create,
-            agt_grid_do_collision,
+            agt_grid_do_simple_collision,
             agt_2d_grid_clear,
+            example_move_acorn,
         }
         // add own locations through comma
     };   
@@ -108,7 +110,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // Minor-Location
         location! {
             acorn_debug_inspector,
-            example_move_acorn,
             // add own functions through comma 
         }
         // add own locations through comma 
@@ -302,8 +303,8 @@ pub fn example_spawn_acorn(
             */
         },
         AcornAABB {
-            min: vec3(-1.0, -1.0, -1.0),
-            max: vec3(1.0, 1.0, 1.0)
+            min: vec3(-2.0, -2.0, -2.0),
+            max: vec3(2.0, 2.0, 2.0)
         },
         IsAcorn, // component-marker
     ));
@@ -319,9 +320,9 @@ pub fn example_spawn_acorn_move(
 
     world.spawn((
         AcornEntity3DTransform {
-                position: vec3(1.0, 1.0, 0.0),
-                rotation: 0.0,
-                scale: vec3(1.0, 1.0, 1.0)
+            position: vec3(5.0, 1.0, 0.0),
+            rotation: 0.0,
+            scale: vec3(1.0, 1.0, 1.0)
         }, 
         AcornEntity3DModel {
                 // WARNING: you should remember index of your 3d model
@@ -340,8 +341,11 @@ pub fn example_spawn_acorn_move(
                 */
         },
         AcornAABB {
-            min: vec3(-1.0, -1.0, -1.0),
-            max: vec3(1.0, 1.0, 1.0)
+            min: vec3(-2.0, -2.0, -2.0),
+            max: vec3(2.0, 2.0, 2.0)
+        },
+        Acorn3DSpeed {
+            speed_value: Vec3::new(0.0, 0.0, 0.0)
         },
         CanAcornMove, // component-marker
     ));
@@ -350,17 +354,33 @@ pub fn example_spawn_acorn_move(
 }
 
 // new
+fn example_speed_acorn(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let mut query = world.query_filtered::<&mut Acorn3DSpeed, With<CanAcornMove>>();
+    let dt = context.frame_delta;
+
+    for mut i in query.iter_mut(world) {
+        if is_key_down(KeyCode::Right){
+            i.speed_value.x = -1.0 * dt;
+        } else {
+            i.speed_value.x = 0.0;
+        }
+    }
+}
+
+// new
 fn example_move_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-    let mut query = world.query_filtered::<&mut AcornEntity3DTransform, With<CanAcornMove>>();
+    let mut query = world.query_filtered::<(&mut AcornEntity3DTransform, &Acorn3DSpeed), With<CanAcornMove>>();
 
-    for mut i in query.iter_mut(world) {
-        if is_key_down(KeyCode::Right){
-            i.position.x -= 1.0 * context.frame_delta;
-        }
+    for (mut transform, speed) in query.iter_mut(world) {
+        transform.position.x += speed.speed_value.x;
     }
 }
 

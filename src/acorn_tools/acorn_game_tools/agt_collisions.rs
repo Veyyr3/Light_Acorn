@@ -9,10 +9,14 @@
 
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
-use std::collections::HashMap;
 use crate::acorn_tools::acorn_game_tools::prelude::*;
+use crate::acorn_kernel::prelude::*;
+use std::collections::HashMap;
 
-use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
+use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext}; // for Acorn functions
+
+// sugar macros
+use crate::{location};
 
 // ---------------------------- Structs ----------------------------
 
@@ -35,6 +39,15 @@ pub struct CellCoordinates {
 pub struct AcornAABB {
     pub min: Vec3,
     pub max: Vec3,
+}
+
+#[derive(Debug, Clone, Component)]
+/// ## Description
+/// Speed of entities on XYZ.
+/// 
+/// Use it to add speed for your entities. It is necessary for entities moving and collisions.
+pub struct Acorn3DSpeed {
+    pub speed_value: Vec3,
 }
 
 // new
@@ -307,6 +320,61 @@ pub fn agt_grid_do_collision(
     }
 }
 
+pub fn agt_grid_do_simple_collision(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; } // Проверяем объект со всеми соседями в клетке
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                // Получаем мутабельный доступ к скорости А, и иммутабельный к Б
+                if let Ok([(trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    // Если у А скорость нулевая, проверять нечего
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    // 1. Текущее положение объекта Б (препятствие)
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // 2. ГИПОТЕТИЧЕСКОЕ положение объекта А (Текущая позиция + Желаемая скорость)
+                    let future_pos_a = trans_a.position + speed_a.speed_value;
+                    let a_future_min = future_pos_a + aabb_a.min;
+                    let a_future_max = future_pos_a + aabb_a.max;
+
+                    // Проверяем, столкнутся ли они в будущем кадре
+                    let will_collide = 
+                        a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
+                        a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
+                        a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
+
+                    if will_collide {
+                        // Пофигукс! Столкновение неизбежно. Гасим скорость.
+                        // Для идеального скольжения вдоль стен можно гасить только ту ось, 
+                        // которая пересекает границу, но для "Simple Collision" — обнуляем вектор целиком:
+                        speed_a.speed_value = Vec3::ZERO;
+                        
+                        // Или альтернативный вариант (проверка по осям):
+                        // Из-за дискретности шага обнуление всего Vec3 гарантирует 100% остановку без проваливания.
+                        
+                        println!("[Agt Физика] Скорость сущности {:?} погашена перед {:?}", entity_a, entity_b);
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub fn agt_2d_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -324,3 +392,6 @@ pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> boo
     first.min.y <= second.max.y && first.max.y >= second.min.y &&
     first.min.z <= second.max.z && first.max.z >= second.min.z
 }
+
+// ---------------------------- Acorn Functions Sets ----------------------------
+// const AGT_SIMPLE_COLLISION: (AcornFunction, AcornFunction, AcornFunction) = (agt_2d_grid_create, agt_grid_do_simple_collision, agt_2d_grid_clear);
