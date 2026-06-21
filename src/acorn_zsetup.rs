@@ -75,7 +75,6 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // Location for UI input
         location! {
             agt_camera_3d_control_fps, // update camera position and look
-            example_speed_acorn,
         }
         // add own locations through comma
     };
@@ -97,11 +96,12 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             // add own functions through comma
         },
         location! {
+            example_speed_acorn,
             agt_2d_grid_create,
             agt_grid_do_simple_collision,
             agt_2d_grid_clear,
             example_move_acorn,
-        }
+        },
         // add own locations through comma
     };   
 
@@ -306,6 +306,9 @@ pub fn example_spawn_acorn(
             min: vec3(-2.0, -2.0, -2.0),
             max: vec3(2.0, 2.0, 2.0)
         },
+        Acorn3DSpeed {
+            speed_value: Vec3::ZERO
+        },
         IsAcorn, // component-marker
     ));
     println!("Entity spawned!");
@@ -345,7 +348,7 @@ pub fn example_spawn_acorn_move(
             max: vec3(2.0, 2.0, 2.0)
         },
         Acorn3DSpeed {
-            speed_value: Vec3::new(0.0, 0.0, 0.0)
+            speed_value: Vec3::ZERO
         },
         CanAcornMove, // component-marker
     ));
