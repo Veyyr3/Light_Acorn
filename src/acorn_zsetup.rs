@@ -98,7 +98,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             example_speed_acorn,
             agt_2d_grid_create,
-            agt_grid_do_slide_collision,
+            agt_2d_grid_do_slide_collision,
             agt_2d_grid_clear,
             example_move_acorn,
         },

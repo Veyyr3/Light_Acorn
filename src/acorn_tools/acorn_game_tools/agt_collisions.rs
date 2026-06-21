@@ -10,13 +10,9 @@
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 use crate::acorn_tools::acorn_game_tools::prelude::*;
-use crate::acorn_kernel::prelude::*;
 use std::collections::HashMap;
-
-use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext}; // for Acorn functions
-
-// sugar macros
-use crate::{location};
+// for Acorn functions
+use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
 
 // ---------------------------- Structs ----------------------------
 
@@ -93,6 +89,7 @@ impl Default for Acorn2DWorldGrid {
 
 // ---------------------------- Acorn Functions ----------------------------
 
+// ====== fn about 2d grid ======
 pub fn agt_2d_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -116,7 +113,30 @@ pub fn agt_2d_grid_create(
     }
 }
 
-pub fn agt_grid_check_collision(
+pub fn agt_2d_grid_clear(
+    _world: &mut World,
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // Clear cells every frame (Sparse Spatial Grid)
+    context.game_base_preset.world_collision_grid.cells.clear(); 
+}
+
+pub fn agt_2d_grid_count_cells(
+    _world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    
+    let cells_count = grid.cells.len();
+    
+    // Выводим каждый кадр в консоль
+    println!("[Acorn Grid] Cells in grid: {}", cells_count);
+}
+
+// ====== fn about 2d grid collision ======
+pub fn agt_2d_grid_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -151,7 +171,7 @@ pub fn agt_grid_check_collision(
 
                     if is_colliding {
                         println!(
-                            "[Grid] collision in ({}, {}): {:?} and {:?}", 
+                            "[Acorn Grid] collision in ({}, {}): {:?} and {:?}", 
                             coord.x, coord.y, entity_a, entity_b
                         );
                     }
@@ -161,7 +181,7 @@ pub fn agt_grid_check_collision(
     }
 }
 
-pub fn agt_grid_do_simple_collision(
+pub fn agt_2d_grid_do_simple_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -216,7 +236,7 @@ pub fn agt_grid_do_simple_collision(
     }
 }
 
-pub fn agt_grid_do_slide_collision(
+pub fn agt_2d_grid_do_slide_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -302,7 +322,7 @@ pub fn agt_grid_do_slide_collision(
     }
 }
 
-pub fn agt_grid_do_independent_collision(
+pub fn agt_2d_grid_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -391,7 +411,7 @@ pub fn agt_grid_do_independent_collision(
     }
 }
 
-pub fn agt_grid_do_independent_collision_profiler(
+pub fn agt_2d_grid_do_independent_collision_profiler(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -485,7 +505,7 @@ pub fn agt_grid_do_independent_collision_profiler(
     }
 }
 
-pub fn agt_grid_do_predict_independent_collision(
+pub fn agt_2d_grid_do_predict_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -568,15 +588,6 @@ pub fn agt_grid_do_predict_independent_collision(
             }
         }
     }
-}
-
-pub fn agt_2d_grid_clear(
-    _world: &mut World,
-    _zones: &mut AcornZoneContext, 
-    context: &mut AcornGlobalContext
-) {
-    // Clear cells every frame (Sparse Spatial Grid)
-    context.game_base_preset.world_collision_grid.cells.clear(); 
 }
 
 // ---------------------------- Public Functions ----------------------------
