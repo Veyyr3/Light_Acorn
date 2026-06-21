@@ -90,6 +90,7 @@ impl Default for Acorn2DWorldGrid {
 // ---------------------------- Acorn Functions ----------------------------
 
 // ====== fn about 2d grid ======
+#[allow(dead_code)]
 pub fn agt_2d_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -113,6 +114,7 @@ pub fn agt_2d_grid_create(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -122,6 +124,7 @@ pub fn agt_2d_grid_clear(
     context.game_base_preset.world_collision_grid.cells.clear(); 
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_count_cells(
     _world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -144,6 +147,7 @@ pub fn agt_2d_grid_count_cells(
 }
 
 // ====== fn about 2d grid collision ======
+#[allow(dead_code)]
 pub fn agt_2d_grid_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -189,6 +193,7 @@ pub fn agt_2d_grid_check_collision(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_do_simple_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -244,6 +249,7 @@ pub fn agt_2d_grid_do_simple_collision(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_do_slide_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -330,6 +336,7 @@ pub fn agt_2d_grid_do_slide_collision(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -419,6 +426,7 @@ pub fn agt_2d_grid_do_independent_collision(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_do_independent_collision_profiler(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -513,6 +521,7 @@ pub fn agt_2d_grid_do_independent_collision_profiler(
     }
 }
 
+#[allow(dead_code)]
 pub fn agt_2d_grid_do_predict_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
