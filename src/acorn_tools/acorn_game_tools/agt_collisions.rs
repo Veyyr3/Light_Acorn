@@ -129,10 +129,18 @@ pub fn agt_2d_grid_count_cells(
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
     
-    let cells_count = grid.cells.len();
+    let total_cells = grid.cells.len();
     
-    // Выводим каждый кадр в консоль
-    println!("[Acorn Grid] Cells in grid: {}", cells_count);
+    let hot_cells = grid.cells
+        .values()
+        .filter(|entities| entities.len() >= 2)
+        .count();
+    
+    println!(
+        "[Acorn Grid] Cells in grid: {} | Grids wtih >=2 entities: {}", 
+        total_cells, 
+        hot_cells
+    );
 }
 
 // ====== fn about 2d grid collision ======
