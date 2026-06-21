@@ -86,7 +86,7 @@ impl Default for Acorn2DWorldGrid {
     fn default() -> Self {
         Self {
             cells: HashMap::new(),
-            cell_size: 2.0,
+            cell_size: 10.0,
         }
     }
 }
@@ -209,6 +209,360 @@ pub fn agt_grid_do_simple_collision(
                         // Из-за дискретности шага обнуление всего Vec3 гарантирует 100% остановку без проваливания.
                         
                         println!("[Agt Физика] Скорость сущности {:?} погашена перед {:?}", entity_a, entity_b);
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn agt_grid_do_slide_collision(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&mut AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; }
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let Ok([(mut trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // --- 1. ТЕСТ И ДВИЖЕНИЕ ПО ОСИ X ---
+                    if speed_a.speed_value.x != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.max;
+
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_x {
+                            speed_a.speed_value.x = 0.0; // Врезались — никуда не идем по X
+                        } else {
+                            // Путь свободен! Продвигаем трансформ по X прямо СЕЙЧАС, 
+                            // чтобы тест оси Z видел нашу новую ЧЕСТНУЮ позицию вне стены
+                            trans_a.position.x += speed_a.speed_value.x;
+                            speed_a.speed_value.x = 0.0; // Сбрасываем, так как уже применили
+                        }
+                    }
+
+                    // --- 2. ТЕСТ И ДВИЖЕНИЕ ПО ОСИ Y ---
+                    if speed_a.speed_value.y != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.max;
+
+                        let collide_y = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_y {
+                            speed_a.speed_value.y = 0.0;
+                        } else {
+                            trans_a.position.y += speed_a.speed_value.y;
+                            speed_a.speed_value.y = 0.0;
+                        }
+                    }
+
+                    // --- 3. ТЕСТ И ДВИЖЕНИЕ ПО ОСИ Z ---
+                    if speed_a.speed_value.z != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.max;
+
+                        let collide_z = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z {
+                            speed_a.speed_value.z = 0.0;
+                        } else {
+                            trans_a.position.z += speed_a.speed_value.z;
+                            speed_a.speed_value.z = 0.0;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+pub fn agt_grid_do_independent_collision(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; } // Не проверяем самого себя
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let Ok([(trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    // Текущие мировые границы объекта Б (препятствие)
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // Текущие мировые границы объекта А (без учёта скорости)
+                    let a_curr_min = trans_a.position + aabb_a.min;
+                    let a_curr_max = trans_a.position + aabb_a.max;
+
+                    // --- НЕЗАВИСИМЫЙ ТЕСТ ПО ОСИ X ---
+                    if speed_a.speed_value.x != 0.0 {
+                        // Сдвигаем текущие границы А только по X
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.x += speed_a.speed_value.x;
+                        a_test_max.x += speed_a.speed_value.x;
+
+                        // Проверяем пересечение с Б (Y и Z берутся исходные, без движения)
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_x {
+                            speed_a.speed_value.x = 0.0; // Врезались по X — блокируем только X
+                        }
+                    }
+
+                    // --- НЕЗАВИСИМЫЙ ТЕСТ ПО ОСИ Y ---
+                    if speed_a.speed_value.y != 0.0 {
+                        // Сдвигаем текущие границы А только по Y
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.y += speed_a.speed_value.y;
+                        a_test_max.y += speed_a.speed_value.y;
+
+                        let collide_y = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_y {
+                            speed_a.speed_value.y = 0.0; // Врезались по Y — блокируем только Y
+                        }
+                    }
+
+                    // --- НЕЗАВИСИМЫЙ ТЕСТ ПО ОСИ Z ---
+                    if speed_a.speed_value.z != 0.0 {
+                        // Сдвигаем текущие границы А только по Z
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.z += speed_a.speed_value.z;
+                        a_test_max.z += speed_a.speed_value.z;
+
+                        let collide_z = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z {
+                            speed_a.speed_value.z = 0.0; // Врезались по Z — блокируем только Z
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn agt_grid_do_independent_collision_profiler(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; }
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let Ok([(trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    let a_curr_min = trans_a.position + aabb_a.min;
+                    let a_curr_max = trans_a.position + aabb_a.max;
+
+                    // Запоминаем исходную скорость для профайлера
+                    let original_speed = speed_a.speed_value;
+
+                    // --- ТЕСТ ПО ОСИ X ---
+                    if speed_a.speed_value.x != 0.0 {
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.x += speed_a.speed_value.x;
+                        a_test_max.x += speed_a.speed_value.x;
+
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_x {
+                            speed_a.speed_value.x = 0.0;
+                            println!(
+                                "[PROFILER X] Entity {:?} blocked by {:?}.\n -> MoveX: {}\n -> A_test_X: [{}..{}], B_X: [{}..{}]\n -> A_curr_Z: [{}..{}], B_Z: [{}..{}]",
+                                entity_a, entity_b, original_speed.x, a_test_min.x, a_test_max.x, b_min.x, b_max.x, a_curr_min.z, a_curr_max.z, b_min.z, b_max.z
+                            );
+                        }
+                    }
+
+                    // --- ТЕСТ ПО ОСИ Y ---
+                    if speed_a.speed_value.y != 0.0 {
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.y += speed_a.speed_value.y;
+                        a_test_max.y += speed_a.speed_value.y;
+
+                        let collide_y = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_y {
+                            speed_a.speed_value.y = 0.0;
+                        }
+                    }
+
+                    // --- ТЕСТ ПО ОСИ Z ---
+                    if speed_a.speed_value.z != 0.0 {
+                        let mut a_test_min = a_curr_min;
+                        let mut a_test_max = a_curr_max;
+                        a_test_min.z += speed_a.speed_value.z;
+                        a_test_max.z += speed_a.speed_value.z;
+
+                        let collide_z = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z {
+                            speed_a.speed_value.z = 0.0;
+                            println!(
+                                "[PROFILER Z] Entity {:?} blocked by {:?}.\n -> MoveZ: {}\n -> A_test_Z: [{}..{}], B_Z: [{}..{}]\n -> A_curr_X: [{}..{}], B_X: [{}..{}]",
+                                entity_a, entity_b, original_speed.z, a_test_min.z, a_test_max.z, b_min.z, b_max.z, a_curr_min.x, a_curr_max.x, b_min.x, b_max.x
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn agt_grid_do_predict_independent_collision(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; }
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let Ok([(trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // Текущие границы объекта А без движения
+                    let a_curr_min = trans_a.position + aabb_a.min;
+                    let a_curr_max = trans_a.position + aabb_a.max;
+
+                    // Проверяем, пересекаются ли объекты по осям ПРЯМО СЕЙЧАС (до движения)
+                    let already_overlap_x = a_curr_min.x < b_max.x && a_curr_max.x > b_min.x;
+                    let already_overlap_y = a_curr_min.y < b_max.y && a_curr_max.y > b_min.y;
+                    let already_overlap_z = a_curr_min.z < b_max.z && a_curr_max.z > b_min.z;
+
+                    // --- 1. ТЕСТ ПО ОСИ X ---
+                    if speed_a.speed_value.x != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.max;
+
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        // Блокируем X только если мы движемся вглубь объекта. 
+                        // Если мы уже пересекались по Y и Z, и движемся ЕЩЕ И по X в стену — гасим.
+                        if collide_x && (!already_overlap_x || (already_overlap_y && already_overlap_z)) {
+                            speed_a.speed_value.x = 0.0;
+                        }
+                    }
+
+                    // --- 2. ТЕСТ ПО ОСИ Y ---
+                    if speed_a.speed_value.y != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, speed_a.speed_value.y, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, speed_a.speed_value.y, 0.0) + aabb_a.max;
+
+                        let collide_y = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_y && (!already_overlap_y || (speed_a.speed_value.x == 0.0 && already_overlap_z)) {
+                            speed_a.speed_value.y = 0.0;
+                        }
+                    }
+
+                    // --- 3. ТЕСТ ПО ОСИ Z ---
+                    if speed_a.speed_value.z != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, speed_a.speed_value.y, speed_a.speed_value.z) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, speed_a.speed_value.y, speed_a.speed_value.z) + aabb_a.max;
+
+                        let collide_z = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z && (!already_overlap_z || (speed_a.speed_value.x == 0.0 && already_overlap_y)) {
+                            speed_a.speed_value.z = 0.0;
+                        }
                     }
                 }
             }

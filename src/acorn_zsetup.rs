@@ -98,7 +98,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             example_speed_acorn,
             agt_2d_grid_create,
-            agt_grid_do_simple_collision,
+            agt_grid_do_slide_collision,
             agt_2d_grid_clear,
             example_move_acorn,
         },
@@ -303,8 +303,8 @@ pub fn example_spawn_acorn(
             */
         },
         AcornAABB {
-            min: vec3(-2.0, -2.0, -2.0),
-            max: vec3(2.0, 2.0, 2.0)
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
         },
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
@@ -344,8 +344,8 @@ pub fn example_spawn_acorn_move(
                 */
         },
         AcornAABB {
-            min: vec3(-2.0, -2.0, -2.0),
-            max: vec3(2.0, 2.0, 2.0)
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
         },
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
@@ -367,10 +367,16 @@ fn example_speed_acorn(
 
     for mut i in query.iter_mut(world) {
         if is_key_down(KeyCode::Right){
-            i.speed_value.x = -1.0 * dt;
+            i.speed_value.x = -2.0 * dt;
         } else {
             i.speed_value.x = 0.0;
         }
+        if is_key_down(KeyCode::Left) {
+            i.speed_value.z = 2.0 * dt;
+        } else {
+            i.speed_value.z = 0.0;
+        }
+
     }
 }
 
@@ -378,12 +384,14 @@ fn example_speed_acorn(
 fn example_move_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
-    context: &mut AcornGlobalContext
+    _context: &mut AcornGlobalContext
 ) {
     let mut query = world.query_filtered::<(&mut AcornEntity3DTransform, &Acorn3DSpeed), With<CanAcornMove>>();
 
     for (mut transform, speed) in query.iter_mut(world) {
         transform.position.x += speed.speed_value.x;
+        transform.position.y += speed.speed_value.y;
+        transform.position.z += speed.speed_value.z;
     }
 }
 
