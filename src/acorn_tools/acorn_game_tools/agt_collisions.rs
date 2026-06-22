@@ -407,10 +407,9 @@ pub fn agt_xz_grid_do_slide_collision(
     context: &mut AcornGlobalContext
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
-    // Возвращаем иммутабельный трансформ, мутабельную скорость
     let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
 
-    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
             for j in 0..entities.len() {
                 if i == j { continue; } 
@@ -426,7 +425,7 @@ pub fn agt_xz_grid_do_slide_collision(
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // --- ТЕСТ ПО ОСИ X ---
+                    // --- TEST X AXIS ---
                     if speed_a.speed_value.x != 0.0 {
                         let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.min;
                         let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.max;
@@ -437,17 +436,16 @@ pub fn agt_xz_grid_do_slide_collision(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_x {
-                            // Перенаправляем скорость: сохраняем знак движения по X, 
-                            // но добавляем эту кинетическую энергию к оси Z!
+                            // Add the speed from X to Z.
                             let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
                             speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
                             
-                            // Гасим оригинальный X
+                            // X velocity is zero
                             speed_a.speed_value.x = 0.0; 
                         }
                     }
 
-                    // --- ТЕСТ ПО ОСИ Z ---
+                    // --- TEST Z AXIS ---
                     if speed_a.speed_value.z != 0.0 {
                         let a_test_min = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.min;
                         let a_test_max = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.max;
@@ -458,15 +456,16 @@ pub fn agt_xz_grid_do_slide_collision(
                             a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
 
                         if collide_z {
-                            // Если врезались по Z — аналогично переносим остаток в X (если там свободно)
+                            // Add the speed from X to Z.
                             let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
                             speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
                             
+                            // Z velocity is zero
                             speed_a.speed_value.z = 0.0;
                         }
                     }
 
-                    // --- ТЕСТ ПО ОСИ Y (Высота/Гравитация) ---
+                    // --- TEST Y AXIS ---
                     if speed_a.speed_value.y != 0.0 {
                         let a_test_min = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.min;
                         let a_test_max = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.max;
@@ -480,7 +479,6 @@ pub fn agt_xz_grid_do_slide_collision(
                             speed_a.speed_value.y = 0.0;
                         }
                     }
-
                 }
             }
         }
@@ -498,7 +496,7 @@ pub fn agt_xz_grid_do_independent_collision(
     let grid = &context.game_base_preset.world_collision_grid;
     let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
 
-    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
             for j in 0..entities.len() {
                 if i == j { continue; } // Не проверяем самого себя
@@ -590,7 +588,7 @@ pub fn agt_xz_grid_debug_do_independent_collision(
     let grid = &context.game_base_preset.world_collision_grid;
     let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
 
-    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
             for j in 0..entities.len() {
                 if i == j { continue; }
@@ -687,7 +685,7 @@ pub fn agt_xz_grid_do_predict_independent_collision(
     let grid = &context.game_base_preset.world_collision_grid;
     let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
 
-    for (coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
             for j in 0..entities.len() {
                 if i == j { continue; }
