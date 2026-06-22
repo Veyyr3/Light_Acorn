@@ -61,6 +61,8 @@ pub fn agt_draw_3d_assets(
 ) {
     let gl = acorn_get_gl_contex();
 
+    let db_assets = &context.game_base_preset.assets_3d.meshes;
+
     let mut query = 
         world.query::<(&AcornEntity3DTransform, &AcornEntity3DModel)>();
 
@@ -73,14 +75,14 @@ pub fn agt_draw_3d_assets(
         You may change to if/else branching for safety
         But I use perfomance mode
 
-        if let Some(mesh) = context.assets_3d.meshes.get(mesh.mesh_id) {
+        if let Some(mesh) = db_assets.get(mesh.mesh_id) {
             draw_mesh(mesh);
         } else {
             println!("oops...")
         }
         */
 
-        draw_mesh(&context.assets_3d.meshes[mesh.mesh_id]);
+        draw_mesh(&db_assets[mesh.mesh_id]);
 
         gl.pop_model_matrix();
     }

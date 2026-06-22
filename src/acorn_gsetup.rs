@@ -17,7 +17,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
 
     // =================================
     // setup base 
-    let game_base_preset = Acorn3DGameBase {
+    let mut game_base_preset = Acorn3DGameBase {
         // camera
         camera_physical: Acorn3DCameraPhysical{
             position: vec3(10.0, 1.8, 0.0),
@@ -38,7 +38,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
 
     // =================================
     // Keep 3d models in assets database.
-    let mut assets_3d = Acorn3DAssetDatabase {meshes: Vec::new()};
+    let assets_3d = &mut game_base_preset.assets_3d;
 
     // Add your .obj files with push.
     // PLEASE, remember index of your 3d models when you add news.
@@ -56,6 +56,5 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         // suggestion for game
         game_base_preset,
         frame_delta,
-        assets_3d,
     }
 }

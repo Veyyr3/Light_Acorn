@@ -28,9 +28,6 @@ pub fn acorn_ecs_setup() -> AcornECS {
     let mut acorn_ecs = AcornECS::default();
 
     // Resources
-    acorn_ecs.world.insert_resource(AcornDynamicSpatialHash { // new
-        grid: HashMap::new(),
-    });
     /*
     acorn_ecs.world.insert_resource(GameSettings {
         max_oaks: 18_446_744_073_709_551_615, 

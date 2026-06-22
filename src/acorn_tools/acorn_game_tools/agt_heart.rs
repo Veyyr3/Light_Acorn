@@ -11,7 +11,6 @@
 
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
-use std::collections::HashMap;
 
 // ---------------------------- Structs ----------------------------
 
@@ -72,15 +71,12 @@ pub struct AcornEntity3DModel {
     pub mesh_id: usize // instead of Mesh
 }
 
-// new
-#[derive(Resource, Default)]
-pub struct AcornDynamicSpatialHash {
-    // Карта: Координата клетки -> Список ID сущностей, которые в ней находятся
-    pub grid: HashMap<IVec3, Vec<Entity>>,
-}
+// ---------------------------- Default behaviors ----------------------------
 
-// new
-#[derive(Component, Default)]
-pub struct CollisionPush {
-    pub vector: Vec3,
+impl Default for Acorn3DAssetDatabase {
+    fn default() -> Self {
+        Self {
+            meshes: Vec::new(),
+        }
+    }
 }
