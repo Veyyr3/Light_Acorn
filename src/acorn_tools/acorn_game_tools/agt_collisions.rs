@@ -297,7 +297,7 @@ pub fn agt_xz_grid_debug_check_collision(
 
 #[allow(dead_code)]
 /// ## Description
-/// Function for debug place collision.
+/// Function for collision between 2 entities. The function resets the speed (XYZ) for an entity if its future position collides with another entity.
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -360,6 +360,22 @@ pub fn agt_xz_grid_do_simple_collision(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Function for collision between 2 entities. This function adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_slide_collision, // <-
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
+/// },
+/// ```
+///  
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_do_slide_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -447,6 +463,8 @@ pub fn agt_xz_grid_do_slide_collision(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// This function for future. Ignore this because `agt_xz_grid_do_simple_collision` is better for perfomance.
 pub fn agt_xz_grid_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -537,6 +555,8 @@ pub fn agt_xz_grid_do_independent_collision(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// This function for future. Ignore this because `agt_xz_grid_do_simple_collision` is better for perfomance.
 pub fn agt_xz_grid_debug_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -632,6 +652,8 @@ pub fn agt_xz_grid_debug_do_independent_collision(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// This function for future. Ignore this because `agt_xz_grid_do_simple_collision` is better for perfomance.
 pub fn agt_xz_grid_do_predict_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -720,6 +742,60 @@ pub fn agt_xz_grid_do_predict_independent_collision(
 // ====== fn about collision and entities ======
 
 #[allow(dead_code)]
+/// ## Description
+/// Function to move entities. The function gets all speed (XYZ) from each entity and applies speed to position.
+/// 
+/// **You can copy this function and create own to filter by type entities (example, Goblin, Orc) through With<Component> for multithreading.** But you also need to rewrite this function into Bevy system and add to `acorn_esetup` for begin multithreading.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_simple_collision, // use any type collision
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // <-
+/// },
+/// ```
+///  
+/// **But you also need create own function to update speed of entities. Example:**
+/// ```
+/// fn example_speed_your_entity(
+///     world: &mut World, 
+///     _zones: &mut AcornZoneContext, 
+///     context: &mut AcornGlobalContext
+/// ) {
+///     let mut query = world.query_filtered::<&mut Acorn3DSpeed, With<YourTypeEntity>>();
+/// 
+///     // it's important thing. The speed of the camera and objects will not depend on FPS.
+///     let dt = context.frame_delta; 
+/// 
+///     for mut i in query.iter_mut(world) {
+///         if is_key_down(KeyCode::Right){
+///             i.speed_value.x = 2.0 * dt;
+///         } else {
+///             i.speed_value.x = 0.0;
+///         }
+/// 
+///         if is_key_down(KeyCode::Left){
+///             i.speed_value.x = -2.0 * dt;
+///         } else {
+///             i.speed_value.x = 0.0;
+///         }
+///     }
+/// }
+/// ```
+/// 
+/// **And put your speed function BEFORE Location with collision functions (or in `ui_input_zone`):**
+/// ```
+/// location! {
+///     example_speed_your_entity, // <- your function
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_simple_collision, // use any type collision
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, 
+/// }, 
+/// ```
 pub fn agt_do_entities_move(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -735,6 +811,22 @@ pub fn agt_do_entities_move(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Function for to move entities. The function gets all speed (XYZ) from each entity and applies speed to position.
+/// 
+/// **You can copy this function and create own to filter by type entities (example, Goblin, Orc) through With<Component> for multithreading.** But you also need to rewrite this function into Bevy system and add to `acorn_esetup` for begin multithreading.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_debug_entities_aabb_draw, // <-
+///     agt_xz_grid_do_simple_collision, // use any type collision
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
+/// },
+/// ```
 pub fn agt_debug_entities_aabb_draw(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -743,20 +835,15 @@ pub fn agt_debug_entities_aabb_draw(
     let mut query = world.query::<(&AcornEntity3DTransform, &AcornAABB)>();
 
     for (transform, aabb) in query.iter(world) {
-        // 1. Переводим локальные границы AABB в мировые координаты
         let world_min = transform.position + aabb.min;
         let world_max = transform.position + aabb.max;
 
-        // 2. Вычисляем точный геометрический центр коробки в мире
         let position = (world_min + world_max) * 0.5;
 
-        // 3. Вычисляем полный размер коробки по трем осям (длина, высота, ширина)
         let size = world_max - world_min;
 
-        // Зеленый (или красный/бирюзовый) цвет традиционно хорош для хитбоксов
         let color = RED;
 
-        // Отрисовка каркаса хитбокса сущности
         draw_cube(position, size, None, color);
     }
 }

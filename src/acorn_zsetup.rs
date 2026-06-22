@@ -373,12 +373,12 @@ fn example_speed_acorn(
         } else {
             i.speed_value.x = 0.0;
         }
+
         if is_key_down(KeyCode::Left) {
             i.speed_value.z = 2.0 * dt;
         } else {
             i.speed_value.z = 0.0;
         }
-
     }
 }
 
