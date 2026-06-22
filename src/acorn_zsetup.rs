@@ -101,7 +101,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             agt_xz_grid_do_slide_collision,
             agt_xz_grid_debug_draw,
             agt_xz_grid_clear,
-            example_move_acorn,
+            agt_do_entities_move,
         },
         // add own locations through comma
     };   
@@ -378,21 +378,6 @@ fn example_speed_acorn(
             i.speed_value.z = 0.0;
         }
 
-    }
-}
-
-// new
-fn example_move_acorn(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    let mut query = world.query_filtered::<(&mut AcornEntity3DTransform, &Acorn3DSpeed), With<CanAcornMove>>();
-
-    for (mut transform, speed) in query.iter_mut(world) {
-        transform.position.x += speed.speed_value.x;
-        transform.position.y += speed.speed_value.y;
-        transform.position.z += speed.speed_value.z;
     }
 }
 

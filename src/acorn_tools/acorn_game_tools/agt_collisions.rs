@@ -90,6 +90,7 @@ impl Default for Acorn2DWorldGrid {
 // ---------------------------- Acorn Functions ----------------------------
 
 // ====== fn about XZ grid ======
+
 #[allow(dead_code)]
 pub fn agt_xz_grid_create(
     world: &mut World, 
@@ -171,7 +172,8 @@ pub fn agt_xz_grid_debug_draw(
     }
 }
 
-// ====== fn about 2d grid collision ======
+// ====== fn about XZ grid collision ======
+
 #[allow(dead_code)]
 pub fn agt_xz_grid_debug_check_collision(
     world: &mut World,
@@ -629,6 +631,23 @@ pub fn agt_xz_grid_do_predict_independent_collision(
                 }
             }
         }
+    }
+}
+
+// ====== fn about collision and entities ======
+
+#[allow(dead_code)]
+pub fn agt_do_entities_move(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    _context: &mut AcornGlobalContext
+) {
+    let mut query = world.query::<(&mut AcornEntity3DTransform, &Acorn3DSpeed)>();
+
+    for (mut entity_transform, entity_speed) in query.iter_mut(world) {
+        entity_transform.position.x += entity_speed.speed_value.x;
+        entity_transform.position.y += entity_speed.speed_value.y;
+        entity_transform.position.z += entity_speed.speed_value.z;
     }
 }
 
