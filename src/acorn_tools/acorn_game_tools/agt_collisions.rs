@@ -89,9 +89,9 @@ impl Default for Acorn2DWorldGrid {
 
 // ---------------------------- Acorn Functions ----------------------------
 
-// ====== fn about 2d grid ======
+// ====== fn about XZ grid ======
 #[allow(dead_code)]
-pub fn agt_2d_grid_create(
+pub fn agt_xz_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -115,7 +115,7 @@ pub fn agt_2d_grid_create(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_clear(
+pub fn agt_xz_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -125,7 +125,7 @@ pub fn agt_2d_grid_clear(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_debug_count_cells(
+pub fn agt_xz_grid_debug_count_cells(
     _world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -147,7 +147,7 @@ pub fn agt_2d_grid_debug_count_cells(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_debug_draw(
+pub fn agt_xz_grid_debug_draw(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -173,7 +173,7 @@ pub fn agt_2d_grid_debug_draw(
 
 // ====== fn about 2d grid collision ======
 #[allow(dead_code)]
-pub fn agt_2d_grid_debug_check_collision(
+pub fn agt_xz_grid_debug_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -219,7 +219,7 @@ pub fn agt_2d_grid_debug_check_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_do_simple_collision(
+pub fn agt_xz_grid_do_simple_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -275,7 +275,7 @@ pub fn agt_2d_grid_do_simple_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_do_slide_collision(
+pub fn agt_xz_grid_do_slide_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -362,7 +362,7 @@ pub fn agt_2d_grid_do_slide_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_do_independent_collision(
+pub fn agt_xz_grid_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -452,7 +452,7 @@ pub fn agt_2d_grid_do_independent_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_debug_do_independent_collision(
+pub fn agt_xz_grid_debug_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -547,7 +547,7 @@ pub fn agt_2d_grid_debug_do_independent_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_do_predict_independent_collision(
+pub fn agt_xz_grid_do_predict_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -642,4 +642,4 @@ pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> boo
 }
 
 // ---------------------------- Acorn Functions Sets ----------------------------
-// const AGT_SIMPLE_COLLISION: (AcornFunction, AcornFunction, AcornFunction) = (agt_2d_grid_create, agt_grid_do_simple_collision, agt_2d_grid_clear);
+// const AGT_SIMPLE_COLLISION: (AcornFunction, AcornFunction, AcornFunction) = (agt_xz_grid_create, agt_grid_do_simple_collision, agt_xz_grid_clear);
