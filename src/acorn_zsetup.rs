@@ -100,6 +100,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             agt_xz_grid_create,
             agt_xz_grid_do_slide_collision,
             agt_xz_grid_debug_draw,
+            agt_debug_entities_aabb_draw,
             agt_xz_grid_clear,
             agt_do_entities_move,
         },

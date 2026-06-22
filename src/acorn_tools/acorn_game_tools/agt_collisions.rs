@@ -167,7 +167,7 @@ pub fn agt_xz_grid_debug_draw(
         
         let color = YELLOW;
 
-        println!("[Acorn Grid Debug] Cell position: {}", position);
+        println!("[Acorn Grid Debug] Draw cell position: {}", position);
         draw_cube_wires(position, size, color);
     }
 }
@@ -648,6 +648,33 @@ pub fn agt_do_entities_move(
         entity_transform.position.x += entity_speed.speed_value.x;
         entity_transform.position.y += entity_speed.speed_value.y;
         entity_transform.position.z += entity_speed.speed_value.z;
+    }
+}
+
+#[allow(dead_code)]
+pub fn agt_debug_entities_aabb_draw(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    let mut query = world.query::<(&AcornEntity3DTransform, &AcornAABB)>();
+
+    for (transform, aabb) in query.iter(world) {
+        // 1. Переводим локальные границы AABB в мировые координаты
+        let world_min = transform.position + aabb.min;
+        let world_max = transform.position + aabb.max;
+
+        // 2. Вычисляем точный геометрический центр коробки в мире
+        let position = (world_min + world_max) * 0.5;
+
+        // 3. Вычисляем полный размер коробки по трем осям (длина, высота, ширина)
+        let size = world_max - world_min;
+
+        // Зеленый (или красный/бирюзовый) цвет традиционно хорош для хитбоксов
+        let color = RED;
+
+        // Отрисовка каркаса хитбокса сущности
+        draw_cube(position, size, None, color);
     }
 }
 
