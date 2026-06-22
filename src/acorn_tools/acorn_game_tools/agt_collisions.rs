@@ -82,7 +82,7 @@ impl Default for Acorn2DWorldGrid {
     fn default() -> Self {
         Self {
             cells: HashMap::new(),
-            cell_size: 10.0,
+            cell_size: 5.0,
         }
     }
 }
@@ -105,9 +105,9 @@ pub fn agt_2d_grid_create(
 
     for (entity, transform) in query.iter(world) {
         let cell_x = (transform.position.x / cell_size).floor() as i32;
-        let cell_y = (transform.position.y / cell_size).floor() as i32;
+        let cell_z = (transform.position.z / cell_size).floor() as i32;
 
-        let coord = CellCoordinates { x: cell_x, y: cell_y };
+        let coord = CellCoordinates { x: cell_x, y: cell_z };
 
         // Add the entity ID to the corresponding cell
         grid.cells.entry(coord).or_insert_with(Vec::new).push(entity);
@@ -125,7 +125,7 @@ pub fn agt_2d_grid_clear(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_count_cells(
+pub fn agt_2d_grid_debug_count_cells(
     _world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
@@ -140,15 +140,40 @@ pub fn agt_2d_grid_count_cells(
         .count();
     
     println!(
-        "[Acorn Grid] Cells in grid: {} | Grids wtih >=2 entities: {}", 
+        "[Acorn Grid Debug] Cells in grid: {} | Grids with >=2 entities: {}", 
         total_cells, 
         hot_cells
     );
 }
 
+#[allow(dead_code)]
+pub fn agt_2d_grid_debug_draw(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let cell_size = grid.cell_size;
+
+    for coord in grid.cells.keys() {
+        let world_x = (coord.x as f32 * cell_size) + (cell_size * 0.5);
+        let world_y = 0.0;
+        let world_z = (coord.y as f32 * cell_size) + (cell_size * 0.5);
+
+        let position = Vec3::new(world_x, world_y, world_z);
+        
+        let size = Vec3::new(cell_size, 0.1, cell_size);
+        
+        let color = YELLOW;
+
+        println!("[Acorn Grid Debug] Cell position: {}", position);
+        draw_cube_wires(position, size, color);
+    }
+}
+
 // ====== fn about 2d grid collision ======
 #[allow(dead_code)]
-pub fn agt_2d_grid_check_collision(
+pub fn agt_2d_grid_debug_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
@@ -183,7 +208,7 @@ pub fn agt_2d_grid_check_collision(
 
                     if is_colliding {
                         println!(
-                            "[Acorn Grid] collision in ({}, {}): {:?} and {:?}", 
+                            "[Acorn Grid Debug] collision in ({}, {}): {:?} and {:?}", 
                             coord.x, coord.y, entity_a, entity_b
                         );
                     }
@@ -427,7 +452,7 @@ pub fn agt_2d_grid_do_independent_collision(
 }
 
 #[allow(dead_code)]
-pub fn agt_2d_grid_do_independent_collision_profiler(
+pub fn agt_2d_grid_debug_do_independent_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext
