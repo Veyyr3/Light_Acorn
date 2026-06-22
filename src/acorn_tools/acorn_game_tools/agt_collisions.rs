@@ -16,15 +16,28 @@ use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
 
 // ---------------------------- Structs ----------------------------
 
-pub struct Acorn2DWorldGrid {
-    pub cells: HashMap<CellCoordinates, Vec<Entity>>,
+/// ## Description
+/// Use it to add collisions between entities. This struct is included in `Acorn3DGameBase`.
+/// 
+/// Acorn collision based on **Sparse Spatial Grid**. An invisible grid is stretched across the entire game world along the XZ axes, the cells of which exist only where entities exist. The grid is two-dimensional (only XZ, no Y).
+/// 
+/// ## How it works?
+/// It means that the collision is triggered only in those places where the entities are close to each other (that is, in the same cell). It's very nice for optimization.
+/// 
+/// ## Fields description
+/// * `cells` - contains cell coordinate and vector of Bevy entities ID.
+/// * `cell_size` - the larger the cell size, the more entities can fit into one cell.
+pub struct AcornXZWorldGrid {
+    pub cells: HashMap<CellXZCoordinates, Vec<Entity>>,
     pub cell_size: f32,
 }
 
 #[derive(PartialEq, Eq, Hash)]
-pub struct CellCoordinates {
+/// ## Description
+/// It is inluded in `AcornXZWorldGrid`. Each cell is two-dimensional (only XZ, no Y).
+pub struct CellXZCoordinates {
     pub x: i32,
-    pub y: i32,
+    pub z: i32,
 }
 
 // ---------------------------- Components ----------------------------
@@ -46,15 +59,9 @@ pub struct Acorn3DSpeed {
     pub speed_value: Vec3,
 }
 
-// new
-#[derive(Component)]
-pub struct AcornSimpleAABB {
-    pub half_extents: Vec3
-}
-
 // useless
-#[derive(Component)]
 #[allow(dead_code)]
+#[derive(Component)]
 pub struct CollisionFlags {
     pub can_move_pos_x: bool,
     pub can_move_neg_x: bool,
@@ -78,7 +85,7 @@ impl AcornAABB {
 
 // ---------------------------- Default behaviors ----------------------------
 
-impl Default for Acorn2DWorldGrid {
+impl Default for AcornXZWorldGrid {
     fn default() -> Self {
         Self {
             cells: HashMap::new(),
@@ -108,7 +115,7 @@ pub fn agt_xz_grid_create(
         let cell_x = (transform.position.x / cell_size).floor() as i32;
         let cell_z = (transform.position.z / cell_size).floor() as i32;
 
-        let coord = CellCoordinates { x: cell_x, y: cell_z };
+        let coord = CellXZCoordinates { x: cell_x, z: cell_z };
 
         // Add the entity ID to the corresponding cell
         grid.cells.entry(coord).or_insert_with(Vec::new).push(entity);
@@ -159,7 +166,7 @@ pub fn agt_xz_grid_debug_draw(
     for coord in grid.cells.keys() {
         let world_x = (coord.x as f32 * cell_size) + (cell_size * 0.5);
         let world_y = 0.0;
-        let world_z = (coord.y as f32 * cell_size) + (cell_size * 0.5);
+        let world_z = (coord.z as f32 * cell_size) + (cell_size * 0.5);
 
         let position = Vec3::new(world_x, world_y, world_z);
         
@@ -211,7 +218,7 @@ pub fn agt_xz_grid_debug_check_collision(
                     if is_colliding {
                         println!(
                             "[Acorn Grid Debug] collision in ({}, {}): {:?} and {:?}", 
-                            coord.x, coord.y, entity_a, entity_b
+                            coord.x, coord.z, entity_a, entity_b
                         );
                     }
                 }

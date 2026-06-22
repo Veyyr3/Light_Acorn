@@ -27,5 +27,5 @@ pub struct Acorn3DGameBase {
   pub camera: Acorn3DCamera, // 3D camera
   pub camera_physical: Acorn3DCameraPhysical, // 3D camera with physic
   // collisions
-  pub world_collision_grid: Acorn2DWorldGrid,
+  pub world_collision_grid: AcornXZWorldGrid,
 }
