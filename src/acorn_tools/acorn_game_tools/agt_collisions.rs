@@ -235,6 +235,21 @@ pub fn agt_xz_grid_debug_draw(
 // ====== fn about XZ grid collision ======
 
 #[allow(dead_code)]
+/// ## Description
+/// Function for debug place collision.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_debug_check_collision, // <-
+///     agt_xz_grid_clear,
+/// },
+/// ```
+///  
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_debug_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -281,6 +296,22 @@ pub fn agt_xz_grid_debug_check_collision(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Function for debug place collision.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_simple_collision, // <-
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
+/// },
+/// ```
+///  
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_do_simple_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -292,43 +323,35 @@ pub fn agt_xz_grid_do_simple_collision(
     for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
             for j in 0..entities.len() {
-                if i == j { continue; } // Проверяем объект со всеми соседями в клетке
+                if i == j { continue; } // do not check self (necessary 2 different Bevy entities ID)
 
                 let entity_a = entities[i];
                 let entity_b = entities[j];
 
-                // Получаем мутабельный доступ к скорости А, и иммутабельный к Б
                 if let Ok([(trans_a, mut speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
                     query.get_many_mut(world, [entity_a, entity_b]) 
                 {
-                    // Если у А скорость нулевая, проверять нечего
+                    // if entity A has 0 speed, pass
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
-                    // 1. Текущее положение объекта Б (препятствие)
+                    // entity B
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // 2. ГИПОТЕТИЧЕСКОЕ положение объекта А (Текущая позиция + Желаемая скорость)
+                    // future position of entity A
                     let future_pos_a = trans_a.position + speed_a.speed_value;
                     let a_future_min = future_pos_a + aabb_a.min;
                     let a_future_max = future_pos_a + aabb_a.max;
 
-                    // Проверяем, столкнутся ли они в будущем кадре
+                    // collided?
                     let will_collide = 
                         a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
                     if will_collide {
-                        // Пофигукс! Столкновение неизбежно. Гасим скорость.
-                        // Для идеального скольжения вдоль стен можно гасить только ту ось, 
-                        // которая пересекает границу, но для "Simple Collision" — обнуляем вектор целиком:
+                        // Set all speed to Zero
                         speed_a.speed_value = Vec3::ZERO;
-                        
-                        // Или альтернативный вариант (проверка по осям):
-                        // Из-за дискретности шага обнуление всего Vec3 гарантирует 100% остановку без проваливания.
-                        
-                        println!("[Agt Физика] Скорость сущности {:?} погашена перед {:?}", entity_a, entity_b);
                     }
                 }
             }
