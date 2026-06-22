@@ -127,6 +127,11 @@ impl Default for AcornXZWorldGrid {
 /// 
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_xz_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -160,6 +165,11 @@ pub fn agt_xz_grid_create(
 /// 
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_xz_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -250,6 +260,11 @@ pub fn agt_xz_grid_debug_draw(
 ///  
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_xz_grid_debug_check_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -312,6 +327,11 @@ pub fn agt_xz_grid_debug_check_collision(
 ///  
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_xz_grid_do_simple_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -376,6 +396,11 @@ pub fn agt_xz_grid_do_simple_collision(
 ///  
 /// ## Necessary Global States in `AcornGlobalContext`:
 /// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_xz_grid_do_slide_collision(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -796,6 +821,11 @@ pub fn agt_xz_grid_do_predict_independent_collision(
 ///     agt_do_entities_move, 
 /// }, 
 /// ```
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_do_entities_move(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -812,9 +842,7 @@ pub fn agt_do_entities_move(
 
 #[allow(dead_code)]
 /// ## Description
-/// Function for to move entities. The function gets all speed (XYZ) from each entity and applies speed to position.
-/// 
-/// **You can copy this function and create own to filter by type entities (example, Goblin, Orc) through With<Component> for multithreading.** But you also need to rewrite this function into Bevy system and add to `acorn_esetup` for begin multithreading.
+/// Function to draw AABB of entities.
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -827,6 +855,11 @@ pub fn agt_do_entities_move(
 ///     agt_do_entities_move, // This is necessary for the entities to move.
 /// },
 /// ```
+/// 
+/// ## Required entity components for collisions:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornAABB`
 pub fn agt_debug_entities_aabb_draw(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
