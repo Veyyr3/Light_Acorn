@@ -63,7 +63,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     ======================
     */
 
-    // ui_input_zone (Ex: handle input, events: victory, failure and etc.)
+    // ------------- ui_input_zone (Ex: handle input, events: victory, failure and etc.) -------------
     let ui_input_zone = zone! {
         // Lord-Location.
         location! {
@@ -79,7 +79,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // add own locations through comma
     };
 
-    // before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations)
+    // ------------- before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations) -------------
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
@@ -107,7 +107,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // add own locations through comma
     };   
 
-    // after_2d_zone (Ex: UI draw and other Locations)
+    // ------------- after_2d_zone (Ex: UI draw and other Locations) -------------
     let after_2d_zone = zone! {
         // Minor-Location
         location! {
