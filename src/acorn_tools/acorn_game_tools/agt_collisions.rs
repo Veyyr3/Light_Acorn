@@ -45,6 +45,16 @@ pub struct CellXZCoordinates {
 #[derive(Clone, Copy, Debug, Component)]
 /// ## Description
 /// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
+/// 
+/// ## Example in `AcornFunction` to spawn entitiy:
+/// ```
+/// world.spawn((
+///    AcornAABB {
+///        min: vec3(-1.0, -1.0, -1.0),
+///        max: vec3(1.0, 1.0, 1.0)
+///    },
+/// ));, 
+/// ```
 pub struct AcornAABB {
     pub min: Vec3,
     pub max: Vec3,
@@ -55,6 +65,15 @@ pub struct AcornAABB {
 /// Speed of entities on XYZ.
 /// 
 /// Use it to add speed for your entities. It is necessary for entities moving and collisions.
+/// 
+/// ## Example in `AcornFunction` to spawn entitiy:
+/// ```
+/// world.spawn((
+///     Acorn3DSpeed {
+///       speed_value: Vec3::ZERO
+///     },
+/// ));, 
+/// ```
 pub struct Acorn3DSpeed {
     pub speed_value: Vec3,
 }
@@ -99,6 +118,15 @@ impl Default for AcornXZWorldGrid {
 // ====== fn about XZ grid ======
 
 #[allow(dead_code)]
+/// ## Description
+/// Create **Sparse Spatial Collision Grid** on XZ for whole game world.
+/// 
+/// It is necessary for full collision job.
+/// 
+/// **Be sure to place it BEFORE collision functions such as: `agt_xz_grid_do_simple_collision`, etc.**
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_create(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -123,6 +151,15 @@ pub fn agt_xz_grid_create(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Clear **Sparse Spatial Collision Grid** on XZ for whole game world.
+/// 
+/// It is necessary for full collision job.
+/// 
+/// **Be sure to place it AFTER collision functions such as: `agt_xz_grid_do_simple_collision`, etc.**
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_clear(
     _world: &mut World,
     _zones: &mut AcornZoneContext, 
@@ -133,6 +170,13 @@ pub fn agt_xz_grid_clear(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Count all cells and cells with >= 2 entities. In cells where >= 2 will execute collision between entities.
+/// 
+/// **Be sure to place it BEFORE: `agt_xz_grid_clear`**
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_debug_count_cells(
     _world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -140,21 +184,30 @@ pub fn agt_xz_grid_debug_count_cells(
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
     
+    // all cells
     let total_cells = grid.cells.len();
     
+    // cells with >= 2 entities
     let hot_cells = grid.cells
         .values()
         .filter(|entities| entities.len() >= 2)
         .count();
     
     println!(
-        "[Acorn Grid Debug] Cells in grid: {} | Grids with >=2 entities: {}", 
+        "[Acorn XZ Grid Debug] Cells in grid: {} | Grids with >=2 entities: {}", 
         total_cells, 
         hot_cells
     );
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Draw grid cells.
+/// 
+/// **Be sure to place it BEFORE: `agt_xz_grid_clear`**
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
 pub fn agt_xz_grid_debug_draw(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -174,7 +227,7 @@ pub fn agt_xz_grid_debug_draw(
         
         let color = YELLOW;
 
-        println!("[Acorn Grid Debug] Draw cell position: {}", position);
+        println!("[Acorn XZ Grid Debug] Draw cell position: {}", position);
         draw_cube_wires(position, size, color);
     }
 }
@@ -217,7 +270,7 @@ pub fn agt_xz_grid_debug_check_collision(
 
                     if is_colliding {
                         println!(
-                            "[Acorn Grid Debug] collision in ({}, {}): {:?} and {:?}", 
+                            "[Acorn XZ Grid Debug] collision in ({}, {}): {:?} and {:?}", 
                             coord.x, coord.z, entity_a, entity_b
                         );
                     }
