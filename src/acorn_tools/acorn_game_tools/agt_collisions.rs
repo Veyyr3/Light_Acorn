@@ -255,6 +255,7 @@ pub fn agt_xz_grid_debug_draw(
 ///     agt_xz_grid_create,
 ///     agt_xz_grid_debug_check_collision, // <-
 ///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
 /// },
 /// ```
 ///  
