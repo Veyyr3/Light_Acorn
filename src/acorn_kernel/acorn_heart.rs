@@ -35,6 +35,25 @@ pub struct AcornECS {
     pub schedule: Schedule
 }
 
+// ---------------------------- Traits ----------------------------
+/// ## Description
+/// Trait allows put Acorn Function Sets into Zone. This is the only reason why here trait.
+/// 
+/// Acorn Function Set is Location with functions.
+/// 
+/// ## Trait exsists for that:
+/// ```
+/// zone! {
+///     location! {
+///         agt_camera,
+///     },
+///     AGT_SLIDE_COLLISION // <- here is Acorn Function Set (that is also Location)
+/// };
+/// ```
+pub trait IntoLocation {
+    fn into_location(self) -> Location;
+}
+
 // ---------------------------- Implementations ----------------------------
 
 #[allow(dead_code)]
@@ -52,9 +71,16 @@ impl Location {
         self
     }
 
-    /// Creating Location from vector of functions 
+    /// Create Location from vector of functions 
     pub fn from_fn_vec(functions: Vec<AcornFunction>) -> Self {
         Self { functions }
+    }
+
+    /// Create Location from array with `AcornFunction`
+    pub fn from_preset(slice: &[AcornFunction]) -> Self {
+        let mut temp_vec = slice.to_vec();
+        temp_vec.reverse();
+        Self::from_fn_vec(temp_vec)
     }
 }
 
@@ -76,6 +102,20 @@ impl Zone {
     pub fn with_locations(mut self, locations: Vec<Location>) -> Self {
         self.locations = locations;
         self
+    }
+}
+
+// ---------------------------- Implementations IntoLocation ----------------------------
+
+impl IntoLocation for Location {
+    fn into_location(self) -> Location {
+        self
+    }
+}
+
+impl<const N: usize> IntoLocation for [AcornFunction; N] {
+    fn into_location(self) -> Location {
+        Location::from_fn_vec(self.into_iter().rev().collect())
     }
 }
 
@@ -115,7 +155,8 @@ impl Default for AcornECS {
 ///     function2,
 /// }
 /// ```
-/// This sugar macro is the same as:
+/// 
+/// This sugar macro is equivalent to:
 /// ```
 /// let mut temp_vec: Vec<AcornFunction> = vec![
 ///     function1 as AcornFunction,
@@ -143,32 +184,31 @@ macro_rules! location {
 ///         function1, 
 ///         function2,
 ///     }, 
-///     location! {
-///         function1, 
-///         function2,
-///     },
+///     FUNCTION_SET
 /// }
 /// ```
-/// This sugar macro same like this:
+/// 
+/// This sugar macro is equivalent to:
 /// ```
-/// Zone::default()
-/// .with_locations(vec![
-///     Location::from_fn_vec(vec![
-///         // functions
-///     ]),
-///     Location::from_fn_vec(vec![
-///         // add own functions through comma 
-///     ]),
-///     // add own locations through comma 
-/// ]);
+/// use crate::acorn_kernel::acorn_heart::IntoLocation;
+/// 
+/// let mut zone = Zone::default();
+/// zone.add((location! { ... }).into_location());
+/// zone.add((AGT_SIMPLE_COLLISION).into_location());
+/// zone
 /// ```
 macro_rules! zone {
-    ($($loc:expr),* $(,)?) => {
-        $crate::acorn_kernel::acorn_heart::Zone::default()
-            .with_locations(vec![
-                $($loc),*
-            ])
-    };
+    ($($item:expr),* $(,)?) => {{
+        use $crate::acorn_kernel::acorn_heart::IntoLocation;
+
+        let mut zone = $crate::acorn_kernel::acorn_heart::Zone::default();
+
+        $(
+            zone.add(($item).into_location());
+        )*
+
+        zone
+    }};
 }
 
 #[macro_export]

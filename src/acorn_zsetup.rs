@@ -96,15 +96,16 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         },
+        AGT_SLIDE_COLLISION,
         // Full functional 
-        location! {
-            agt_xz_grid_create,
-            agt_xz_grid_do_slide_collision,
-            agt_xz_grid_debug_draw,
-            agt_debug_entities_aabb_draw,
-            agt_xz_grid_clear,
-            agt_do_entities_move,
-        },
+        // location! {
+        //     agt_xz_grid_create,
+        //     agt_xz_grid_do_slide_collision,
+        //     agt_xz_grid_debug_draw,
+        //     agt_debug_entities_aabb_draw,
+        //     agt_xz_grid_clear,
+        //     agt_do_entities_move,
+        // },
         // add own locations through comma
     };   
 

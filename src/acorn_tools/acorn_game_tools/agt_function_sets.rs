@@ -10,8 +10,23 @@
 use crate::acorn_kernel::prelude::*;
 use crate::acorn_tools::acorn_game_tools::prelude::*;
 
-// ---------------------------- Acorn Functions Sets ----------------------------
-const AGT_SIMPLE_COLLISION: [AcornFunction; 4] = 
+// ---------------------------- Before 2D Zone Acorn Functions Sets ----------------------------
+
+#[allow(dead_code)]
+/// ## Description
+/// Add simple collision between entities. 
+/// 
+/// This Function Set resets the speed (XYZ) for an entity if its future position collides with another entity.
+/// 
+/// ## Example:
+/// ```
+/// let before_2d_zone = zone! {
+///     location! {
+///         function,
+///     },
+///     AGT_SIMPLE_COLLISION,
+/// ```
+pub const AGT_SIMPLE_COLLISION: [AcornFunction; 4] = 
     [
         agt_xz_grid_create,
         agt_xz_grid_do_simple_collision,
@@ -19,7 +34,21 @@ const AGT_SIMPLE_COLLISION: [AcornFunction; 4] =
         agt_do_entities_move,
     ];
 
-const AGT_SLIDE_COLLISION: [AcornFunction; 4] = 
+#[allow(dead_code)]
+/// ## Description
+/// Add slide collision between entities. 
+/// 
+/// This Function Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
+/// 
+/// ## Example:
+/// ```
+/// let before_2d_zone = zone! {
+///     location! {
+///         function,
+///     },
+///     AGT_SLIDE_COLLISION,
+/// ```
+pub const AGT_SLIDE_COLLISION: [AcornFunction; 4] = 
     [
         agt_xz_grid_create,
         agt_xz_grid_do_slide_collision,
