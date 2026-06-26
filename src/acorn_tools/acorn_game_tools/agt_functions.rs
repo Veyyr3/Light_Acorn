@@ -9,13 +9,14 @@
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_functions.rs
 
+use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
+use crate::acorn_tools::acorn_game_tools::prelude::*;
+// from settings
 use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
-use crate::acorn_tools::acorn_game_tools::agt_heart::{AcornEntity3DModel, AcornEntity3DTransform};
-use bevy_ecs::world::World;
 // for debug
 use std::fs::File;
 use std::io::{BufReader, BufRead};
@@ -85,6 +86,22 @@ pub fn agt_draw_3d_assets(
         draw_mesh(&db_assets[mesh.mesh_id]);
 
         gl.pop_model_matrix();
+    }
+}
+
+#[allow(dead_code)]
+pub fn agt_gravity(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let mut query = 
+        world.query_filtered::<&mut AcornEntity3DTransform, With<AcornHasGravity>>();
+
+    let gravity_force = context.game_base_preset.gravity_force;
+
+    for mut entity in query.iter_mut(world) {
+        entity.position.y -= gravity_force;
     }
 }
 

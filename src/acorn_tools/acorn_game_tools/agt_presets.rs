@@ -30,4 +30,6 @@ pub struct Acorn3DGameBase {
   pub world_collision_grid: AcornXZWorldGrid,
   // 3D models
   pub assets_3d: Acorn3DAssetDatabase, // 3D meshes
+  // Special
+  pub gravity_force: f32,
 }

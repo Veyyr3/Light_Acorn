@@ -23,6 +23,8 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
             position: vec3(10.0, 1.8, 0.0),
             ..Default::default()
         },
+        // gravity
+        gravity_force: 8.0,
         ..Default::default()
     };
     // =================================

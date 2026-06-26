@@ -71,6 +71,10 @@ pub struct AcornEntity3DModel {
     pub mesh_id: usize // instead of Mesh
 }
 
+// ---------------------------- Components ----------------------------
+#[derive(Component)]
+pub struct AcornHasGravity;
+
 // ---------------------------- Default behaviors ----------------------------
 
 impl Default for Acorn3DAssetDatabase {
