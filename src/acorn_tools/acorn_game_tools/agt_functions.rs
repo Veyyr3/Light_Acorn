@@ -90,18 +90,57 @@ pub fn agt_draw_3d_assets(
 }
 
 #[allow(dead_code)]
+/// ## Description
+/// Add gravity for your entities.
+/// 
+/// Cheaper in perfomance than `agt_gravity_no_under_ground`.
+/// 
+/// ## Required entity components:
+/// * `Acorn3DSpeed`
+/// * `AcornHasGravity` 
 pub fn agt_gravity(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
     let mut query = 
-        world.query_filtered::<&mut AcornEntity3DTransform, With<AcornHasGravity>>();
+        world.query_filtered::<&mut Acorn3DSpeed, With<AcornHasGravity>>();
 
     let gravity_force = context.game_base_preset.gravity_force;
 
-    for mut entity in query.iter_mut(world) {
-        entity.position.y -= gravity_force;
+    let dt = context.frame_delta;
+
+    for mut speed in query.iter_mut(world) {
+        speed.speed_value.y -= gravity_force * dt;
+    }
+}
+
+#[allow(dead_code)]
+/// ## Description
+/// Add gravity for your entities. Entities do not fall under 0.0 on Y axis. But sometimes they may do it.
+/// 
+/// ## Required entity components:
+/// * `Acorn3DSpeed`
+/// * `AcornEntity3DTransform`
+/// * `AcornHasGravity` 
+pub fn agt_gravity_no_under_ground(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let mut query = 
+        world.query_filtered::<(&AcornEntity3DTransform, &mut Acorn3DSpeed), With<AcornHasGravity>>();
+
+    let gravity_force = context.game_base_preset.gravity_force;
+
+    let dt = context.frame_delta;
+
+    for (e_pos, mut e_speed) in query.iter_mut(world) {
+        if e_pos.position.y < 0.0 {
+            e_speed.speed_value.y = 0.0;
+        } else {
+            e_speed.speed_value.y -= gravity_force * dt;
+        }
     }
 }
 

@@ -24,7 +24,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
             ..Default::default()
         },
         // gravity
-        gravity_force: 8.0,
+        gravity_force: 1.0,
         ..Default::default()
     };
     // =================================

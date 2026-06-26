@@ -96,6 +96,9 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         },
+        location! {
+            agt_gravity_no_under_ground,
+        },
         AGT_SLIDE_COLLISION,
         // Full functional 
         // location! {
@@ -286,7 +289,7 @@ pub fn example_spawn_acorn(
 ) {
     world.spawn((
         AcornEntity3DTransform {
-            position: vec3(0.0, 1.0, 0.0),
+            position: vec3(0.0, 10.0, 0.0),
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
@@ -314,6 +317,7 @@ pub fn example_spawn_acorn(
             speed_value: Vec3::ZERO
         },
         IsAcorn, // component-marker
+        AcornHasGravity
     ));
     println!("Entity spawned!");
 }
@@ -355,6 +359,7 @@ pub fn example_spawn_acorn_move(
             speed_value: Vec3::ZERO
         },
         CanAcornMove, // component-marker
+        AcornHasGravity,
     ));
     println!("Entity spawned!");
 
