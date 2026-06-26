@@ -67,6 +67,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let ui_input_zone = zone! {
         // Lord-Location.
         location! {
+            example_speed_acorn, // move acorn
             example_add_circle_function, // add blue circle (press left mouse button)
             example_runtime_spawner, // add new entity (press F and see result in console)
             example_delete_function, // (press TAB to delete functions in Minor-Location)
@@ -95,8 +96,8 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         },
+        // Full functional 
         location! {
-            example_speed_acorn,
             agt_xz_grid_create,
             agt_xz_grid_do_slide_collision,
             agt_xz_grid_debug_draw,
