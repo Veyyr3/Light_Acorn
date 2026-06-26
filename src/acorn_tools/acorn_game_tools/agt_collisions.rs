@@ -9,7 +9,7 @@
 
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
-use crate::acorn_tools::acorn_game_tools::prelude::*;
+use crate::{acorn_tools::acorn_game_tools::prelude::*};
 use std::collections::HashMap;
 // for Acorn functions
 use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
@@ -888,6 +888,3 @@ pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> boo
     first.min.y <= second.max.y && first.max.y >= second.min.y &&
     first.min.z <= second.max.z && first.max.z >= second.min.z
 }
-
-// ---------------------------- Acorn Functions Sets ----------------------------
-// const AGT_SIMPLE_COLLISION: (AcornFunction, AcornFunction, AcornFunction) = (agt_xz_grid_create, agt_grid_do_simple_collision, agt_xz_grid_clear);
