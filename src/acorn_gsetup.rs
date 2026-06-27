@@ -18,14 +18,20 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // =================================
     // setup base 
     let mut game_base_preset = Acorn3DGameBase {
+        // grid collision
+        world_collision_grid: AcornXZWorldGrid { 
+            cell_size: 5.0,
+            ..Default::default()
+        },
         // camera
         camera: Acorn3DCamera{
             position: vec3(10.0, 1.8, 0.0),
             ..Default::default()
         },
+        // player
         player: AcornPlayer3D { 
             position: vec3(10.0, 10.0, 10.0), 
-            look_position: vec3(0.0, 2.0, 0.0),
+            look_position: vec3(0.0, 5.0, 0.0),
             ..Default::default()
         },
         // gravity
