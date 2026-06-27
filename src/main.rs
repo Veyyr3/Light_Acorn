@@ -3,6 +3,7 @@
 // See the LICENSES folder in the project root for the full license text.
 
 // src/main.rs
+
 mod acorn_kernel; // Zone, Location, AcornFunction
 mod acorn_zsetup; // zones, locations, functions setup
 mod acorn_gsetup; // global setup
@@ -14,14 +15,15 @@ mod acorn_tools; // game tools
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
-    // other example functions
+    // only for example functions
     example_spawn_acorn,  
-    example_spawn_entity
+    example_spawn_entity,
+    example_spawn_acorn_move
 };
 use acorn_gsetup::acorn_global_setup;
 use acorn_esetup::acorn_ecs_setup;
 
-use crate::acorn_zsetup::example_spawn_acorn_move;
+use crate::acorn_tools::acorn_game_tools::agt_player::agt_spawn_player;
 
 /*
 Hi!
@@ -69,6 +71,11 @@ async fn main() {
     );
     // new
     example_spawn_acorn_move( 
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    agt_spawn_player( 
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context

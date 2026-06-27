@@ -75,7 +75,8 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         // Location for UI input
         location! {
-            agt_camera_3d_control_free_fly, // update camera position and look
+            agt_3d_camera_common_control, // update camera position and look
+            agt_player_fps_speed,
         }
         // add own locations through comma
     };
@@ -100,6 +101,10 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             agt_gravity_no_under_ground,
         },
         AGT_SLIDE_COLLISION, // <- A Function Set
+        location! {
+            agt_3d_camera_link_to_player,
+            agt_debug_entities_aabb_draw,
+        }
         // Full functional 
         // location! {
         //     agt_xz_grid_create,
