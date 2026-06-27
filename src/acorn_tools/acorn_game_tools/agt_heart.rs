@@ -72,6 +72,7 @@ pub struct AcornEntity3DModel {
 }
 
 // ---------------------------- Components ----------------------------
+
 #[derive(Component)]
 pub struct AcornHasGravity;
 

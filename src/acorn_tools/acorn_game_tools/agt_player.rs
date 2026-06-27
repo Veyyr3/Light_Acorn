@@ -15,7 +15,31 @@ use crate::acorn_tools::acorn_game_tools::prelude::*;
 // for Acorn functions
 use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
 
+// ---------------------------- Structs ----------------------------
+
 pub struct AcornPlayer3D {
     pub position: Vec3,
     pub look_position: Vec3,
+}
+
+// ---------------------------- Impls ----------------------------
+
+impl AcornPlayer3D {
+    pub fn new(position: Vec3, look_position: Vec3) -> Self {
+        Self {
+            position,
+            look_position
+        }
+    }
+}
+
+// ---------------------------- Default Behaviors ----------------------------
+
+impl Default for AcornPlayer3D {
+    fn default() -> Self {
+        Self::new(
+            vec3(0.0, 0.0, 0.0), 
+            vec3(0.0, 1.0, 0.0)
+        ) 
+    }
 }
