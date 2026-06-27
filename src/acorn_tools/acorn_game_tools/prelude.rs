@@ -16,4 +16,5 @@ pub use crate::acorn_tools::acorn_game_tools::{
   agt_collisions::*,
   agt_function_sets::*,
   agt_systems::*,
+  agt_player::*,
 };

@@ -99,7 +99,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_gravity_no_under_ground,
         },
-        AGT_SLIDE_COLLISION,
+        AGT_SLIDE_COLLISION, // <- A Function Set
         // Full functional 
         // location! {
         //     agt_xz_grid_create,
