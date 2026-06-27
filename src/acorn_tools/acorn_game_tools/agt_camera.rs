@@ -23,13 +23,16 @@ use bevy_ecs::prelude::*;
 /// ## Description
 /// Common 3D camera.
 /// 
-/// ## Fields:
+/// ## Fields
+/// **Main fields**
 /// * `position` – camera position (obviously) 
-/// * `look_speed` mouse look sensitivity
-/// * `move_speed` camera move speed (for special functions)
-/// * `look` the spot the camera looks at
-/// * `yaw` and `pitch` for camera rotation
-/// * `right` to mark the right/left side of the camera
+/// * `look_speed` – mouse look sensitivity
+/// * `move_speed` – camera move speed (for special functions)
+/// 
+/// **Look fields**
+/// * `look` – the spot the camera looks at
+/// * `yaw` and `pitch` – for camera rotation
+/// * `right` – to mark the right/left side of the camera
 pub struct Acorn3DCamera {
     pub position: Vec3,
     pub look_speed: f32,
