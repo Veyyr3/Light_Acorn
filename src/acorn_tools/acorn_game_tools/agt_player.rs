@@ -22,7 +22,12 @@ pub struct AcornPlayer3D {
     pub look_position: Vec3,
 }
 
-// ---------------------------- Impls ----------------------------
+// ---------------------------- Components ----------------------------
+
+#[derive(Component)]
+pub struct AcornIsPlayer;
+
+// ---------------------------- Implementations ----------------------------
 
 impl AcornPlayer3D {
     pub fn new(position: Vec3, look_position: Vec3) -> Self {
@@ -42,4 +47,23 @@ impl Default for AcornPlayer3D {
             vec3(0.0, 1.0, 0.0)
         ) 
     }
+}
+
+// ---------------------------- Acorn Functions ----------------------------
+#[allow(dead_code)]
+/// Add to before 2d zone (in after 2d zone it may work incorrect)
+pub fn agt_player_3d_camera(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // let player_postion = ;
+
+    // spawn camera
+    set_camera(&Camera3D {
+        position: context.game_base_preset.camera.position,
+        up: vec3(0.0, 1.0, 0.0),
+        target: context.game_base_preset.camera.look,
+        ..Default::default()
+    });
 }

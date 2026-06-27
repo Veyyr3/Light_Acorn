@@ -75,7 +75,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         // Location for UI input
         location! {
-            agt_camera_3d_control_fps, // update camera position and look
+            agt_camera_3d_control_free_fly, // update camera position and look
         }
         // add own locations through comma
     };
@@ -84,7 +84,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            agt_camera_physical, // camera should be here first!
+            agt_3d_camera, // camera should be here first!
             // ECS
             // example_query_ecs, // print Oaks result
             // simple function

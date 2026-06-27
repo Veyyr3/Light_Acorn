@@ -23,13 +23,15 @@ This is necessary for brevity and composition.
 /// ## Description
 /// Base preset to build games.
 pub struct Acorn3DGameBase {
-  // cameras
+  // Cameras
   pub camera: Acorn3DCamera, // 3D camera
   pub camera_physical: Acorn3DCameraPhysical, // 3D camera with physic
-  // collisions
+  // Collisions
   pub world_collision_grid: AcornXZWorldGrid,
   // 3D models
   pub assets_3d: Acorn3DAssetDatabase, // 3D meshes
   // Special
   pub gravity_force: f32,
+  // Player
+  pub player: AcornPlayer3D,
 }
