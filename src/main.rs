@@ -33,7 +33,7 @@ This main.rs file.
 Examples are in acorn_setup.rs which you may try and search.
 
 ======================
-Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
+Right now you are using template REACORN-way (when you can reoder functions in runtime).
 BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN WAY template in "TEMPLATES" folder.
 ======================
 
