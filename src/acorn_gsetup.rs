@@ -31,7 +31,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         // player
         player: AcornPlayer3D { 
             position: vec3(0.0, 5.0, 0.0), 
-            eye_position: vec3(0.0, 4.0, 0.0),
+            eye_position: vec3(0.0, 3.0, 0.0),
             move_speed_forward: 10.0,
             move_speed_backward: 10.0,
             move_speed_side: 10.0,

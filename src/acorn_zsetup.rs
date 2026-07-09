@@ -27,6 +27,9 @@ use crate::acorn_tools::acorn_game_tools::prelude::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
+// for game
+use crate::game_functions::*;
+
 pub fn acorn_zone_setup() -> AcornZoneContext {
     // ------------- ui_input_zone (Ex: handle input, events: victory, failure and etc.) -------------
     let ui_input_zone = zone! {
@@ -48,7 +51,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_gravity_no_under_ground,
         },
-        AGT_DEBUG_SLIDE_COLLISION, // <- A Functions Set
+        AGT_SLIDE_COLLISION, // <- A Functions Set
         location! {
             agt_3d_camera_link_to_player,
         }
@@ -58,6 +61,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let after_2d_zone = zone! {
         // Minor-Location
         location! {
+            write_game_statistics,
             // add own functions through comma 
         }
     };

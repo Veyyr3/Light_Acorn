@@ -89,7 +89,24 @@ pub fn spawn_acorns_lvl1(
             },
         ));
     }
+}
+
+pub fn write_game_statistics(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // get context
+    let score = context.score;
+    let level = context.level;
+
+    // variables for text
+    let y_start = 20.0;
+    let x_start = 20.0;
+    let font_size = 20.0;
     
+    draw_text(&format!("LEVEL: {}", level), x_start, y_start, font_size, YELLOW);
+    draw_text(&format!("SCORE: {}", score), x_start, y_start + 15.0, font_size, YELLOW);
 }
 
 // pub fn rotate_coin(
