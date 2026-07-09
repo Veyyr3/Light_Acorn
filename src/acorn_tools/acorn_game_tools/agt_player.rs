@@ -23,7 +23,7 @@ Here are all for player.
 
 pub struct AcornPlayer3D {
     pub position: Vec3,
-    pub look_position: Vec3, // where the camera will be positioned relative to the player.
+    pub eye_position: Vec3, // where the camera will be positioned relative to the player.
     pub move_speed_forward: f32,
     pub move_speed_backward: f32,
     pub move_speed_side: f32,
@@ -40,7 +40,7 @@ pub struct AcornIs3DPlayer;
 impl AcornPlayer3D {
     pub fn new(
         position: Vec3, 
-        look_position: Vec3, 
+        eye_position: Vec3, 
         move_speed_forward: f32,
         move_speed_backward: f32,
         move_speed_side: f32,
@@ -48,7 +48,7 @@ impl AcornPlayer3D {
     ) -> Self {
         Self {
             position,
-            look_position,
+            eye_position,
             move_speed_forward,
             move_speed_backward,
             move_speed_side,
@@ -91,8 +91,8 @@ pub fn agt_3d_camera_link_to_player(
         // 1. Обновляем глобальные координаты игрока
         player.position = player_transform.position;
 
-        // 2. Позиция камеры = Позиция игрока + локальное смещение камеры (look_position)
-        camera.position = player.position + player.look_position;
+        // 2. Позиция камеры = Позиция игрока + локальное смещение камеры (eye_position)
+        camera.position = player.position + player.eye_position;
     }
 }
 

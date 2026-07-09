@@ -31,7 +31,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         // player
         player: AcornPlayer3D { 
             position: vec3(10.0, 10.0, 10.0), 
-            look_position: vec3(0.0, 5.0, 0.0),
+            eye_position: vec3(0.0, 5.0, 0.0),
             ..Default::default()
         },
         // gravity
