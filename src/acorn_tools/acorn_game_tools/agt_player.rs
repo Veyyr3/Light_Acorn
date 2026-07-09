@@ -67,7 +67,7 @@ impl Default for AcornPlayer3D {
             5.0,
             2.0,
             3.0,
-            2.0
+            30.0
         ) 
     }
 }

@@ -132,16 +132,18 @@ pub fn agt_gravity_no_under_ground(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-    let mut query = 
-        world.query_filtered::<(&AcornEntity3DTransform, &mut Acorn3DSpeed), With<AcornHasGravity>>();
-
+    // get context
     let gravity_force = context.game_base_preset.gravity_force;
-
     let dt = context.frame_delta;
 
-    for (e_pos, mut e_speed) in query.iter_mut(world) {
+    // create query
+    let mut query = 
+        world.query_filtered::<(&mut AcornEntity3DTransform, &mut Acorn3DSpeed), With<AcornHasGravity>>();
+
+    // pull out everything that fell
+    for (mut e_pos, mut e_speed) in query.iter_mut(world) {
         if e_pos.position.y < 0.0 {
-            e_speed.speed_value.y = 0.0;
+            e_pos.position.y = 0.0;
         } else {
             e_speed.speed_value.y -= gravity_force * dt;
         }
