@@ -923,8 +923,26 @@ pub fn agt_debug_entities_aabb_draw(
 // ---------------------------- Public Functions ----------------------------
 
 #[allow(dead_code)]
-pub fn intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
+pub fn agt_intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
     first.min.x <= second.max.x && first.max.x >= second.min.x &&
     first.min.y <= second.max.y && first.max.y >= second.min.y &&
     first.min.z <= second.max.z && first.max.z >= second.min.z
+}
+
+#[allow(dead_code)]
+pub fn agt_is_collide(
+    first_aabb: &AcornAABB, 
+    first_position: Vec3,
+    second_aabb: &AcornAABB, 
+    second_position: Vec3
+) -> bool {
+    let first_min = first_aabb.min + first_position;
+    let first_max = first_aabb.max + first_position;
+
+    let second_min = second_aabb.min + second_position;
+    let second_max = second_aabb.max + second_position;
+
+    first_min.x <= second_max.x && first_max.x >= second_min.x &&
+    first_min.y <= second_max.y && first_max.y >= second_min.y &&
+    first_min.z <= second_max.z && first_max.z >= second_min.z
 }
