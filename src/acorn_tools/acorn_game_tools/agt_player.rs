@@ -72,7 +72,7 @@ impl Default for AcornPlayer3D {
             3.0,
             30.0,
             AcornAABB { 
-                min: vec3(1.0, 1.0, 1.0), 
+                min: vec3(-1.0, -1.0, -1.0), 
                 max: vec3(1.0, 1.0, 1.0) 
             }
         ) 
