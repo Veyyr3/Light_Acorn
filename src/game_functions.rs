@@ -7,7 +7,7 @@ use crate::acorn_settings::{
     AcornGlobalContext,
 };
 use crate::acorn_tools::acorn_game_tools::prelude::*;
-use crate::game_components;
+use crate::game_components::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
@@ -40,6 +40,8 @@ use bevy_ecs::prelude::*;
 //         println!("I've created function! Message from: example_add_circle_function");
 //     }
 // }
+
+// ---------------------------- Spawn ----------------------------
 
 pub fn spawn_acorns_lvl1(
     world: &mut World, 
@@ -91,6 +93,89 @@ pub fn spawn_acorns_lvl1(
     }
 }
 
+pub fn spawn_finish_lvl1(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    world.spawn((
+        AcornEntity3DTransform {
+            position: vec3(45.0, 12.0, 10.0),
+            rotation: 0.0,
+            scale: vec3(1.0, 1.0, 1.0)
+        }, 
+        AcornEntity3DModel {
+            mesh_id: 1 
+        },
+        AcornAABB {
+            min: vec3(-1.0, -0.5, -1.0),
+            max: vec3(1.0, 0.5, 1.0)
+        },
+        Acorn3DSpeed {
+            speed_value: Vec3::ZERO
+        },
+    ));
+}
+
+pub fn spawn_coin_lvl1(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    world.spawn((
+        AcornEntity3DTransform {
+            position: vec3(35.0, 24.0, 10.0),
+            rotation: 0.0,
+            scale: vec3(1.0, 1.0, 1.0)
+        }, 
+        AcornEntity3DModel {
+            mesh_id: 2 
+        },
+        AcornAABB {
+            min: vec3(-1.0, -0.5, -1.0),
+            max: vec3(1.0, 0.5, 1.0)
+        },
+        Acorn3DSpeed {
+            speed_value: Vec3::ZERO
+        },
+        IsCoin,
+    ));
+}
+
+// ---------------------------- Logic ----------------------------
+
+pub fn rotate_coin(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    // Take all acorns and change rotations
+    let mut query = 
+        world
+        .query_filtered::<&mut AcornEntity3DTransform, With<IsCoin>>();
+
+    for mut i in query.iter_mut(world) {
+        i.rotation += 0.1;
+    }
+}
+
+pub fn update_lvl(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+    // Take all acorns and change rotations
+    let mut query = 
+        world
+        .query_filtered::<&mut AcornEntity3DTransform, With<IsCoin>>();
+
+    for mut i in query.iter_mut(world) {
+        i.rotation += 0.1;
+    }
+}
+
+// ---------------------------- UI ----------------------------
+
 pub fn write_game_statistics(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
@@ -108,18 +193,3 @@ pub fn write_game_statistics(
     draw_text(&format!("LEVEL: {}", level), x_start, y_start, font_size, YELLOW);
     draw_text(&format!("SCORE: {}", score), x_start, y_start + 15.0, font_size, YELLOW);
 }
-
-// pub fn rotate_coin(
-//     world: &mut World, 
-//     _zones: &mut AcornZoneContext, 
-//     _context: &mut AcornGlobalContext
-// ) {
-//     // Take all acorns and change rotations
-//     let mut query = 
-//         world
-//         .query_filtered::<&mut AcornEntity3DTransform, With<IsAcorn>>();
-
-//     for mut i in query.iter_mut(world) {
-//         i.rotation += 0.1;
-//     }
-// }

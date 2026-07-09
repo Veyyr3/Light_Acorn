@@ -45,6 +45,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         // Minor-Location
         location! {
             agt_3d_camera, // camera should be here first!
+            rotate_coin,
             agt_draw_3d_assets, // to draw yours 3d models
             example_game_draw_grid,
         },

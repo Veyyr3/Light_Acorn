@@ -5,4 +5,4 @@
 use bevy_ecs::prelude::*;
 
 #[derive(Component)]
-struct IsCoin;
+pub struct IsCoin;

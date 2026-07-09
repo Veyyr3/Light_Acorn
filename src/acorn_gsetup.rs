@@ -63,6 +63,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     assets_3d.meshes.extend([
         load_obj_with_materials_to_mesh("objs/acorn_engine.obj"),
         load_obj_with_materials_to_mesh("objs/yellow_platform.obj"),
+        load_obj_with_materials_to_mesh("objs/coin.obj"),
     ]);
     // =================================
     

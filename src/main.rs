@@ -25,9 +25,7 @@ use acorn_esetup::acorn_ecs_setup;
 use crate::{
     acorn_tools::acorn_game_tools::agt_player::agt_spawn_player, 
     // for game
-    game_functions::{
-        spawn_acorns_lvl1
-    }
+    game_functions::*
 };
 
 /*
@@ -65,6 +63,16 @@ async fn main() {
 
     // Create entities here (or in runtime by your logic)
     spawn_acorns_lvl1(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    spawn_finish_lvl1(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    spawn_coin_lvl1(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context
