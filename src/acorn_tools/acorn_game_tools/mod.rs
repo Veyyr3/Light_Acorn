@@ -14,6 +14,6 @@ pub mod agt_camera;
 pub mod agt_presets;
 pub mod agt_systems;
 pub mod agt_collisions;
-pub mod agt_function_sets;
+pub mod agt_functions_sets;
 pub mod agt_player;
 pub mod prelude;
