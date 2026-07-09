@@ -146,6 +146,7 @@ pub fn agt_player_fps_speed(
     }
 }
 
+/// Spawn Bevy entity as Player
 pub fn agt_spawn_player(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
