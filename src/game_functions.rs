@@ -8,6 +8,7 @@ use crate::acorn_settings::{
 };
 use crate::acorn_tools::acorn_game_tools::prelude::*;
 use crate::game_components::*;
+use crate::game_settings::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
@@ -67,20 +68,7 @@ pub fn spawn_acorns_lvl1(
                 scale: vec3(1.0, 1.0, 1.0)
             }, 
             AcornEntity3DModel {
-                // WARNING: you should remember index of your 3d model
-                mesh_id: 0 
-
-                /*
-                But you can use a trick:
-
-                // src/game_assets.rs
-                pub const ACORN_MODEL: usize = 0;
-                pub const TREE_MODEL: usize = 1;
-                pub const ROCK_MODEL: usize = 2;
-
-                AND write like that:
-                mesh_id: ACORN_MODEL
-                */
+                mesh_id: ACORN_MODEL 
             },
             AcornAABB {
                 min: vec3(-1.0, -1.0, -1.0),
@@ -93,19 +81,19 @@ pub fn spawn_acorns_lvl1(
     }
 }
 
-pub fn spawn_finish_lvl1(
+pub fn spawn_finish(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
+    context: &mut AcornGlobalContext
 ) {
     world.spawn((
         AcornEntity3DTransform {
-            position: vec3(45.0, 12.0, 10.0),
+            position: context.finish_location,
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
         AcornEntity3DModel {
-            mesh_id: 1 
+            mesh_id: FINISH_MODEL 
         },
         AcornAABB {
             min: vec3(-1.0, -0.5, -1.0),
@@ -129,7 +117,7 @@ pub fn spawn_coin_lvl1(
             scale: vec3(1.0, 1.0, 1.0)
         }, 
         AcornEntity3DModel {
-            mesh_id: 2 
+            mesh_id: COIN_MODEL 
         },
         AcornAABB {
             min: vec3(-1.0, -0.5, -1.0),

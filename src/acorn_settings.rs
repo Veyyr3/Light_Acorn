@@ -12,7 +12,10 @@ Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depend
 
 use crate::acorn_kernel::prelude::*; // import Zone
 // game suggestions
-use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase
+use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase.
+
+// for game
+use macroquad::prelude::*;
 
 /// Contain here your Zones
 pub struct AcornZoneContext {
@@ -29,4 +32,5 @@ pub struct AcornGlobalContext {
     pub frame_delta: f32, // it's important thing. The speed of the camera and objects will not depend on FPS.
     pub level: u8,
     pub score: u16,
+    pub finish_location: Vec3,
 }

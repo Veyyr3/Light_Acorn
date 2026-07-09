@@ -76,5 +76,6 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         frame_delta,
         level: 1,
         score: 0,
+        finish_location: vec3(45.0, 12.0, 10.0),
     }
 }

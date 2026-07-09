@@ -14,6 +14,7 @@ mod acorn_tools; // game tools
 // for game
 mod game_functions;
 mod game_components;
+mod game_settings;
 
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
@@ -67,7 +68,7 @@ async fn main() {
         &mut acorn_zone_context, 
         &mut acorn_global_context
     );
-    spawn_finish_lvl1(
+    spawn_finish(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context
