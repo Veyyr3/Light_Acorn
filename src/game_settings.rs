@@ -18,10 +18,10 @@ pub struct Finish {
 impl Default for Finish {
     fn default() -> Self {
         Self {
-            position: vec3(45.0, 12.0, 10.0),
+            position: vec3(45.0, 15.0, 10.0),
             aabb: AcornAABB {
-                min: vec3(-1.0, -0.5, -1.0),
-                max: vec3(1.0, 0.5, 1.0)
+                min: vec3(-2.0, -2.0, -2.0),
+                max: vec3(2.0, 2.0, 2.0)
             }
         }
     }

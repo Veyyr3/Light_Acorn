@@ -95,10 +95,7 @@ pub fn spawn_finish(
         AcornEntity3DModel {
             mesh_id: FINISH_MODEL 
         },
-        AcornAABB {
-            min: vec3(-1.0, -0.5, -1.0),
-            max: vec3(1.0, 0.5, 1.0)
-        },
+        context.finish.aabb,
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
         },
@@ -163,10 +160,13 @@ pub fn update_lvl(
         &player.aabb, 
         player.position
     );
+    println!("player {}", player.position);
+    println!("finish {}", finish.position);
 
     if is_collide {
         context.level += 1;
         context.is_new_level = true;
+        println!("collide!");
     }
 }
 

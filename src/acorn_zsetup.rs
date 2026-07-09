@@ -54,6 +54,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         },
         AGT_DEBUG_SLIDE_COLLISION, // <- A Functions Set
         location! {
+            update_lvl,
             agt_3d_camera_link_to_player,
         }
     };   
