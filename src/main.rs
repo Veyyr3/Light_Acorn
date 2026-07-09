@@ -69,7 +69,6 @@ async fn main() {
         &mut acorn_zone_context, 
         &mut acorn_global_context
     );
-    // new
     example_spawn_acorn_move( 
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
