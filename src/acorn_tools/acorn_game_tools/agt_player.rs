@@ -28,6 +28,7 @@ pub struct AcornPlayer3D {
     pub move_speed_backward: f32,
     pub move_speed_side: f32,
     pub jump_force: f32,
+    pub aabb: AcornAABB,
 }
 
 // ---------------------------- Components ----------------------------
@@ -45,6 +46,7 @@ impl AcornPlayer3D {
         move_speed_backward: f32,
         move_speed_side: f32,
         jump_force: f32,
+        aabb: AcornAABB
     ) -> Self {
         Self {
             position,
@@ -52,7 +54,8 @@ impl AcornPlayer3D {
             move_speed_forward,
             move_speed_backward,
             move_speed_side,
-            jump_force
+            jump_force,
+            aabb
         }
     }
 }
@@ -67,7 +70,11 @@ impl Default for AcornPlayer3D {
             5.0,
             2.0,
             3.0,
-            30.0
+            30.0,
+            AcornAABB { 
+                min: vec3(1.0, 1.0, 1.0), 
+                max: vec3(1.0, 1.0, 1.0) 
+            }
         ) 
     }
 }
@@ -220,16 +227,16 @@ pub fn agt_spawn_player(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-   world.spawn((
+    // get context
+    let player = &context.game_base_preset.player;
+
+    world.spawn((
         AcornEntity3DTransform {
-            position: context.game_base_preset.player.position,
+            position: player.position,
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
-        AcornAABB {
-            min: vec3(-1.0, -1.0, -1.0),
-            max: vec3(1.0, 1.0, 1.0)
-        },
+        player.aabb,
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
         },
