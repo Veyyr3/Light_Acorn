@@ -79,8 +79,10 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         // suggestion for game
         game_base_preset,
         frame_delta,
+        // for game
         level: 1,
         score: 0,
         finish,
+        is_new_level: false,
     }
 }

@@ -34,4 +34,5 @@ pub struct AcornGlobalContext {
     pub level: u8,
     pub score: u16,
     pub finish: Finish,
+    pub is_new_level: bool,
 }

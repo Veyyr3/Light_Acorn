@@ -148,23 +148,27 @@ pub fn rotate_coin(
     }
 }
 
-// pub fn update_lvl(
-//     world: &mut World, 
-//     _zones: &mut AcornZoneContext, 
-//     context: &mut AcornGlobalContext
-// ) {
-//     // get context
-//     let finish = context.finish_location;
+pub fn update_lvl(
+    _world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // get context
+    let finish = &context.finish;
+    let player = &context.game_base_preset.player;
 
-//     // Take all acorns and change rotations
-//     let mut query = 
-//         world
-//         .query_filtered::<(&AcornEntity3DTransform, &AcornAABB), With<IsFinish>>();
+    let is_collide = agt_is_collide(
+        &finish.aabb, 
+        finish.position, 
+        &player.aabb, 
+        player.position
+    );
 
-//     for (finish_position in query.iter_mut(world) {
-//         i.rotation += 0.1;
-//     }
-// }
+    if is_collide {
+        context.level += 1;
+        context.is_new_level = true;
+    }
+}
 
 // ---------------------------- UI ----------------------------
 
