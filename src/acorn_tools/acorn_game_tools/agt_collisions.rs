@@ -145,21 +145,53 @@ pub fn agt_xz_grid_create(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
+    // get context
     let cell_size = context.game_base_preset.world_collision_grid.cell_size;
-
     let grid = &mut context.game_base_preset.world_collision_grid;
 
+    // create query
     let mut query = world
         .query_filtered::<(Entity, &AcornEntity3DTransform), With<AcornAABB>>();
 
     for (entity, transform) in query.iter(world) {
-        let cell_x = (transform.position.x / cell_size).floor() as i32;
-        let cell_z = (transform.position.z / cell_size).floor() as i32;
+        // center of entity position
+        let exact_x = transform.position.x / cell_size;
+        let exact_z = transform.position.z / cell_size;
 
-        let coord = CellXZCoordinates { x: cell_x, z: cell_z };
+        // coordinates of the main cell
+        let cell_x = exact_x.floor() as i32;
+        let cell_z = exact_z.floor() as i32;
 
-        // Add the entity ID to the corresponding cell
-        grid.cells.entry(coord).or_insert_with(Vec::new).push(entity);
+        // add the main cell into Grid
+        grid.cells.entry(CellXZCoordinates { x: cell_x, z: cell_z })
+            .or_insert_with(Vec::new)
+            .push(entity);
+
+        // offset from the main cell
+        let fract_x = exact_x - exact_x.floor();
+        let fract_z = exact_z - exact_z.floor();
+
+        // determine the locations of neighbors.
+        // If the center is in the right half (fract > 0.5), then the neighbor is to the right (+1), otherwise to the left (-1)
+        let step_x = if fract_x >= 0.5 { 1 } else { -1 };
+        let step_z = if fract_z >= 0.5 { 1 } else { -1 };
+
+        // add neighbors for the main cell
+
+        // neighbor (X)
+        grid.cells.entry(CellXZCoordinates { x: cell_x + step_x, z: cell_z })
+            .or_insert_with(Vec::new)
+            .push(entity);
+
+        // neighbor (Z)
+        grid.cells.entry(CellXZCoordinates { x: cell_x, z: cell_z + step_z })
+            .or_insert_with(Vec::new)
+            .push(entity);
+
+        // Diagonal neighbor (X and Z)
+        grid.cells.entry(CellXZCoordinates { x: cell_x + step_x, z: cell_z + step_z })
+            .or_insert_with(Vec::new)
+            .push(entity);
     }
 }
 
