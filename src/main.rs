@@ -18,14 +18,17 @@ mod game_components;
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
-    // only for example functions
-    example_spawn_acorn,  
-    example_spawn_acorn_move
 };
 use acorn_gsetup::acorn_global_setup;
 use acorn_esetup::acorn_ecs_setup;
 
-use crate::acorn_tools::acorn_game_tools::agt_player::agt_spawn_player;
+use crate::{
+    acorn_tools::acorn_game_tools::agt_player::agt_spawn_player, 
+    // for game
+    game_functions::{
+        spawn_acorns_lvl1
+    }
+};
 
 /*
 Hi!
@@ -61,12 +64,7 @@ async fn main() {
     let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    example_spawn_acorn(
-        &mut acorn_ecs.world, 
-        &mut acorn_zone_context, 
-        &mut acorn_global_context
-    );
-    example_spawn_acorn_move( 
+    spawn_acorns_lvl1(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context

@@ -41,66 +41,68 @@ use bevy_ecs::prelude::*;
 //     }
 // }
 
-pub fn spawn_acorns(
+pub fn spawn_acorns_lvl1(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
     let coordinates = vec![
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
-        vec3(10.0, 10.0, 10.0),
+        vec3(10.0, 1.5, 10.0),
+        vec3(15.0, 5.0, 10.0),
+        vec3(20.0, 10.0, 10.0),
+        vec3(25.0, 10.0, 10.0),
+        vec3(30.0, 15.0, 10.0),
+        vec3(35.0, 20.0, 10.0), // high
+        vec3(40.0, 10.0, 10.0),
+        vec3(45.0, 10.0, 10.0),
     ];
 
-    world.spawn((
-        AcornEntity3DTransform {
-            position: vec3(0.0, 10.0, 0.0),
-            rotation: 0.0,
-            scale: vec3(1.0, 1.0, 1.0)
-        }, 
-        AcornEntity3DModel {
-            // WARNING: you should remember index of your 3d model
-            mesh_id: 0 
+    for coor in coordinates {
+        world.spawn((
+            AcornEntity3DTransform {
+                position: coor,
+                rotation: 0.0,
+                scale: vec3(1.0, 1.0, 1.0)
+            }, 
+            AcornEntity3DModel {
+                // WARNING: you should remember index of your 3d model
+                mesh_id: 0 
 
-            /*
-            But you can use a trick:
+                /*
+                But you can use a trick:
 
-            // src/game_assets.rs
-            pub const ACORN_MODEL: usize = 0;
-            pub const TREE_MODEL: usize = 1;
-            pub const ROCK_MODEL: usize = 2;
+                // src/game_assets.rs
+                pub const ACORN_MODEL: usize = 0;
+                pub const TREE_MODEL: usize = 1;
+                pub const ROCK_MODEL: usize = 2;
 
-            AND write like that:
-            mesh_id: ACORN_MODEL
-            */
-        },
-        AcornAABB {
-            min: vec3(-1.0, -1.0, -1.0),
-            max: vec3(1.0, 1.0, 1.0)
-        },
-        Acorn3DSpeed {
-            speed_value: Vec3::ZERO
-        },
-        AcornHasGravity
-    ));
-}
-
-pub fn rotate_coin(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // Take all acorns and change rotations
-    let mut query = 
-        world
-        .query_filtered::<&mut AcornEntity3DTransform, With<IsAcorn>>();
-
-    for mut i in query.iter_mut(world) {
-        i.rotation += 0.1;
+                AND write like that:
+                mesh_id: ACORN_MODEL
+                */
+            },
+            AcornAABB {
+                min: vec3(-1.0, -1.0, -1.0),
+                max: vec3(1.0, 1.0, 1.0)
+            },
+            Acorn3DSpeed {
+                speed_value: Vec3::ZERO
+            },
+        ));
     }
+    
 }
+
+// pub fn rotate_coin(
+//     world: &mut World, 
+//     _zones: &mut AcornZoneContext, 
+//     _context: &mut AcornGlobalContext
+// ) {
+//     // Take all acorns and change rotations
+//     let mut query = 
+//         world
+//         .query_filtered::<&mut AcornEntity3DTransform, With<IsAcorn>>();
+
+//     for mut i in query.iter_mut(world) {
+//         i.rotation += 0.1;
+//     }
+// }

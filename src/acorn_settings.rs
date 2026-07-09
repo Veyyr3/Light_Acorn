@@ -27,4 +27,6 @@ pub struct AcornGlobalContext {
     // from game tools
     pub game_base_preset: Acorn3DGameBase,
     pub frame_delta: f32, // it's important thing. The speed of the camera and objects will not depend on FPS.
+    pub level: u8,
+    pub score: u16,
 }

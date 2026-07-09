@@ -96,5 +96,5 @@ fn example_game_draw_grid(
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    draw_grid(20, 1.0, WHITE, GRAY);
+    draw_grid(100, 1.0, WHITE, GRAY);
 }
