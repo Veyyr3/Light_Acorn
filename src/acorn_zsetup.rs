@@ -31,45 +31,11 @@ use bevy_ecs::prelude::*;
 /// Add function to Location, Location to Zone.
 /// Warning: If you want to add new Zone then you should add new loop "for" in acorn_render (read in docs about this).
 pub fn acorn_zone_setup() -> AcornZoneContext {
-    /* 
-    Here is an example. 
-    
-
-    Locations don't need variables! But you can use variables if you want.
-    Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
-
-    ======================
-    Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
-    ======================
-    */
-
-    /*
-    ======================
-    Also I offer to you Lord-Minor achitecture to full control life of functions.
-    ======================
-
-    Lord-Location: here are Lord-Functions which can change other functions order in Minor-Locations.
-    For each Lord-Functions in Lord-Location you should create own Minor-Location.
-
-    Minor-Location: here are functions which obey to Lord-Function. They listen him and die, move or born by his orders.
-
-    ======================
-    Example: 
-    if there are 3 Lord-Functions in Lord-Location then 3 Minor-Locations for each Lord-Functions.
-    ======================
-    OR Just Memorise: One Lord-Function = One his Minor-Location.
-    ======================
-    But YOU are not required to use this architecture. You are Lord of your ideas.
-    ======================
-    */
-
     // ------------- ui_input_zone (Ex: handle input, events: victory, failure and etc.) -------------
     let ui_input_zone = zone! {
         // Lord-Location.
         location! {
             example_speed_acorn, // move acorn
-            example_add_circle_function, // add blue circle (press left mouse button)
-            example_runtime_spawner, // add new entity (press F and see result in console)
             example_delete_function, // (press TAB to delete functions in Minor-Location)
             // add own functions through comma
         },
@@ -104,23 +70,12 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_3d_camera_link_to_player,
         }
-        // Full functional 
-        // location! {
-        //     agt_xz_grid_create,
-        //     agt_xz_grid_do_slide_collision,
-        //     agt_xz_grid_debug_draw,
-        //     agt_debug_entities_aabb_draw,
-        //     agt_xz_grid_clear,
-        //     agt_do_entities_move,
-        // },
-        // add own locations through comma
     };   
 
     // ------------- after_2d_zone (Ex: UI draw and other Locations) -------------
     let after_2d_zone = zone! {
         // Minor-Location
         location! {
-            acorn_debug_inspector,
             // add own functions through comma 
         }
         // add own locations through comma 
@@ -155,95 +110,6 @@ Arguments:
 Advise: Create functions in other files and import here.
 ====================== */
 
-// ---------------------------- Example simple functions ----------------------------
-// All simple functions should have World argument but shouldn't use it.
-fn example_greeting(
-    _world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    print!("Hello, Light Acorn!");
-}
-
-fn example_draw_circle(
-    _world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    draw_circle(
-        screen_width()/2.0, 
-        screen_height()/2.0, 
-        5.0, 
-        BLUE
-    )
-}
-
-// ---------------------------- Example ECS functions ----------------------------
-// All ECS functions should have World argument.
-
-// example component
-#[derive(Component)]
-pub struct Oaks {pub x: u64}
-
-// Use spawn entities in fn main
-pub fn example_spawn_entity(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    world.spawn((
-        Oaks { x: 100 },
-    ));
-    println!("Entity spawned!");
-}
-
-// Add this function into location
-fn example_query_ecs(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // create query
-    let mut query = world.query::<&Oaks>();
-    
-    // loop for all entities
-    for oaks in query.iter(world) {
-        println!("Entity has: {} oaks", oaks.x);
-    }
-}
-
-// Add this function into location
-// But you can be sure this function also is in acorn_esetup.rs
-fn example_update_oaks(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // create query
-    let mut query = world.query::<&mut Oaks>();
-
-    // loop for all entities. 
-    // Spoiler: game will be over when oaks reach 18 446 744 073 709 551 615 :)
-    for mut oaks in query.iter_mut(world) {
-        oaks.x += 1; 
-    }
-}
-
-// Add this function into location
-fn example_runtime_spawner(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // create new entity. Press F!
-    if is_key_pressed(KeyCode::F) {
-        world.spawn((
-            Oaks { x: 0 }, 
-        ));
-        println!("Runtime Spawn!");
-    }
-}
-
 // ---------------------------- Example Lord-Functions ----------------------------
 // Add this function into Lord-Location in Ui input zone
 fn example_delete_function(
@@ -262,18 +128,18 @@ fn example_delete_function(
     }
 }
 
-// Add this function into Lord-Location
-fn example_add_circle_function(
-    _world: &mut World, 
-    zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // press left mouse button to draw your circle!
-    if is_mouse_button_pressed(MouseButton::Left) { 
-        zones.after_2d_zone.locations[0].functions.push(example_draw_circle);
-        println!("I've created function! Message from: example_add_circle_function");
-    }
-}
+// // Add this function into Lord-Location
+// fn example_add_circle_function(
+//     _world: &mut World, 
+//     zones: &mut AcornZoneContext, 
+//     _context: &mut AcornGlobalContext
+// ) {
+//     // press left mouse button to draw your circle!
+//     if is_mouse_button_pressed(MouseButton::Left) { 
+//         zones.after_2d_zone.locations[0].functions.push(example_draw_circle);
+//         println!("I've created function! Message from: example_add_circle_function");
+//     }
+// }
 
 // ---------------------------- Example Game Functuions ----------------------------
 // Use this example ZST in ECS Query to replace if/else branching.

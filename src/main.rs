@@ -11,13 +11,15 @@ mod acorn_settings; // to setup your global statements, zone and etc.
 mod acorn_esetup; // to setup multithread systems through Bevy
 // tools
 mod acorn_tools; // game tools
+// for game
+mod game_functions;
+mod game_components;
 
 use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
     // only for example functions
     example_spawn_acorn,  
-    example_spawn_entity,
     example_spawn_acorn_move
 };
 use acorn_gsetup::acorn_global_setup;
@@ -59,11 +61,6 @@ async fn main() {
     let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    example_spawn_entity(
-        &mut acorn_ecs.world, 
-        &mut acorn_zone_context, 
-        &mut acorn_global_context
-    );
     example_spawn_acorn(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
