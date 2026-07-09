@@ -99,29 +99,30 @@ pub fn agt_3d_camera_link_to_player(
     }
 }
 
-pub fn agt_player_fps_speed(
+pub fn agt_player_fps_speed_control(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext,
 ) {
+    // get context
     let dt = context.frame_delta;
     let player = &context.game_base_preset.player; 
     let camera = &context.game_base_preset.camera;
 
-    // Считаем горизонтальное направление камеры (проецируем на плоскость XZ, чтобы не взлетать)
+    // Calculate the horizontal direction of the camera (project it onto the XZ plane to avoid taking off)
     let look_dir = (camera.look - camera.position).normalize();
     let forward_xz = vec3(look_dir.x, 0.0, look_dir.z).normalize();
     
-    // Вектор "вправо" получаем через векторное произведение forward_xz и мировой оси Y
     let right_xz = forward_xz.cross(vec3(0.0, 1.0, 0.0)).normalize();
 
-    // Запрос к скоростям игрока
-    let mut query = world.query_filtered::<&mut Acorn3DSpeed, With<AcornIs3DPlayer>>();
+    // create query
+    let mut query = world
+        .query_filtered::<&mut Acorn3DSpeed, With<AcornIs3DPlayer>>();
 
     for mut speed in query.iter_mut(world) {
         let mut move_dir = Vec3::ZERO;
 
-        // Опрос WASD клавиш
+        // WASD handling input
         if is_key_down(KeyCode::W) {
             move_dir += forward_xz * player.move_speed_forward;
         }
@@ -135,15 +136,12 @@ pub fn agt_player_fps_speed(
             move_dir -= right_xz * player.move_speed_side;
         }
 
-        // Применяем скорость по осям X и Z с учетом дельты времени
+        // Apply speed X, Z
         speed.speed_value.x = move_dir.x * dt;
         speed.speed_value.z = move_dir.z * dt;
 
-        // Прыжок: если нажат Пробел, задаем импульс вверх по Y
-        // (Гравитация сама потянет вниз в другой системе)
+        // Jump: SPACE
         if is_key_pressed(KeyCode::Space) {
-            // Здесь предполагается проверка "на земле ли игрок", если твоя физика это позволяет.
-            // Для простоты выставляем силу прыжка напрямую:
             speed.speed_value.y = player.jump_force * dt;
         }
     }
