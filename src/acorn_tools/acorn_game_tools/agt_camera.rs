@@ -14,8 +14,13 @@ use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
-use crate::acorn_tools::acorn_game_tools::prelude::*; // AABB
 use bevy_ecs::prelude::*;
+
+/*
+Here are all for Camera. 
+
+Acorn Collision based on Sparse Spatial Grid.
+*/
 
 // ---------------------------- Structs ----------------------------
 

@@ -12,6 +12,10 @@
 use macroquad::prelude::*;
 use tobj;
 
+/*
+Here are parsers for .obj files.
+*/
+
 #[allow(dead_code)] // delete this if you use
 /// ## Description
 /// Load your 3d model and fill with macroquad color.

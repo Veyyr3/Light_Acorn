@@ -16,6 +16,12 @@ use std::collections::HashMap;
 // for Acorn functions
 use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
 
+/*
+Here are all for Collisions. 
+
+Acorn Collision based on Predictive Sparse Spatial Grid.
+*/
+
 // ---------------------------- Structs ----------------------------
 
 /// ## Description

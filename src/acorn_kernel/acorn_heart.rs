@@ -37,9 +37,9 @@ pub struct AcornECS {
 
 // ---------------------------- Traits ----------------------------
 /// ## Description
-/// Trait allows put Acorn Function Sets into Zone. This is the only reason why here trait.
+/// Trait allows put Acorn Functions Sets into Zone. This is the only reason why here trait.
 /// 
-/// Acorn Function Set is Location with functions.
+/// Acorn Functions Set is Location with functions.
 /// 
 /// ## Trait exsists for that:
 /// ```
@@ -47,7 +47,7 @@ pub struct AcornECS {
 ///     location! {
 ///         agt_camera,
 ///     },
-///     AGT_SLIDE_COLLISION // <- here is Acorn Function Set (that is also Location)
+///     AGT_SLIDE_COLLISION // <- here is Acorn Functions Set (that is also Location)
 /// };
 /// ```
 pub trait IntoLocation {

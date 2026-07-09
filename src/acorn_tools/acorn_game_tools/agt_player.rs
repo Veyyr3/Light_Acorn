@@ -15,6 +15,10 @@ use crate::acorn_tools::acorn_game_tools::prelude::*;
 // for Acorn functions
 use crate::acorn_settings::{AcornGlobalContext, AcornZoneContext};
 
+/*
+Here are all for player.
+*/
+
 // ---------------------------- Structs ----------------------------
 
 pub struct AcornPlayer3D {

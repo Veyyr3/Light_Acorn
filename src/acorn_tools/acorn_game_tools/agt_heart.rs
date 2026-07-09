@@ -12,6 +12,10 @@
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
+/*
+Here are base structs for games.
+*/
+
 // ---------------------------- Structs ----------------------------
 
 /// ## Description

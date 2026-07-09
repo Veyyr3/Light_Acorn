@@ -7,8 +7,16 @@
   Lord of the Framework: Veyyr3
 */
 
+// src/acorn_kernel/acorn_tools/acorn_game_tools/agt_function_sets.rs
+
 use crate::acorn_kernel::prelude::*;
 use crate::acorn_tools::acorn_game_tools::prelude::*;
+
+/*
+Here are Functions Sets. 
+
+Functions Set is group of functions. Put them direct into Zone.
+*/
 
 // ---------------------------- Before 2D Zone Acorn Functions Sets ----------------------------
 
@@ -16,7 +24,13 @@ use crate::acorn_tools::acorn_game_tools::prelude::*;
 /// ## Description
 /// Add simple collision between entities. 
 /// 
-/// This Function Set resets the speed (XYZ) for an entity if its future position collides with another entity.
+/// This Functions Set resets the speed (XYZ) for an entity if its future position collides with another entity.
+/// 
+/// ## Functions:
+/// * `agt_xz_grid_create` – Create grid collision.
+/// * `agt_xz_grid_do_simple_collision` – Do simple collision in cells where >1 entities.
+/// * `agt_xz_grid_clear` – Clear grid collision.
+/// * `agt_do_entities_move` – Apply speed of entities to coordinates.
 /// 
 /// ## Example:
 /// ```
@@ -38,7 +52,13 @@ pub const AGT_SIMPLE_COLLISION: [AcornFunction; 4] =
 /// ## Description
 /// Add slide collision between entities. 
 /// 
-/// This Function Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
+/// This Functions Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
+/// 
+/// ## Functions:
+/// * `agt_xz_grid_create` – Create grid collision.
+/// * `agt_xz_grid_do_slide_collision` – Do slide collision in cells where >1 entities.
+/// * `agt_xz_grid_clear` – Clear grid collision.
+/// * `agt_do_entities_move` – Apply speed of entities to coordinates.
 /// 
 /// ## Example:
 /// ```
