@@ -74,7 +74,11 @@ impl Default for AcornPlayer3D {
 
 // ---------------------------- Acorn Functions ----------------------------
 #[allow(dead_code)]
-/// Add to before 2d zone (in after 2d zone it may work incorrect)
+/// ## Description
+/// Function links camera position to your player.
+/// 
+/// ## Related other Acorn Functions:
+/// * [`agt_player_fps_speed_control`]
 /// 
 /// ## WARNING
 /// **Put only AFTER function** `agt_do_entities_move` **or Functions Sets with Collision like** 'AGT_SIMPLE_COLLISION'.
@@ -99,6 +103,35 @@ pub fn agt_3d_camera_link_to_player(
     }
 }
 
+/// ## Description
+/// Function allows to you control your player via WASD handling.
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase,`
+/// 
+/// ## Necessary pipeline in Zones for full functionality:
+/// ```
+/// let ui_input_zone = zone! {
+///     location! {
+///         agt_3d_camera_common_control, // update camera position and look
+///         agt_player_fps_speed_control, // <- this function
+///     }
+/// };
+/// 
+/// let before_2d_zone = zone! {
+///     // Minor-Location
+///     location! {
+///         agt_3d_camera, // camera should be here first!
+///     },
+///     location! {
+///         agt_gravity_no_under_ground, // for jump
+///     },
+///     AGT_DEBUG_SLIDE_COLLISION, // collision
+///     location! {
+///         agt_3d_camera_link_to_player, // only after collision.
+///     }
+/// };
+/// ```
 pub fn agt_player_fps_speed_control(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -162,7 +195,26 @@ pub fn agt_player_fps_speed_control(
     }
 }
 
-/// Spawn Bevy entity as Player
+/// ## Description
+/// Spawn Bevy entity as Player.
+/// 
+/// ## Example:
+/// ```
+/// #[macroquad::main("Light Acorn test")]
+/// async fn main() {
+///     let mut acorn_ecs = acorn_ecs_setup();
+///     let mut acorn_zone_context = acorn_zone_setup();
+///     let mut acorn_global_context = acorn_global_setup();
+/// 
+///     agt_spawn_player( // <- put here
+///         &mut acorn_ecs.world, 
+///         &mut acorn_zone_context, 
+///         &mut acorn_global_context
+///     );
+/// 
+///     acorn_loop(acorn_ecs, acorn_zone_context, acorn_global_context).await;
+/// }
+/// ```
 pub fn agt_spawn_player(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
