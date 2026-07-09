@@ -58,7 +58,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // It so, because for perfomance. 
     // BUT I leave it to you for organize logic assets keeping.
     assets_3d.meshes.push(
-        load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
+        load_obj_with_materials_to_mesh("objs/acorn_engine.obj")
     );
     // =================================
     
