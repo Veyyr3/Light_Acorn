@@ -8,16 +8,26 @@
 */
 
 // src/acorn_kernel/acorn_tools/acorn_game_tools/agt_obj_parser.rs
+
 use macroquad::prelude::*;
 use tobj;
 
+/*
+Here are parsers for .obj files.
+*/
+
+#[allow(dead_code)] // delete this if you use
+/// ## Description
 /// Load your 3d model and fill with macroquad color.
 /// 
 /// You can use this ONLY IF you don't have .mtl file.
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
 /// 
-/// Ex: color_and_load_obj_to_mesh('your/model.obj', WHITE.into())
+/// ## Example: 
+/// ```
+/// color_and_load_obj_to_mesh('your/model.obj', WHITE.into())
+/// ```
 pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     // load_obj returns (models, materials)
     let (models, _materials) = tobj::load_obj(
@@ -68,13 +78,18 @@ pub fn color_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     }
 }
 
+#[allow(dead_code)] // delete this if you use
+/// ## Description
 /// Load your 3d model and fill with macroquad color.
 /// 
 /// You can use this if you have .mtl file.
 /// 
 /// Use [u8; 4] RGBA in second argument for control your own color. 
 ///  
-/// Ex: color_mtl_and_load_obj_to_mesh('your/model.obj', WHITE.into())
+/// ## Example: 
+/// ```
+/// color_mtl_and_load_obj_to_mesh('your/model.obj', WHITE.into())
+/// ```
 pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     let (models, _materials) = tobj::load_obj(
         path,
@@ -125,9 +140,20 @@ pub fn color_mtl_and_load_obj_to_mesh(path: &str, color: [u8; 4]) -> Mesh {
     }
 }
 
+/// ## Description
 /// Use this function if you have color materials in obj file.
 /// 
 /// Make sure that you have .mtl file near .obj!
+/// 
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub assets_3d: Acorn3DAssetDatabase,`
+/// 
+/// ## Example: 
+/// ```
+/// assets_3d.meshes.push(
+///     load_obj_with_materials_to_mesh("src/acorn_tools/acorn_game_tools/objs/acorn_engine.obj")
+/// );
+/// ```
 pub fn load_obj_with_materials_to_mesh(path: &str) -> Mesh {
     let (models, materials_result) = tobj::load_obj(
         path,

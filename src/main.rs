@@ -3,24 +3,27 @@
 // See the LICENSES folder in the project root for the full license text.
 
 // src/main.rs
-mod acorn_kernel;
-mod acorn_zsetup; // zone setup
-mod acorn_gsetup; // global setup
-mod acorn_settings;
-// for game
-mod acorn_tools;
 
-use acorn_kernel::{
-    acorn_render::acorn_loop, // import acorn_loop
-    acorn_heart::AcornECS, // import Zone, Location, AcornECS
-};
+mod acorn_kernel; // Zone, Location, AcornFunction
+mod acorn_zsetup; // zones, locations, functions setup
+mod acorn_gsetup; // global setup
+mod acorn_settings; // to setup your global statements, zone and etc.
+mod acorn_esetup; // to setup multithread systems through Bevy
+// tools
+mod acorn_tools; // game tools
+
+use acorn_kernel::prelude::*; // acorn loop, acorn ECS
 use acorn_zsetup::{ // import functions from acorn_setup for use in Main
     acorn_zone_setup,
-    // other example functions
-    acorn_game_spawn_acorn,  
-    acorn_example_spawn_entity
+    // only for example functions
+    example_spawn_acorn,  
+    example_spawn_entity,
+    example_spawn_acorn_move
 };
 use acorn_gsetup::acorn_global_setup;
+use acorn_esetup::acorn_ecs_setup;
+
+use crate::acorn_tools::acorn_game_tools::agt_player::agt_spawn_player;
 
 /*
 Hi!
@@ -30,7 +33,7 @@ This main.rs file.
 Examples are in acorn_setup.rs which you may try and search.
 
 ======================
-Right now you are using tempelate REACORN-way (when you can reoder functions in runtime).
+Right now you are using template REACORN-way (when you can reoder functions in runtime).
 BUT IF YOU DON'T WANT MUTABLE CODE IN RUNTIME: use ACORN WAY template in "TEMPLATES" folder.
 ======================
 
@@ -44,20 +47,34 @@ Memorise: Zone is when, Location is where, Function is time-marker.
 #[macroquad::main("Light Acorn test")]
 async fn main() {
     // Global variable ECS. Hand over to acorn_loop.
-    let mut acorn_ecs = AcornECS::default();
+    let mut acorn_ecs = acorn_ecs_setup();
+
+    // WARNING: if you don't need Bevy multithreading then use that:
+    // let mut acorn_ecs = AcornECS::default();
 
     // Contex of Zones. Hand over to acorn_loop.
     let mut acorn_zone_context = acorn_zone_setup();
+
     // Global states. Hand over to acorn_loop.
     let mut acorn_global_context = acorn_global_setup();
 
     // Create entities here (or in runtime by your logic)
-    acorn_example_spawn_entity(
+    example_spawn_entity(
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context
     );
-    acorn_game_spawn_acorn(
+    example_spawn_acorn(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    example_spawn_acorn_move( 
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
+    agt_spawn_player( 
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
         &mut acorn_global_context

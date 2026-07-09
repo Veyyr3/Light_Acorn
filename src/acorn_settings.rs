@@ -9,14 +9,14 @@ Warning: Do not rename 'before_2d_zone' or 'after_2d_zone' fields, kernel depend
 */
 
 // src/acorn_settings.rs
-use crate::acorn_kernel::{
-    acorn_heart::Zone, 
-};
+
+use crate::acorn_kernel::prelude::*; // import Zone
 // game suggestions
-use crate::acorn_tools::acorn_game_tools::agt_heart::Acorn3DAssetDatabase;
+use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase
 
 /// Contain here your Zones
 pub struct AcornZoneContext {
+    pub ui_input_zone: Zone,
     pub before_2d_zone: Zone,
     pub after_2d_zone: Zone,
     // add here your Zone trough comma
@@ -25,5 +25,6 @@ pub struct AcornZoneContext {
 /// Contain here your global statements 
 pub struct AcornGlobalContext {
     // from game tools
-    pub assets_3d: Acorn3DAssetDatabase,
+    pub game_base_preset: Acorn3DGameBase,
+    pub frame_delta: f32, // it's important thing. The speed of the camera and objects will not depend on FPS.
 }

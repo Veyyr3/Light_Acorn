@@ -3,17 +3,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /* Copyright © 2026 Veyyr3
-  Light Acorn Framework: Game Tools
+  Light Acorn Framework: Kernel
   Lord of the Framework: Veyyr3
 */
 
-pub mod agt_heart;
-pub mod agt_obj_parsers;
-pub mod agt_functions;
-pub mod agt_camera;
-pub mod agt_presets;
-pub mod agt_systems;
-pub mod agt_collisions;
-pub mod agt_functions_sets;
-pub mod agt_player;
-pub mod prelude;
+pub use crate::acorn_kernel::acorn_heart::*;
+pub use crate::acorn_kernel::acorn_render::*;

@@ -7,13 +7,12 @@
   Lord of the Framework: Veyyr3
 */
 
-pub mod agt_heart;
-pub mod agt_obj_parsers;
-pub mod agt_functions;
-pub mod agt_camera;
-pub mod agt_presets;
-pub mod agt_systems;
-pub mod agt_collisions;
-pub mod agt_functions_sets;
-pub mod agt_player;
-pub mod prelude;
+// src/acorn_kernel/acorn_tools/acorn_game_tools/agt_systems.rs
+
+use bevy_ecs::prelude::*;
+use macroquad::prelude::*;
+use crate::acorn_tools::acorn_game_tools::prelude::*;
+
+/*
+Here are Bevy systems for acorn_esetup.
+*/

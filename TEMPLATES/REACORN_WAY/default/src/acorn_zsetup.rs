@@ -9,30 +9,21 @@ It's your interface. (sorry, code doesn't let me use GUI here)
 Below, there are examples of Acorn functions.
 
 ======================
-Warning: If you want to add new Zone then you should add new loop "for" in acorn_render (read in docs about this).
+Warning: If you want to add new Zone then you should add new zone_run! in acorn_render (read in docs about this).
 ======================
 */
 
 
 // src/acorn_zsetup.rs
-use crate::acorn_kernel::{
-    acorn_heart::{Zone, Location}, // import Zone, Location
-};
+
 use crate::acorn_settings::{
     AcornZoneContext,
     AcornGlobalContext,
 };
+// sugar macros
+use crate::{zone, location};
 // game suggestions
-use crate::acorn_tools::acorn_game_tools::{
-    agt_heart::{
-        Entity3DTransform, 
-        Entity3DModel,
-    }, 
-    agt_functions::{
-        acorn_game_draw_3d_assets,
-        acorn_debug_inspector,
-    },
-};
+use crate::acorn_tools::acorn_game_tools::prelude::*;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
@@ -48,9 +39,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     Warning: Variables of Locations should exists before variables of Zones in acorn_setup.
 
     ======================
-    Memorise: read code from top to down. Locations, Zones will run by chain.
-    ======================
-    Warning Memorise: Functions will run from down to top (see reason in acorn_render.rs)
+    Memorise: read code from top to down. Functions, Locations, Zones will run by chain.
     ======================
     */
 
@@ -74,53 +63,75 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     ======================
     */
 
-    // before_2d_zone (Ex: UI input, ECS Queries, 3D Mesh drawing and other Locations)
-    let before_2d_zone = Zone::default()
-    .with_locations(vec![
+    // ------------- ui_input_zone (Ex: handle input, events: victory, failure and etc.) -------------
+    let ui_input_zone = zone! {
         // Lord-Location.
-        Location::from_fn_vec(vec![
-            // Deleter of functions.
-            acorn_example_delete_function, // (press TAB to delete functions in Minor-Location)
-        ]),
-        // Minor-Location
-        Location::from_fn_vec(vec![
-            // ECS
-            acorn_example_query_ecs, // print Oaks result
-            // simple function
-            acorn_example_greeting,
-            // ECS
-            acorn_example_runtime_spawner, // add new entity
-            acorn_example_update_oaks, // update ECS state
-            // game
-            acorn_game_draw_3d_assets, // to draw yours 3d models
-            acorn_example_game_rotate_acorn,
-            acorn_example_game_draw_grid,
-            acorn_example_game_camera,
-            // add own functions through comma 
-        ]),
-        // add own locations through comma 
-    ]);
+        location! {
+            example_speed_acorn, // move acorn
+            example_add_circle_function, // add blue circle (press left mouse button)
+            example_runtime_spawner, // add new entity (press F and see result in console)
+            example_delete_function, // (press TAB to delete functions in Minor-Location)
+            // add own functions through comma
+        },
+        // Location for UI input
+        location! {
+            agt_3d_camera_common_control, // update camera position and look
+            agt_player_fps_speed_control,
+        }
+        // add own locations through comma
+    };
 
-    // after_2d_zone (Ex: UI draw and other Locations)
-    let after_2d_zone = Zone::default()
-    .with_locations(vec![
-        // Lord-Location
-        Location::from_fn_vec(vec![
-            acorn_example_add_circle_function
-        ]),
+    // ------------- before_2d_zone (Ex: ECS Queries, 3D Mesh drawing and other Locations) -------------
+    let before_2d_zone = zone! {
         // Minor-Location
-        Location::from_fn_vec(vec![
-            acorn_debug_inspector
+        location! {
+            agt_3d_camera, // camera should be here first!
+            // ECS
+            // example_query_ecs, // print Oaks result
+            // simple function
+            // example_greeting, // print 'Hello, Light Acorn!'
+            // example_update_oaks, // update ECS state. But this function also is in acorn_esetup.rs. 
+            // game
+            agt_draw_3d_assets, // to draw yours 3d models
+            example_game_rotate_acorn, // ECS
+            example_game_draw_grid, // press TAB and this function will be deleted first
+            // add own functions through comma
+        },
+        location! {
+            agt_gravity_no_under_ground,
+        },
+        AGT_DEBUG_SLIDE_COLLISION, // <- A Functions Set
+        location! {
+            agt_3d_camera_link_to_player,
+        }
+        // Full functional 
+        // location! {
+        //     agt_xz_grid_create,
+        //     agt_xz_grid_do_slide_collision,
+        //     agt_xz_grid_debug_draw,
+        //     agt_debug_entities_aabb_draw,
+        //     agt_xz_grid_clear,
+        //     agt_do_entities_move,
+        // },
+        // add own locations through comma
+    };   
+
+    // ------------- after_2d_zone (Ex: UI draw and other Locations) -------------
+    let after_2d_zone = zone! {
+        // Minor-Location
+        location! {
+            acorn_debug_inspector,
             // add own functions through comma 
-        ]),
+        }
         // add own locations through comma 
-    ]);
+    };
 
     // Return AcornZoneContext for Main function
     AcornZoneContext { 
+        ui_input_zone,
         before_2d_zone, 
         after_2d_zone,
-        // your Zone through comma
+        // your Zone through comma if you have
     }
 }
 
@@ -146,7 +157,7 @@ Advise: Create functions in other files and import here.
 
 // ---------------------------- Example simple functions ----------------------------
 // All simple functions should have World argument but shouldn't use it.
-fn acorn_example_greeting(
+fn example_greeting(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -154,7 +165,7 @@ fn acorn_example_greeting(
     print!("Hello, Light Acorn!");
 }
 
-fn acorn_example_draw_circle(
+fn example_draw_circle(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -162,7 +173,7 @@ fn acorn_example_draw_circle(
     draw_circle(
         screen_width()/2.0, 
         screen_height()/2.0, 
-        60.0, 
+        5.0, 
         BLUE
     )
 }
@@ -172,10 +183,10 @@ fn acorn_example_draw_circle(
 
 // example component
 #[derive(Component)]
-struct Oaks {x: u64}
+pub struct Oaks {pub x: u64}
 
 // Use spawn entities in fn main
-pub fn acorn_example_spawn_entity(
+pub fn example_spawn_entity(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -187,7 +198,7 @@ pub fn acorn_example_spawn_entity(
 }
 
 // Add this function into location
-fn acorn_example_query_ecs(
+fn example_query_ecs(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -202,7 +213,8 @@ fn acorn_example_query_ecs(
 }
 
 // Add this function into location
-fn acorn_example_update_oaks(
+// But you can be sure this function also is in acorn_esetup.rs
+fn example_update_oaks(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -218,13 +230,13 @@ fn acorn_example_update_oaks(
 }
 
 // Add this function into location
-fn acorn_example_runtime_spawner(
+fn example_runtime_spawner(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    // create new entity. Press Space!
-    if is_key_pressed(KeyCode::Space) {
+    // create new entity. Press F!
+    if is_key_pressed(KeyCode::F) {
         world.spawn((
             Oaks { x: 0 }, 
         ));
@@ -233,55 +245,59 @@ fn acorn_example_runtime_spawner(
 }
 
 // ---------------------------- Example Lord-Functions ----------------------------
-// Add this function into Lord-Location
-fn acorn_example_delete_function(
+// Add this function into Lord-Location in Ui input zone
+fn example_delete_function(
     _world: &mut World, 
     zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    // KILL ANY FUNCTION IN FIRST ZONE, SECOND LOCATION!
+    // KILL ANY FUNCTION IN SECOND ZONE!
     // PRESS TAB!
     // of course you have right to write if/else checking to get rid of 101 error in runtime:
-    // if !zones.before_2d_zone.locations[1].functions.is_empty()
+    // if !zones.before_2d_zone.locations[0].functions.is_empty()
     // but I leave this to understand REACORN-way for you
     if is_key_pressed(KeyCode::Tab) { 
-        zones.before_2d_zone.locations[1].functions.remove(0);
-        println!("I've killed function! Message from: acorn_example_delete_function");
+        zones.before_2d_zone.locations[0].functions.remove(0);
+        println!("I've killed function! Message from: example_delete_function");
     }
 }
 
 // Add this function into Lord-Location
-fn acorn_example_add_circle_function(
+fn example_add_circle_function(
     _world: &mut World, 
     zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
     // press left mouse button to draw your circle!
     if is_mouse_button_pressed(MouseButton::Left) { 
-        zones.after_2d_zone.locations[1].functions.push(acorn_example_draw_circle);
-        println!("I've gave birth function! Message from: acorn_example_add_circle_function");
+        zones.after_2d_zone.locations[0].functions.push(example_draw_circle);
+        println!("I've created function! Message from: example_add_circle_function");
     }
 }
 
 // ---------------------------- Example Game Functuions ----------------------------
 // Use this example ZST in ECS Query to replace if/else branching.
-// In acorn_example_game_rotate_acorn ECS function rotating only entities with IsAcorn.
+// In example_game_rotate_acorn ECS function rotating only entities with IsAcorn.
 #[derive(Component)]
 struct IsAcorn;
 
+// new
+#[derive(Component)]
+struct CanAcornMove;
+
 // spawner 3d model of acorn.
-pub fn acorn_game_spawn_acorn(
+pub fn example_spawn_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
     world.spawn((
-       Entity3DTransform {
-            position: vec3(0.0, 1.0, 0.0),
+        AcornEntity3DTransform {
+            position: vec3(0.0, 10.0, 0.0),
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
-       }, 
-       Entity3DModel {
+        }, 
+        AcornEntity3DModel {
             // WARNING: you should remember index of your 3d model
             mesh_id: 0 
 
@@ -296,29 +312,104 @@ pub fn acorn_game_spawn_acorn(
             AND write like that:
             mesh_id: ACORN_MODEL
             */
-       },
-       IsAcorn // component-marker
+        },
+        AcornAABB {
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
+        },
+        Acorn3DSpeed {
+            speed_value: Vec3::ZERO
+        },
+        IsAcorn, // component-marker
+        AcornHasGravity
     ));
     println!("Entity spawned!");
 }
 
+// new
+pub fn example_spawn_acorn_move(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    _context: &mut AcornGlobalContext
+) {
+
+    world.spawn((
+        AcornEntity3DTransform {
+            position: vec3(5.0, 1.0, 0.0),
+            rotation: 0.0,
+            scale: vec3(1.0, 1.0, 1.0)
+        }, 
+        AcornEntity3DModel {
+                // WARNING: you should remember index of your 3d model
+                mesh_id: 0 
+
+                /*
+                But you can use a trick:
+
+                // src/game_assets.rs
+                pub const ACORN_MODEL: usize = 0;
+                pub const TREE_MODEL: usize = 1;
+                pub const ROCK_MODEL: usize = 2;
+
+                AND write like that:
+                mesh_id: ACORN_MODEL
+                */
+        },
+        AcornAABB {
+            min: vec3(-1.0, -1.0, -1.0),
+            max: vec3(1.0, 1.0, 1.0)
+        },
+        Acorn3DSpeed {
+            speed_value: Vec3::ZERO
+        },
+        CanAcornMove, // component-marker
+        AcornHasGravity,
+    ));
+    println!("Entity spawned!");
+
+}
+
+// new
+fn example_speed_acorn(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    let mut query = world.query_filtered::<&mut Acorn3DSpeed, With<CanAcornMove>>();
+    let dt = context.frame_delta;
+
+    for mut i in query.iter_mut(world) {
+        if is_key_down(KeyCode::Right){
+            i.speed_value.x = -2.0 * dt;
+        } else {
+            i.speed_value.x = 0.0;
+        }
+
+        if is_key_down(KeyCode::Left) {
+            i.speed_value.z = 2.0 * dt;
+        } else {
+            i.speed_value.z = 0.0;
+        }
+    }
+}
+
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_camera(
+fn example_game_simple_camera(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
     // spawn camera
     set_camera(&Camera3D {
-            position: vec3(5.0, 5.0, 5.0),
-            up: vec3(0.0, 1.0, 0.0),
-            target: vec3(0.0, 0.5, 0.0),
-            ..Default::default()
-        });
+        position: vec3(5.0, 5.0, 5.0),
+        up: vec3(0.0, 1.0, 0.0),
+        target: vec3(0.0, 0.5, 0.0),
+        ..Default::default()
+    });
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_rotate_acorn(
+fn example_game_rotate_acorn(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
@@ -326,7 +417,7 @@ fn acorn_example_game_rotate_acorn(
     // Take all acorns and change rotations
     let mut query = 
         world
-        .query_filtered::<&mut Entity3DTransform, With<IsAcorn>>();
+        .query_filtered::<&mut AcornEntity3DTransform, With<IsAcorn>>();
 
     for mut i in query.iter_mut(world) {
         i.rotation += 0.1;
@@ -334,7 +425,7 @@ fn acorn_example_game_rotate_acorn(
 }
 
 // Add to before 2d zone (in after 2d zone it may work incorrect)
-fn acorn_example_game_draw_grid(
+fn example_game_draw_grid(
     _world: &mut World, 
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
