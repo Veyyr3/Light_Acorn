@@ -75,23 +75,26 @@ impl Default for AcornPlayer3D {
 // ---------------------------- Acorn Functions ----------------------------
 #[allow(dead_code)]
 /// Add to before 2d zone (in after 2d zone it may work incorrect)
+/// 
+/// ## WARNING
+/// **Put only AFTER function** `agt_do_entities_move` **or Functions Sets with Collision like** 'AGT_SIMPLE_COLLISION'.
 pub fn agt_3d_camera_link_to_player(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext,
 ) {
+    // get context
     let player = &mut context.game_base_preset.player;
     let camera = &mut context.game_base_preset.camera;
     
-    // Берем позицию трансформа игрока (предполагаем наличие компонента AcornEntity3DTransform)
+    // create query
     let mut query = 
         world.query_filtered::<&AcornEntity3DTransform, With<AcornIs3DPlayer>>();
     
+    // take first entitiy with AcornIs3DPlayer.
     if let Some(player_transform) = query.iter(world).next() {
-        // 1. Обновляем глобальные координаты игрока
         player.position = player_transform.position;
 
-        // 2. Позиция камеры = Позиция игрока + локальное смещение камеры (eye_position)
         camera.position = player.position + player.eye_position;
     }
 }
