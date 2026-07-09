@@ -227,16 +227,16 @@ pub fn agt_spawn_player(
     _zones: &mut AcornZoneContext, 
     context: &mut AcornGlobalContext
 ) {
-   world.spawn((
+    // get context
+    let player = &context.game_base_preset.player;
+
+    world.spawn((
         AcornEntity3DTransform {
-            position: context.game_base_preset.player.position,
+            position: player.position,
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
-        AcornAABB {
-            min: vec3(-1.0, -1.0, -1.0),
-            max: vec3(1.0, 1.0, 1.0)
-        },
+        player.aabb,
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
         },
