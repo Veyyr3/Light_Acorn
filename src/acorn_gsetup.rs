@@ -4,9 +4,7 @@
 
 // src/acorn_gsetup.rs
 
-use crate::acorn_settings::{
-    AcornGlobalContext,
-};
+use crate::{acorn_settings::AcornGlobalContext, game_settings::Finish};
 use macroquad::prelude::*;
 // game suggestions
 use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DGameBase, Acorn3DAssetDatabase
@@ -66,7 +64,14 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         load_obj_with_materials_to_mesh("objs/coin.obj"),
     ]);
     // =================================
-    
+
+
+    // =================================
+    // for game
+    let finish = Finish {
+        ..Default::default()
+    };
+    // =================================
 
 
     // return global context
@@ -76,6 +81,6 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
         frame_delta,
         level: 1,
         score: 0,
-        finish_location: vec3(45.0, 12.0, 10.0),
+        finish,
     }
 }

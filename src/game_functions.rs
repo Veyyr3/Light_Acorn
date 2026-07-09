@@ -88,7 +88,7 @@ pub fn spawn_finish(
 ) {
     world.spawn((
         AcornEntity3DTransform {
-            position: context.finish_location,
+            position: context.finish.position,
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 
@@ -102,6 +102,7 @@ pub fn spawn_finish(
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
         },
+        IsFinish,
     ));
 }
 
@@ -147,20 +148,23 @@ pub fn rotate_coin(
     }
 }
 
-pub fn update_lvl(
-    world: &mut World, 
-    _zones: &mut AcornZoneContext, 
-    _context: &mut AcornGlobalContext
-) {
-    // Take all acorns and change rotations
-    let mut query = 
-        world
-        .query_filtered::<&mut AcornEntity3DTransform, With<IsCoin>>();
+// pub fn update_lvl(
+//     world: &mut World, 
+//     _zones: &mut AcornZoneContext, 
+//     context: &mut AcornGlobalContext
+// ) {
+//     // get context
+//     let finish = context.finish_location;
 
-    for mut i in query.iter_mut(world) {
-        i.rotation += 0.1;
-    }
-}
+//     // Take all acorns and change rotations
+//     let mut query = 
+//         world
+//         .query_filtered::<(&AcornEntity3DTransform, &AcornAABB), With<IsFinish>>();
+
+//     for (finish_position in query.iter_mut(world) {
+//         i.rotation += 0.1;
+//     }
+// }
 
 // ---------------------------- UI ----------------------------
 

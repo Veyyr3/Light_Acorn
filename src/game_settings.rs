@@ -9,3 +9,20 @@ use bevy_ecs::prelude::*;
 pub const ACORN_MODEL:  usize = 0;
 pub const FINISH_MODEL:  usize = 1;
 pub const COIN_MODEL:  usize = 2;
+
+pub struct Finish {
+    pub position: Vec3,
+    pub aabb: AcornAABB,
+}
+
+impl Default for Finish {
+    fn default() -> Self {
+        Self {
+            position: vec3(45.0, 12.0, 10.0),
+            aabb: AcornAABB {
+                min: vec3(-1.0, -0.5, -1.0),
+                max: vec3(1.0, 0.5, 1.0)
+            }
+        }
+    }
+}

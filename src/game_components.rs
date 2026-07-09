@@ -6,3 +6,6 @@ use bevy_ecs::prelude::*;
 
 #[derive(Component)]
 pub struct IsCoin;
+
+#[derive(Component)]
+pub struct IsFinish;

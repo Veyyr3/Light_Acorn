@@ -16,6 +16,7 @@ use crate::acorn_tools::acorn_game_tools::prelude::*; // Acorn3DAssetDatabase.
 
 // for game
 use macroquad::prelude::*;
+use crate::game_settings::*;
 
 /// Contain here your Zones
 pub struct AcornZoneContext {
@@ -32,5 +33,5 @@ pub struct AcornGlobalContext {
     pub frame_delta: f32, // it's important thing. The speed of the camera and objects will not depend on FPS.
     pub level: u8,
     pub score: u16,
-    pub finish_location: Vec3,
+    pub finish: Finish,
 }
