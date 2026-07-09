@@ -109,10 +109,9 @@ pub fn agt_player_fps_speed_control(
     let player = &context.game_base_preset.player; 
     let camera = &context.game_base_preset.camera;
 
-    // Calculate the horizontal direction of the camera (project it onto the XZ plane to avoid taking off)
+    // Calculate the horizontal direction of the camera
     let look_dir = (camera.look - camera.position).normalize();
     let forward_xz = vec3(look_dir.x, 0.0, look_dir.z).normalize();
-    
     let right_xz = forward_xz.cross(vec3(0.0, 1.0, 0.0)).normalize();
 
     // create query
@@ -121,19 +120,35 @@ pub fn agt_player_fps_speed_control(
 
     for mut speed in query.iter_mut(world) {
         let mut move_dir = Vec3::ZERO;
+        let mut input_dir = Vec3::ZERO;
+        let mut current_speed = player.move_speed_forward;
 
-        // WASD handling input
         if is_key_down(KeyCode::W) {
-            move_dir += forward_xz * player.move_speed_forward;
+            input_dir += forward_xz;
+            current_speed = player.move_speed_forward;
         }
         if is_key_down(KeyCode::S) {
-            move_dir -= forward_xz * player.move_speed_backward;
+            input_dir -= forward_xz;
+            current_speed = player.move_speed_backward;
         }
         if is_key_down(KeyCode::D) {
-            move_dir += right_xz * player.move_speed_side;
+            input_dir += right_xz;
+            // Diagonal acceleration protection.
+            if !is_key_down(KeyCode::W) && !is_key_down(KeyCode::S) {
+                current_speed = player.move_speed_side;
+            }
         }
         if is_key_down(KeyCode::A) {
-            move_dir -= right_xz * player.move_speed_side;
+            input_dir -= right_xz;
+            // Diagonal acceleration protection.
+            if !is_key_down(KeyCode::W) && !is_key_down(KeyCode::S) {
+                current_speed = player.move_speed_side;
+            }
+        }
+
+        // Normalize the input vector if it is non-zero
+        if input_dir != Vec3::ZERO {
+            move_dir = input_dir.normalize() * current_speed;
         }
 
         // Apply speed X, Z
