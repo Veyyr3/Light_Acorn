@@ -50,6 +50,35 @@ pub const AGT_SIMPLE_COLLISION: [AcornFunction; 4] =
 
 #[allow(dead_code)]
 /// ## Description
+/// Add simple collision between entities. If an entity is trigger then others can move through the entity.
+/// You can use this Function Set to implement objects like finish, bonus, button and etc. in your game.
+/// 
+/// This Functions Set resets the speed (XYZ) for an entity if its future position collides with another entity.
+/// 
+/// ## Functions:
+/// * `agt_xz_grid_create` – Create grid collision.
+/// * `agt_xz_grid_do_simple_collision_include_triggers` – Do simple collision in cells where >1 entities, include triggers.
+/// * `agt_xz_grid_clear` – Clear grid collision.
+/// * `agt_do_entities_move` – Apply speed of entities to coordinates.
+/// 
+/// ## Example:
+/// ```
+/// let before_2d_zone = zone! {
+///     location! {
+///         function,
+///     },
+///     AGT_SIMPLE_COLLISION,
+/// ```
+pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] = 
+    [
+        agt_xz_grid_create,
+        agt_xz_grid_do_simple_collision_include_triggers,
+        agt_xz_grid_clear,
+        agt_do_entities_move,
+    ];
+
+#[allow(dead_code)]
+/// ## Description
 /// Add slide collision between entities. 
 /// 
 /// This Functions Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.

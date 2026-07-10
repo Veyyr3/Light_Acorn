@@ -52,15 +52,19 @@ pub struct CellXZCoordinates {
 
 #[derive(Component)]
 /// ## Description
-/// Add this to your entities if they should collide.
-pub struct AcornHasCollision {
-    is_trigger: bool
+/// Add this to your entities if they should be a trigger.
+pub struct AcornIsTrigger {
+    pub is_trigger: bool
 }
 
 #[derive(Component)]
 /// ## Description
 /// Add this to your entities if they are triggers.
-pub struct AcornIsCollided(bool);
+/// 
+/// You may use them in your own functions to detect the collision and make an event. For example, when a player touches the finish of level.
+pub struct AcornIsCollided{
+    pub is_collided: bool
+}
 
 #[derive(Clone, Copy, Debug, Component)]
 /// ## Description
@@ -365,7 +369,7 @@ pub fn agt_xz_grid_debug_check_collision(
 
 #[allow(dead_code)]
 /// ## Description
-/// Function for collision between 2 entities. The function resets the speed (XYZ) for an entity if its future position collides with another entity.
+/// Function for collision between 2 entities. The function resets the speed (XYZ) for an entity if its own future position collides with another entity.
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -425,6 +429,108 @@ pub fn agt_xz_grid_do_simple_collision(
                     if will_collide {
                         // Set all speed to Zero
                         speed_a.speed_value = Vec3::ZERO;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[allow(dead_code)]
+/// ## Description
+/// Function for collision between 2 entities. The function resets the speed (XYZ) for an entity if its own future position collides with another entity.
+/// 
+/// Also the function includes logic for triggers. 
+/// Trigger is an entity that others can move through. 
+/// When an entity moved through the trigger then trigger changes its own bool flag in [`AcornIsCollided`]. 
+/// You can use this function to implement objects like finish, bonus, button and etc. in your game.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_simple_collision_include_triggers, // <-
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
+/// },
+/// ```
+///  
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * [`Acorn3DSpeed`]
+/// * [`AcornEntity3DTransform`]
+/// * [`AcornAABB`]
+/// 
+/// ## Required entity components as a trigger for collisions:
+/// * [`AcornIsTrigger`]
+/// * [`AcornIsCollided`]
+pub fn agt_xz_grid_do_simple_collision_include_triggers(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; } // do not check self (necessary 2 different Bevy entities ID)
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                let mut collision_detected = false;
+
+                if let Ok([(trans_a, speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    // if entity A has 0 speed, pass
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    // entity B
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // future position of entity A
+                    let future_pos_a = trans_a.position + speed_a.speed_value;
+                    let a_future_min = future_pos_a + aabb_a.min;
+                    let a_future_max = future_pos_a + aabb_a.max;
+
+                    // collided?
+                    let will_collide = 
+                        a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
+                        a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
+                        a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
+
+                    if will_collide {
+                        collision_detected = true;
+                    }
+                } // <- here World is free.
+
+                if collision_detected {
+                    let mut is_b_trigger = false;
+                    if let Some(collision_b) = world.get::<AcornIsTrigger>(entity_b) {
+                        if collision_b.is_trigger {
+                            is_b_trigger = true;
+                        }
+                    }
+
+                    if is_b_trigger {
+                        // IF B IS A TRIGGER:
+                        // Do not zero out the speed (pass through), but raise the detection flag on entity B
+                        if let Some(mut collided_b) = world.get_mut::<AcornIsCollided>(entity_b) {
+                            collided_b.is_collided = true;
+                        }
+                    } else {
+                        // IF B IS A SOLID WALL:
+                        // Set all speed to Zero.
+                        if let Some(mut speed_a) = world.get_mut::<Acorn3DSpeed>(entity_a) {
+                            speed_a.speed_value = Vec3::ZERO;
+                        }
                     }
                 }
             }

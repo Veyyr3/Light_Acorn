@@ -196,13 +196,16 @@ pub fn agt_player_fps_speed_control(
             move_dir = input_dir.normalize() * current_speed;
         }
 
+        let move_dir_x = move_dir.x * dt;
+        let move_dir_z = move_dir.z * dt;
+
         // Apply speed X, Z for entity
-        speed.speed_value.x = move_dir.x * dt;
-        speed.speed_value.z = move_dir.z * dt;
+        speed.speed_value.x = move_dir_x;
+        speed.speed_value.z = move_dir_z;
 
         // Apply speed X, Z for Player in Global State
-        player.speed.speed_value.x = move_dir.x * dt;
-        player.speed.speed_value.z = move_dir.x * dt;
+        player.speed.speed_value.x = move_dir_x;
+        player.speed.speed_value.z = move_dir_z;
 
         // Jump: SPACE
         if is_key_pressed(KeyCode::Space) {

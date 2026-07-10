@@ -99,6 +99,12 @@ pub fn spawn_finish(
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
         },
+        AcornIsTrigger {
+            is_trigger: true
+        },
+        AcornIsCollided {
+            is_collided: false
+        },
         IsFinish,
     ));
 }
@@ -123,6 +129,12 @@ pub fn spawn_coin_lvl1(
         },
         Acorn3DSpeed {
             speed_value: Vec3::ZERO
+        },
+        AcornIsTrigger {
+            is_trigger: true
+        },
+        AcornIsCollided {
+            is_collided: false
         },
         IsCoin,
     ));
