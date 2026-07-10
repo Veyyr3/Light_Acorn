@@ -32,6 +32,7 @@ pub struct AcornPlayer3D {
     pub aabb: AcornAABB,
     pub speed: Acorn3DSpeed,
     pub is_grounded: bool,
+    pub is_collided: bool,
 }
 
 // ---------------------------- Components ----------------------------
@@ -51,7 +52,8 @@ impl AcornPlayer3D {
         jump_force: f32,
         aabb: AcornAABB,
         speed: Acorn3DSpeed,
-        is_grounded: bool
+        is_grounded: bool,
+        is_collided: bool,
     ) -> Self {
         Self {
             position,
@@ -62,7 +64,8 @@ impl AcornPlayer3D {
             jump_force,
             aabb,
             speed,
-            is_grounded
+            is_grounded,
+            is_collided,
         }
     }
 }
@@ -83,6 +86,7 @@ impl Default for AcornPlayer3D {
                 max: vec3(1.0, 1.0, 1.0) 
             },
             Acorn3DSpeed { speed_value: Vec3::ZERO },
+            false,
             false
         ) 
     }
@@ -108,7 +112,7 @@ impl Default for AcornPlayer3D {
 ///     },
 /// }
 /// ```
-pub fn agt_3d_camera_link_to_player(
+pub fn agt_3d_camera_link_and_meta_to_player(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext,
@@ -117,14 +121,21 @@ pub fn agt_3d_camera_link_to_player(
     let player = &mut context.game_base_preset.player;
     let camera = &mut context.game_base_preset.camera;
     
-    // create query
+    // create query (take first entitiy with AcornIs3DPlayer)
     let mut query = 
-        world.query_filtered::<&AcornEntity3DTransform, With<AcornIs3DPlayer>>();
+        world.query_filtered::<(
+            &AcornEntity3DTransform, 
+            &AcornIsCollided
+        ),
+        With<AcornIs3DPlayer>>();
     
     // take first entitiy with AcornIs3DPlayer.
-    if let Some(player_transform) = query.iter(world).next() {
-        player.position = player_transform.position;
+    if let Some((player_transform, collision)) = query.iter(world).next() {
+        // set meta for player
+        player.position = player_transform.position; // position
+        player.is_collided = collision.is_collided; // is_collided
 
+        // set position for camera
         camera.position = player.position + player.eye_position;
     }
 }

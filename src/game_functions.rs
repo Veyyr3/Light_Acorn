@@ -181,6 +181,7 @@ pub fn update_lvl(
     );
     println!("player {}", player.position);
     println!("player speed {:?}", player.speed);
+    println!("player collide {:?}", player.is_collided);
     println!("finish {}", finish.position);
 
     if is_collide {
