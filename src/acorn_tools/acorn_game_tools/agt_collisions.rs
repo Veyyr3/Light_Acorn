@@ -644,6 +644,37 @@ pub fn agt_xz_grid_do_slide_collision(
     }
 }
 
+#[allow(dead_code)]
+/// ## Description
+/// Function for collision between 2 entities. This function adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
+/// 
+/// Also the function includes logic for triggers. 
+/// Trigger is an entity that others can move through. 
+/// When an entity moved through the trigger then trigger changes its own bool flag in [`AcornIsCollided`]. 
+/// You can use this function to implement objects like finish, bonus, button and etc. in your game.
+/// 
+/// ## Necessary set of Acorn functions for full functionality:
+/// copy&paste this into `acorn_zsetup`:
+/// ```
+/// location! {
+///     agt_xz_grid_create,
+///     agt_xz_grid_do_slide_collision, // <-
+///     agt_xz_grid_clear,
+///     agt_do_entities_move, // This is necessary for the entities to move.
+/// },
+/// ```
+///  
+/// ## Necessary Global States in `AcornGlobalContext`:
+/// * `pub game_base_preset: Acorn3DGameBase`
+/// 
+/// ## Required entity components for collisions:
+/// * [`Acorn3DSpeed`]
+/// * [`AcornEntity3DTransform`]
+/// * [`AcornAABB`]
+/// 
+/// ## Required entity components as a trigger for collisions:
+/// * [`AcornIsTrigger`]
+/// * [`AcornIsCollided`]
 pub fn agt_xz_grid_do_slide_collision_include_triggers(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -1164,9 +1195,32 @@ pub fn agt_debug_entities_aabb_draw(
     }
 }
 
+#[allow(dead_code)]
+/// ## Description 
+/// Set for all entities false state for [`AcornIsCollided`].
+/// 
+/// This is a must-use if you have collision functions or Functions Sets that include triggers like [`agt_xz_grid_do_slide_collision_include_triggers`].
+/// Otherwise, your entities always be collided even it's not so.
+/// 
+/// ## Required entity components for work:
+/// * [`AcornIsCollided`]
+pub fn agt_clear_collision_triggers(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    _context: &mut AcornGlobalContext
+) {
+    let mut query = world.query::<&mut AcornIsCollided>();
+
+    for mut collided in query.iter_mut(world) {
+        collided.is_collided = false;
+    }
+}
+
 // ---------------------------- Public Functions ----------------------------
 
 #[allow(dead_code)]
+/// ## Description 
+/// Check intersects between 2 AABB.
 pub fn agt_intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) -> bool {
     first.min.x <= second.max.x && first.max.x >= second.min.x &&
     first.min.y <= second.max.y && first.max.y >= second.min.y &&
@@ -1174,6 +1228,8 @@ pub fn agt_intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) ->
 }
 
 #[allow(dead_code)]
+/// ## Description 
+/// Check collision between two object.
 pub fn agt_is_collide(
     first_aabb: &AcornAABB, 
     first_position: Vec3,
@@ -1192,6 +1248,8 @@ pub fn agt_is_collide(
 }
 
 #[allow(dead_code)]
+/// ## Description 
+/// Check predictive collision between two object. The first object should have [`Acorn3DSpeed`].
 pub fn agt_is_predictive_collide(
     first_aabb: &AcornAABB, 
     first_position: Vec3,

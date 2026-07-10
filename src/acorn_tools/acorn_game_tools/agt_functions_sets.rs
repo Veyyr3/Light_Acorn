@@ -56,6 +56,7 @@ pub const AGT_SIMPLE_COLLISION: [AcornFunction; 4] =
 /// This Functions Set resets the speed (XYZ) for an entity if its future position collides with another entity.
 /// 
 /// ## Functions:
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
 /// * `agt_xz_grid_create` – Create grid collision.
 /// * `agt_xz_grid_do_simple_collision_include_triggers` – Do simple collision in cells where >1 entities, include triggers.
 /// * `agt_xz_grid_clear` – Clear grid collision.
@@ -69,8 +70,9 @@ pub const AGT_SIMPLE_COLLISION: [AcornFunction; 4] =
 ///     },
 ///     AGT_SIMPLE_COLLISION,
 /// ```
-pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] = 
+pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 5] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_do_simple_collision_include_triggers,
         agt_xz_grid_clear,
@@ -112,8 +114,9 @@ pub const AGT_SLIDE_COLLISION: [AcornFunction; 4] =
 /// This Functions Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
 /// 
 /// ## Functions:
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
 /// * `agt_xz_grid_create` – Create grid collision.
-/// * `agt_xz_grid_do_slide_collision` – Do slide collision in cells where >1 entities.
+/// * `agt_xz_grid_do_slide_collision_include_triggers` – Do slide collision in cells where >1 entities.
 /// * `agt_xz_grid_clear` – Clear grid collision.
 /// * `agt_do_entities_move` – Apply speed of entities to coordinates.
 /// 
@@ -125,8 +128,9 @@ pub const AGT_SLIDE_COLLISION: [AcornFunction; 4] =
 ///     },
 ///     AGT_SLIDE_COLLISION,
 /// ```
-pub const AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] = 
+pub const AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 5] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_do_slide_collision_include_triggers,
         agt_xz_grid_clear,
