@@ -1229,7 +1229,7 @@ pub fn agt_intersects_between_two_aabb(first: &AcornAABB, second: &AcornAABB) ->
 
 #[allow(dead_code)]
 /// ## Description 
-/// Check collision between two object.
+/// Check collision between two object. Based on position and AABB.
 pub fn agt_is_collide(
     first_aabb: &AcornAABB, 
     first_position: Vec3,
@@ -1249,7 +1249,7 @@ pub fn agt_is_collide(
 
 #[allow(dead_code)]
 /// ## Description 
-/// Check predictive collision between two object. The first object should have [`Acorn3DSpeed`].
+/// Check predictive collision between two object. The first object should have [`Acorn3DSpeed`]. Based on Acorn Predicitve Collision: position, speed, AABB.
 pub fn agt_is_predictive_collide(
     first_aabb: &AcornAABB, 
     first_position: Vec3,
