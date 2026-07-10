@@ -770,6 +770,116 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
     }
 }
 
+pub fn agt_xz_grid_do_slide_collision_include_triggers_experimental(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    
+    let mut query = world.query::<(
+        &AcornEntity3DTransform, 
+        &mut Acorn3DSpeed, 
+        &AcornAABB,
+        &mut AcornIsCollided,
+        &AcornIsTrigger
+    )>();
+
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; } 
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
+                    let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
+                    let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
+
+                    // Вычисляем мировые границы сущности B (Финиш / Стена)
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // Вычисляем БУДУЩИЕ полные границы сущности А (Игрок) с учетом всей скорости Vec3
+                    let future_pos_a = trans_a.position + speed_a.speed_value;
+                    let a_future_min = future_pos_a + aabb_a.min;
+                    let a_future_max = future_pos_a + aabb_a.max;
+
+                    // 1. ОБЩИЙ ТЕСТ НА КОЛЛИЗИЮ (Идеально для триггеров и точной детекции)
+                    let is_overlapping = 
+                        a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
+                        a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
+                        a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
+
+                    if is_overlapping {
+                        // Нашли пересечение — ВСЕГДА взводим флаг (хоть для триггера, хоть для стены)
+                        collided_b.is_collided = true;
+
+                        // Если это ТРИГГЕР — мы просто зафиксировали факт и идем дальше, не ломая скорость
+                        if trigger_b.is_trigger {
+                            continue; 
+                        }
+                    }
+
+                    // 2. ФИЗИКА ДЛЯ ТВЕРДЫХ СТЕН (Выполняется, только если скорость не ZERO и это НЕ триггер)
+                    // Сюда код дойдет, только если trigger_b.is_trigger == false
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    // --- TEST X AXIS ---
+                    if speed_a.speed_value.x != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.max;
+
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_x {
+                            let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
+                            speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
+                            speed_a.speed_value.x = 0.0; 
+                        }
+                    }
+
+                    // --- TEST Z AXIS ---
+                    if speed_a.speed_value.z != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.max;
+
+                        let collide_z = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z {
+                            let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
+                            speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
+                            speed_a.speed_value.z = 0.0;
+                        }
+                    }
+
+                    // --- TEST Y AXIS ---
+                    if speed_a.speed_value.y != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.max;
+
+                        let collide_y = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_y {
+                            speed_a.speed_value.y = 0.0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ====== fn about collision and entities ======
 
 #[allow(dead_code)]

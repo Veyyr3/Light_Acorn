@@ -69,6 +69,7 @@ pub fn acorn_global_setup() -> AcornGlobalContext {
     // =================================
     // for game
     let finish = Finish {
+        position: vec3(10.0, 10.0, 10.0),
         ..Default::default()
     };
     // =================================
