@@ -154,13 +154,15 @@ pub fn update_lvl(
     let finish = &context.finish;
     let player = &context.game_base_preset.player;
 
-    let is_collide = agt_is_collide(
+    let is_collide = agt_is_predictive_collide(
+        &player.aabb,
+        player.position,
+        &player.speed,
         &finish.aabb, 
-        finish.position, 
-        &player.aabb, 
-        player.position
+        finish.position
     );
     println!("player {}", player.position);
+    println!("player speed {:?}", player.speed);
     println!("finish {}", finish.position);
 
     if is_collide {

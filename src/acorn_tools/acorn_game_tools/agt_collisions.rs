@@ -946,3 +946,29 @@ pub fn agt_is_collide(
     first_min.y <= second_max.y && first_max.y >= second_min.y &&
     first_min.z <= second_max.z && first_max.z >= second_min.z
 }
+
+#[allow(dead_code)]
+pub fn agt_is_predictive_collide(
+    first_aabb: &AcornAABB, 
+    first_position: Vec3,
+    first_speed: &Acorn3DSpeed,
+    second_aabb: &AcornAABB, 
+    second_position: Vec3
+) -> bool {
+    // AABB of second entity
+    let second_min = second_aabb.min + second_position;
+    let second_max = second_aabb.max + second_position;
+
+    // future position of first entity
+    let first_future_pos = first_position + first_speed.speed_value;
+    let first_future_min = first_future_pos + first_aabb.min;
+    let first_future_max = first_future_pos + first_aabb.max;
+
+    // collided?
+    let will_collide = 
+        first_future_min.x <= second_max.x && first_future_max.x >= second_min.x &&
+        first_future_min.y <= second_max.y && first_future_max.y >= second_min.y &&
+        first_future_min.z <= second_max.z && first_future_max.z >= second_min.z;
+
+    will_collide
+}

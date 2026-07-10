@@ -28,7 +28,9 @@ pub struct AcornPlayer3D {
     pub move_speed_backward: f32,
     pub move_speed_side: f32,
     pub jump_force: f32,
+    // technical
     pub aabb: AcornAABB,
+    pub speed: Acorn3DSpeed,
 }
 
 // ---------------------------- Components ----------------------------
@@ -46,7 +48,8 @@ impl AcornPlayer3D {
         move_speed_backward: f32,
         move_speed_side: f32,
         jump_force: f32,
-        aabb: AcornAABB
+        aabb: AcornAABB,
+        speed: Acorn3DSpeed
     ) -> Self {
         Self {
             position,
@@ -55,7 +58,8 @@ impl AcornPlayer3D {
             move_speed_backward,
             move_speed_side,
             jump_force,
-            aabb
+            aabb,
+            speed
         }
     }
 }
@@ -74,7 +78,8 @@ impl Default for AcornPlayer3D {
             AcornAABB { 
                 min: vec3(-1.0, -1.0, -1.0), 
                 max: vec3(1.0, 1.0, 1.0) 
-            }
+            },
+            Acorn3DSpeed { speed_value: Vec3::ZERO }
         ) 
     }
 }
@@ -146,7 +151,7 @@ pub fn agt_player_fps_speed_control(
 ) {
     // get context
     let dt = context.frame_delta;
-    let player = &context.game_base_preset.player; 
+    let player = &mut context.game_base_preset.player; 
     let camera = &context.game_base_preset.camera;
 
     // Calculate the horizontal direction of the camera
@@ -191,13 +196,19 @@ pub fn agt_player_fps_speed_control(
             move_dir = input_dir.normalize() * current_speed;
         }
 
-        // Apply speed X, Z
+        // Apply speed X, Z for entity
         speed.speed_value.x = move_dir.x * dt;
         speed.speed_value.z = move_dir.z * dt;
+
+        // Apply speed X, Z for Player in Global State
+        player.speed.speed_value.x = move_dir.x * dt;
+        player.speed.speed_value.z = move_dir.x * dt;
 
         // Jump: SPACE
         if is_key_pressed(KeyCode::Space) {
             speed.speed_value.y = player.jump_force * dt;
+            // Apply speed Y for Player in Global State
+            player.speed.speed_value.y = player.jump_force * dt;
         }
     }
 }
