@@ -473,7 +473,14 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
     context: &mut AcornGlobalContext
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
-    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+    
+    let mut query = world.query::<(
+        &AcornEntity3DTransform, 
+        &mut Acorn3DSpeed, 
+        &AcornAABB, 
+        &mut AcornIsCollided,
+        &AcornIsTrigger
+    )>();
 
     for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
@@ -483,11 +490,10 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                 let entity_a = entities[i];
                 let entity_b = entities[j];
 
-                let mut collision_detected = false;
+                if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
+                    let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
+                    let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
-                if let Ok([(trans_a, speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
-                    query.get_many_mut(world, [entity_a, entity_b]) 
-                {
                     // if entity A has 0 speed, pass
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
@@ -507,32 +513,15 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
                     if will_collide {
-                        collision_detected = true;
-                    }
-                } // <- here World is free.
-
-                if collision_detected {
-                    let mut is_b_trigger = false;
-                    if let Some(collision_b) = world.get::<AcornIsTrigger>(entity_b) {
-                        if collision_b.is_trigger {
-                            is_b_trigger = true;
-                        }
-                    }
-
-                    if is_b_trigger {
-                        // IF B IS A TRIGGER:
-                        // Do not zero out the speed (pass through), but raise the detection flag on entity B
-                        if let Some(mut collided_b) = world.get_mut::<AcornIsCollided>(entity_b) {
-                            collided_b.is_collided = true;
-                        }
-                    } else {
-                        // IF B IS A SOLID WALL:
-                        // Set all speed to Zero.
-                        if let Some(mut speed_a) = world.get_mut::<Acorn3DSpeed>(entity_a) {
+                        // ALWAYS raise the detection flag on entity B
+                        collided_b.is_collided = true;
+                        
+                        // If it's NOT a trigger -> stop entity A
+                        if !trigger_b.is_trigger {
                             speed_a.speed_value = Vec3::ZERO;
                         }
                     }
-                }
+                } 
             }
         }
     }
