@@ -463,8 +463,6 @@ pub fn agt_xz_grid_do_simple_collision(
 /// * [`Acorn3DSpeed`]
 /// * [`AcornEntity3DTransform`]
 /// * [`AcornAABB`]
-/// 
-/// ## Required entity components as a trigger for collisions:
 /// * [`AcornIsTrigger`]
 /// * [`AcornIsCollided`]
 pub fn agt_xz_grid_do_simple_collision_include_triggers(
@@ -660,8 +658,6 @@ pub fn agt_xz_grid_do_slide_collision(
 /// * [`Acorn3DSpeed`]
 /// * [`AcornEntity3DTransform`]
 /// * [`AcornAABB`]
-/// 
-/// ## Required entity components as a trigger for collisions:
 /// * [`AcornIsTrigger`]
 /// * [`AcornIsCollided`]
 pub fn agt_xz_grid_do_slide_collision_include_triggers(

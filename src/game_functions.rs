@@ -77,6 +77,12 @@ pub fn spawn_acorns_lvl1(
             Acorn3DSpeed {
                 speed_value: Vec3::ZERO
             },
+            AcornIsTrigger {
+            is_trigger: false
+            },
+            AcornIsCollided {
+                is_collided: false
+            },
         ));
     }
 }
