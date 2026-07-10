@@ -670,7 +670,14 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
     context: &mut AcornGlobalContext
 ) {
     let grid = &context.game_base_preset.world_collision_grid;
-    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+    
+    let mut query = world.query::<(
+        &AcornEntity3DTransform, 
+        &mut Acorn3DSpeed, 
+        &AcornAABB,
+        &mut AcornIsCollided,
+        &AcornIsTrigger
+    )>();
 
     for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
         for i in 0..entities.len() {
@@ -680,14 +687,10 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                 let entity_a = entities[i];
                 let entity_b = entities[j];
 
-                // Flags to store matching axis collisions to process after query drops
-                let mut detected_x = false;
-                let mut detected_z = false;
-                let mut detected_y = false;
+                if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
+                    let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
+                    let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
-                if let Ok([(trans_a, speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
-                    query.get_many_mut(world, [entity_a, entity_b]) 
-                {
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
                     let b_min = trans_b.position + aabb_b.min;
@@ -704,7 +707,18 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_x {
-                            detected_x = true;
+                            // ALWAYS raise the detection flag on entity B
+                            collided_b.is_collided = true;
+
+                            // Apply sliding only if entity B is a solid wall
+                            if !trigger_b.is_trigger {
+                                // Add the speed from X to Z.
+                                let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
+                                speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
+                                
+                                // X velocity is zero
+                                speed_a.speed_value.x = 0.0; 
+                            }
                         }
                     }
 
@@ -719,7 +733,18 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
 
                         if collide_z {
-                            detected_z = true;
+                            // ALWAYS raise the detection flag on entity B
+                            collided_b.is_collided = true;
+
+                            // Apply sliding only if entity B is a solid wall
+                            if !trigger_b.is_trigger {
+                                // Add the speed from X to Z.
+                                let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
+                                speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
+                                
+                                // Z velocity is zero
+                                speed_a.speed_value.z = 0.0;
+                            }
                         }
                     }
 
@@ -734,52 +759,11 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_y {
-                            detected_y = true;
-                        }
-                    }
-                } // <- query mutable borrow ends here. world is free!
-
-                // Process collisions using direct world access if any axis collided
-                if detected_x || detected_z || detected_y {
-                    let mut is_b_trigger = false;
-                    
-                    // Check if entity B is a trigger
-                    if let Some(trigger_b) = world.get::<AcornIsTrigger>(entity_b) {
-                        if trigger_b.is_trigger {
-                            is_b_trigger = true;
-                        }
-                    }
-
-                    if is_b_trigger {
-                        // IF B IS A TRIGGER:
-                        // Do not modify any speeds, just set flag
-                        if let Some(mut collided_b) = world.get_mut::<AcornIsCollided>(entity_b) {
+                            // ALWAYS raise the detection flag on entity B
                             collided_b.is_collided = true;
-                        }
-                    } else {
-                        // IF B IS A SOLID WALL:
-                        // Re-borrow speed_a to apply your custom axis-based sliding redirection logic
-                        if let Some(mut speed_a) = world.get_mut::<Acorn3DSpeed>(entity_a) {
-                            
-                            if detected_x {
-                                // Add the speed from X to Z.
-                                let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
-                                speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
-                                
-                                // X velocity is zero
-                                speed_a.speed_value.x = 0.0; 
-                            }
 
-                            if detected_z {
-                                // Add the speed from X to Z.
-                                let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
-                                speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
-                                
-                                // Z velocity is zero
-                                speed_a.speed_value.z = 0.0;
-                            }
-
-                            if detected_y {
+                            // Stop Y speed only if entity B is a solid wall
+                            if !trigger_b.is_trigger {
                                 speed_a.speed_value.y = 0.0;
                             }
                         }
