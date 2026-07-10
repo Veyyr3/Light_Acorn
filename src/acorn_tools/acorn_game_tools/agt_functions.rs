@@ -121,12 +121,25 @@ pub fn agt_gravity(
 
 #[allow(dead_code)]
 /// ## Description
-/// Add gravity for your entities. Entities do not fall under 0.0 on Y axis. But sometimes they may do it.
+/// Add gravity for your entities. Entities do not fall under 0.0 on Y axis.
 /// 
 /// ## Required entity components:
-/// * `Acorn3DSpeed`
-/// * `AcornEntity3DTransform`
-/// * `AcornHasGravity` 
+/// * [`Acorn3DSpeed`]
+/// * [`AcornEntity3DTransform`]
+/// * [`AcornHasGravity`]
+/// 
+/// ## WARNING:
+/// **Put only AFTER function** `agt_do_entities_move` **or Functions Sets with Collision like** 'AGT_SIMPLE_COLLISION'. 
+/// 
+/// **Example:**
+/// ```
+/// let before_2d_zone = zone! {
+///     AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // A Functions Set with Collisions
+///     location! {
+///         agt_gravity_no_under_ground, // <-
+///     },
+/// }
+/// ```
 pub fn agt_gravity_no_under_ground(
     world: &mut World, 
     _zones: &mut AcornZoneContext, 

@@ -92,8 +92,18 @@ impl Default for AcornPlayer3D {
 /// ## Related other Acorn Functions:
 /// * [`agt_player_fps_speed_control`]
 /// 
-/// ## WARNING
-/// **Put only AFTER function** `agt_do_entities_move` **or Functions Sets with Collision like** 'AGT_SIMPLE_COLLISION'.
+/// ## WARNING:
+/// **Put only AFTER function** `agt_do_entities_move` **or Functions Sets with Collision like** 'AGT_SIMPLE_COLLISION'. 
+/// 
+/// **Example:**
+/// ```
+/// let before_2d_zone = zone! {
+///     AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // A Functions Set with Collisions
+///     location! {
+///         agt_3d_camera_link_to_player, // <-
+///     },
+/// }
+/// ```
 pub fn agt_3d_camera_link_to_player(
     world: &mut World,
     _zones: &mut AcornZoneContext,

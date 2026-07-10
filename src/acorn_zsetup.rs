@@ -49,10 +49,10 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             agt_draw_3d_assets, // to draw yours 3d models
             example_game_draw_grid,
         },
+        AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // <- A Functions Set
         location! {
             agt_gravity_no_under_ground,
         },
-        AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // <- A Functions Set
         location! {
             update_lvl,
             agt_3d_camera_link_to_player,
