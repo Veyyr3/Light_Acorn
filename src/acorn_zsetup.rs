@@ -97,10 +97,10 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             example_game_draw_grid, // press TAB and this function will be deleted first
             // add own functions through comma
         },
+        AGT_DEBUG_SLIDE_COLLISION, // <- A Functions Set
         location! {
             agt_gravity_no_under_ground,
         },
-        AGT_DEBUG_SLIDE_COLLISION, // <- A Functions Set
         location! {
             agt_3d_camera_link_to_player,
         }
