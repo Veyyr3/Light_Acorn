@@ -31,6 +31,7 @@ pub struct AcornPlayer3D {
     // technical
     pub aabb: AcornAABB,
     pub speed: Acorn3DSpeed,
+    pub is_grounded: bool,
 }
 
 // ---------------------------- Components ----------------------------
@@ -49,7 +50,8 @@ impl AcornPlayer3D {
         move_speed_side: f32,
         jump_force: f32,
         aabb: AcornAABB,
-        speed: Acorn3DSpeed
+        speed: Acorn3DSpeed,
+        is_grounded: bool
     ) -> Self {
         Self {
             position,
@@ -59,7 +61,8 @@ impl AcornPlayer3D {
             move_speed_side,
             jump_force,
             aabb,
-            speed
+            speed,
+            is_grounded
         }
     }
 }
@@ -79,7 +82,8 @@ impl Default for AcornPlayer3D {
                 min: vec3(-1.0, -1.0, -1.0), 
                 max: vec3(1.0, 1.0, 1.0) 
             },
-            Acorn3DSpeed { speed_value: Vec3::ZERO }
+            Acorn3DSpeed { speed_value: Vec3::ZERO },
+            false
         ) 
     }
 }
@@ -218,7 +222,7 @@ pub fn agt_player_fps_speed_control(
         player.speed.speed_value.z = move_dir_z;
 
         // Jump: SPACE
-        if is_key_pressed(KeyCode::Space) && player.position.y >= 0.0{
+        if is_key_pressed(KeyCode::Space) && player.is_grounded{
             speed.speed_value.y = player.jump_force * dt;
             // Apply speed Y for Player in Global State
             player.speed.speed_value.y = player.jump_force * dt;
