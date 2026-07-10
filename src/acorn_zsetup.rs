@@ -52,7 +52,7 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
         location! {
             agt_gravity_no_under_ground,
         },
-        AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS, // <- A Functions Set
+        AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // <- A Functions Set
         location! {
             update_lvl,
             agt_3d_camera_link_to_player,

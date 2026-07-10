@@ -644,6 +644,132 @@ pub fn agt_xz_grid_do_slide_collision(
     }
 }
 
+pub fn agt_xz_grid_do_slide_collision_include_triggers(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext
+) {
+    let grid = &context.game_base_preset.world_collision_grid;
+    let mut query = world.query::<(&AcornEntity3DTransform, &mut Acorn3DSpeed, &AcornAABB)>();
+
+    for (_coord, entities) in grid.cells.iter().filter(|(_, e)| e.len() >= 2) {
+        for i in 0..entities.len() {
+            for j in 0..entities.len() {
+                if i == j { continue; } 
+
+                let entity_a = entities[i];
+                let entity_b = entities[j];
+
+                // Flags to store matching axis collisions to process after query drops
+                let mut detected_x = false;
+                let mut detected_z = false;
+                let mut detected_y = false;
+
+                if let Ok([(trans_a, speed_a, aabb_a), (trans_b, _, aabb_b)]) = 
+                    query.get_many_mut(world, [entity_a, entity_b]) 
+                {
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    let b_min = trans_b.position + aabb_b.min;
+                    let b_max = trans_b.position + aabb_b.max;
+
+                    // --- TEST X AXIS ---
+                    if speed_a.speed_value.x != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(speed_a.speed_value.x, 0.0, 0.0) + aabb_a.max;
+
+                        let collide_x = 
+                            a_test_min.x <= b_max.x && a_test_max.x >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_x {
+                            detected_x = true;
+                        }
+                    }
+
+                    // --- TEST Z AXIS ---
+                    if speed_a.speed_value.z != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, 0.0, speed_a.speed_value.z) + aabb_a.max;
+
+                        let collide_z = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
+                            a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
+
+                        if collide_z {
+                            detected_z = true;
+                        }
+                    }
+
+                    // --- TEST Y AXIS ---
+                    if speed_a.speed_value.y != 0.0 {
+                        let a_test_min = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.min;
+                        let a_test_max = trans_a.position + Vec3::new(0.0, speed_a.speed_value.y, 0.0) + aabb_a.max;
+
+                        let collide_y = 
+                            (trans_a.position.x + aabb_a.min.x) <= b_max.x && (trans_a.position.x + aabb_a.max.x) >= b_min.x &&
+                            a_test_min.y <= b_max.y && a_test_max.y >= b_min.y &&
+                            (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
+
+                        if collide_y {
+                            detected_y = true;
+                        }
+                    }
+                } // <- query mutable borrow ends here. world is free!
+
+                // Process collisions using direct world access if any axis collided
+                if detected_x || detected_z || detected_y {
+                    let mut is_b_trigger = false;
+                    
+                    // Check if entity B is a trigger
+                    if let Some(trigger_b) = world.get::<AcornIsTrigger>(entity_b) {
+                        if trigger_b.is_trigger {
+                            is_b_trigger = true;
+                        }
+                    }
+
+                    if is_b_trigger {
+                        // IF B IS A TRIGGER:
+                        // Do not modify any speeds, just set flag
+                        if let Some(mut collided_b) = world.get_mut::<AcornIsCollided>(entity_b) {
+                            collided_b.is_collided = true;
+                        }
+                    } else {
+                        // IF B IS A SOLID WALL:
+                        // Re-borrow speed_a to apply your custom axis-based sliding redirection logic
+                        if let Some(mut speed_a) = world.get_mut::<Acorn3DSpeed>(entity_a) {
+                            
+                            if detected_x {
+                                // Add the speed from X to Z.
+                                let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
+                                speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
+                                
+                                // X velocity is zero
+                                speed_a.speed_value.x = 0.0; 
+                            }
+
+                            if detected_z {
+                                // Add the speed from X to Z.
+                                let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
+                                speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
+                                
+                                // Z velocity is zero
+                                speed_a.speed_value.z = 0.0;
+                            }
+
+                            if detected_y {
+                                speed_a.speed_value.y = 0.0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 #[allow(dead_code)]
 /// ## Description
 /// This function for future. Ignore this because `agt_xz_grid_do_simple_collision` is better for perfomance.
