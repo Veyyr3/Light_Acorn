@@ -50,6 +50,18 @@ pub struct CellXZCoordinates {
 
 // ---------------------------- Components ----------------------------
 
+#[derive(Component)]
+/// ## Description
+/// Add this to your entities if they should collide.
+pub struct AcornHasCollision {
+    is_trigger: bool
+}
+
+#[derive(Component)]
+/// ## Description
+/// Add this to your entities if they are triggers.
+pub struct AcornIsCollided(bool);
+
 #[derive(Clone, Copy, Debug, Component)]
 /// ## Description
 /// A Bevy component. A simple stucture for collisions. Entities have a "box" for intersection to each other.
