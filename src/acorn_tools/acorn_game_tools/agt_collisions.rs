@@ -633,7 +633,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         // При этом они гарантированно пересекаются (touching_now или touching_future подтвердили это)
                         let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
                         
-                        if is_above {
+                        if is_above && !trigger_b.is_trigger {
                             collided_a.is_collided_bottom = true;
                         }
 
@@ -752,7 +752,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         // Если факт пересечения подтвержден, проверяем, находится ли низ А на уровне или выше верха Б.
                         let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
                         
-                        if is_above {
+                        if is_above && !trigger_b.is_trigger {
                             collided_a.is_collided_bottom = true;
                         }
 
