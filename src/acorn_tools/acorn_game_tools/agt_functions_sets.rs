@@ -84,7 +84,7 @@ pub const AGT_SLIDE_COLLISION: [AcornFunction; 4] =
 /// This Functions Set resets the speed (XYZ) for an entity if its future position collides with another entity.
 /// 
 /// ## Functions:
-/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornCollisionFlags`].
 /// * `agt_xz_grid_create` – Create grid collision.
 /// * `agt_xz_grid_do_simple_collision_include_triggers` – Do simple collision in cells where >1 entities, include triggers.
 /// * `agt_xz_grid_clear` – Clear grid collision.
@@ -114,7 +114,7 @@ pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 5] =
 /// This Functions Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
 /// 
 /// ## Functions:
-/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornCollisionFlags`].
 /// * `agt_xz_grid_create` – Create grid collision.
 /// * `agt_xz_grid_do_slide_collision_include_triggers` – Do slide collision in cells where >1 entities.
 /// * `agt_xz_grid_clear` – Clear grid collision.
@@ -209,7 +209,7 @@ pub const AGT_DEBUG_SLIDE_COLLISION: [AcornFunction; 6] =
 /// This Functions Set resets the speed (XYZ) for an entity if its future position collides with another entity.
 /// 
 /// ## Functions:
-/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornCollisionFlags`].
 /// * `agt_xz_grid_create` – Create grid collision.
 /// * `agt_xz_grid_do_simple_collision_include_triggers` – Do simple collision in cells where >1 entities, include triggers.
 /// * `agt_xz_grid_clear` – Clear grid collision.
@@ -241,7 +241,7 @@ pub const AGT_DEBUG_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 7] =
 /// This Functions Set adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
 /// 
 /// ## Functions:
-/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornIsCollided`].
+/// * `agt_clear_collision_triggers` – Set bool flag to false of component [`AcornCollisionFlags`].
 /// * `agt_xz_grid_create` – Create grid collision.
 /// * `agt_xz_grid_do_slide_collision_include_triggers` – Do slide collision in cells where >1 entities.
 /// * `agt_xz_grid_clear` – Clear grid collision.

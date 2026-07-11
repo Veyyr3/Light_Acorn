@@ -31,7 +31,7 @@ pub struct AcornPlayer3D {
     // technical
     pub aabb: AcornAABB,
     pub speed: Acorn3DSpeed,
-    pub collision: AcornIsCollided,
+    pub collision: AcornCollisionFlags,
 }
 
 // ---------------------------- Components ----------------------------
@@ -51,7 +51,7 @@ impl AcornPlayer3D {
         jump_force: f32,
         aabb: AcornAABB,
         speed: Acorn3DSpeed,
-        collision: AcornIsCollided,
+        collision: AcornCollisionFlags,
     ) -> Self {
         Self {
             position,
@@ -83,7 +83,7 @@ impl Default for AcornPlayer3D {
                 max: vec3(1.0, 1.0, 1.0) 
             },
             Acorn3DSpeed { speed_value: Vec3::ZERO },
-            AcornIsCollided { 
+            AcornCollisionFlags { 
                 is_collided: false, 
                 is_collided_bottom: false 
             },
@@ -124,7 +124,7 @@ pub fn agt_3d_camera_link_and_meta_to_player(
     let mut query = 
         world.query_filtered::<(
             &AcornEntity3DTransform, 
-            &AcornIsCollided
+            &AcornCollisionFlags
         ),
         With<AcornIs3DPlayer>>();
     
@@ -282,7 +282,7 @@ pub fn agt_spawn_player(
         AcornIsTrigger {
             is_trigger: false
         },
-        AcornIsCollided {
+        AcornCollisionFlags {
             is_collided: false,
             is_collided_bottom: false
         },

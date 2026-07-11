@@ -81,7 +81,7 @@ pub fn spawn_acorns_lvl1(
             AcornIsTrigger {
             is_trigger: false
             },
-            AcornIsCollided {
+            AcornCollisionFlags {
                 is_collided: false,
                 is_collided_bottom: false
             },
@@ -110,7 +110,7 @@ pub fn spawn_finish(
         AcornIsTrigger {
             is_trigger: true
         },
-        AcornIsCollided {
+        AcornCollisionFlags {
             is_collided: false,
             is_collided_bottom: false
         },
@@ -143,7 +143,7 @@ pub fn spawn_coin_lvl1(
         AcornIsTrigger {
             is_trigger: true
         },
-        AcornIsCollided {
+        AcornCollisionFlags {
             is_collided: false,
             is_collided_bottom: false
         },

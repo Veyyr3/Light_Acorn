@@ -62,7 +62,7 @@ pub struct AcornIsTrigger {
 /// Add this to your entities if they are triggers.
 /// 
 /// You may use them in your own functions to detect the collision and make an event. For example, when a player touches the finish of level.
-pub struct AcornIsCollided{
+pub struct AcornCollisionFlags{
     pub is_collided: bool,
     pub is_collided_bottom: bool,
 }
@@ -551,7 +551,7 @@ pub fn agt_xz_grid_do_slide_collision(
 /// Trigger is an entity that others can move through. 
 /// You can use this function to implement objects like finish, bonus, button and etc. in your game.
 /// 
-/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornIsCollided`]. 
+/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornCollisionFlags`]. 
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -571,7 +571,7 @@ pub fn agt_xz_grid_do_slide_collision(
 /// * [`AcornEntity3DTransform`]
 /// * [`Acorn3DSpeed`]
 /// * [`AcornAABB`]
-/// * [`AcornIsCollided`]
+/// * [`AcornCollisionFlags`]
 /// * [`AcornIsTrigger`]
 pub fn agt_xz_grid_do_simple_collision_include_triggers(
     world: &mut World,
@@ -584,7 +584,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
         &AcornEntity3DTransform, 
         &mut Acorn3DSpeed, 
         &AcornAABB, 
-        &mut AcornIsCollided,
+        &mut AcornCollisionFlags,
         &AcornIsTrigger
     )>();
 
@@ -673,7 +673,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
 /// Trigger is an entity that others can move through. 
 /// You can use this function to implement objects like finish, bonus, button and etc. in your game.
 /// 
-/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornIsCollided`]. 
+/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornCollisionFlags`]. 
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -693,7 +693,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
 /// * [`AcornEntity3DTransform`]
 /// * [`Acorn3DSpeed`]
 /// * [`AcornAABB`]
-/// * [`AcornIsCollided`]
+/// * [`AcornCollisionFlags`]
 /// * [`AcornIsTrigger`]
 pub fn agt_xz_grid_do_slide_collision_include_triggers(
     world: &mut World,
@@ -706,7 +706,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
         &AcornEntity3DTransform, 
         &mut Acorn3DSpeed, 
         &AcornAABB,
-        &mut AcornIsCollided,
+        &mut AcornCollisionFlags,
         &AcornIsTrigger
     )>();
 
@@ -947,19 +947,19 @@ pub fn agt_debug_entities_aabb_draw(
 
 #[allow(dead_code)]
 /// ## Description 
-/// Set for all entities false state for [`AcornIsCollided`].
+/// Set for all entities false state for [`AcornCollisionFlags`].
 /// 
 /// This is a must-use if you have collision functions or Functions Sets that include triggers like [`agt_xz_grid_do_slide_collision_include_triggers`].
 /// Otherwise, your entities always be collided even it's not so.
 /// 
 /// ## Required entity components for work:
-/// * [`AcornIsCollided`]
+/// * [`AcornCollisionFlags`]
 pub fn agt_clear_collision_triggers(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     _context: &mut AcornGlobalContext
 ) {
-    let mut query = world.query::<&mut AcornIsCollided>();
+    let mut query = world.query::<&mut AcornCollisionFlags>();
 
     for mut collided in query.iter_mut(world) {
         collided.is_collided = false;
