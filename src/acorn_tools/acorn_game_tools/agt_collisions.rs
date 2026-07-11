@@ -549,8 +549,9 @@ pub fn agt_xz_grid_do_slide_collision(
 /// 
 /// Also the function includes logic for triggers. 
 /// Trigger is an entity that others can move through. 
-/// When an entity moved through the trigger then trigger changes its own bool flag in [`AcornIsCollided`]. 
 /// You can use this function to implement objects like finish, bonus, button and etc. in your game.
+/// 
+/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornIsCollided`]. 
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -567,11 +568,11 @@ pub fn agt_xz_grid_do_slide_collision(
 /// * `pub game_base_preset: Acorn3DGameBase`
 /// 
 /// ## Required entity components for collisions:
-/// * [`Acorn3DSpeed`]
 /// * [`AcornEntity3DTransform`]
+/// * [`Acorn3DSpeed`]
 /// * [`AcornAABB`]
-/// * [`AcornIsTrigger`]
 /// * [`AcornIsCollided`]
+/// * [`AcornIsTrigger`]
 pub fn agt_xz_grid_do_simple_collision_include_triggers(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -596,20 +597,19 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                 let entity_b = entities[j];
 
                 if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
-                    // Теперь забираем mut collided_a для сущности А, чтобы выставить ей приземление
                     let (trans_a, mut speed_a, aabb_a, mut collided_a, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
-                    // entity B coordinates
+                    // entity B AABB
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР 0.1) ---
+                    // touch check via padding for AABB of entity A
                     let ray_padding = 0.2;
                     let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
                     let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
 
-                    // Также проверяем предиктивное положение со смещением на скорость
+                    // future position of entity A to change collision flags of entity B
                     let future_pos_a = trans_a.position + speed_a.speed_value;
                     let a_future_min = future_pos_a + aabb_a.min - Vec3::splat(ray_padding);
                     let a_future_max = future_pos_a + aabb_a.max + Vec3::splat(ray_padding);
@@ -625,28 +625,26 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
                     if touching_now || touching_future {
-                        // Если микролуч дотянулся до сущности B — стабильно взводим флаг объекту столкновения
                         collided_b.is_collided = true;
 
-                        // --- ОПРЕДЕЛЕНИЕ ПРИЗЕМЛЕНИЯ (Сущность А стоит над сущностью Б) ---
-                        // Мы считаем, что А стоит НА Б, если честный низ А находится на уровне или выше верха Б.
-                        // При этом они гарантированно пересекаются (touching_now или touching_future подтвердили это)
+                        // entity A stands above entity B?
                         let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
                         
+                        // change is_collided_bottom for entity A
                         if is_above && !trigger_b.is_trigger {
                             collided_a.is_collided_bottom = true;
                         }
 
-                        // Если это триггер — мы зафиксировали факт касания и завершаем обработку этой пары
+                        // do not stop entity A if entity B is a trigger
                         if trigger_b.is_trigger {
                             continue;
                         }
                     }
 
-                    // --- ЧЕСТНАЯ ФИЗИКА ОСТАНОВКИ ДЛЯ ТВЕРДЫХ СТЕН ---
+                    // if entity A has zero speed, pass
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
-                    // Проверяем строго оригинальный хитбокс без каких-либо зазоров
+                    // future position of entity A to predict collision
                     let pure_future_pos_a = trans_a.position + speed_a.speed_value;
                     let pure_a_future_min = pure_future_pos_a + aabb_a.min;
                     let pure_a_future_max = pure_future_pos_a + aabb_a.max;
@@ -671,8 +669,9 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
 /// 
 /// Also the function includes logic for triggers. 
 /// Trigger is an entity that others can move through. 
-/// When an entity moved through the trigger then trigger changes its own bool flag in [`AcornIsCollided`]. 
 /// You can use this function to implement objects like finish, bonus, button and etc. in your game.
+/// 
+/// When entity A collides entity B then entity B changes its own bool flag into true in [`AcornIsCollided`]. 
 /// 
 /// ## Necessary set of Acorn functions for full functionality:
 /// copy&paste this into `acorn_zsetup`:
@@ -689,11 +688,11 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
 /// * `pub game_base_preset: Acorn3DGameBase`
 /// 
 /// ## Required entity components for collisions:
-/// * [`Acorn3DSpeed`]
 /// * [`AcornEntity3DTransform`]
+/// * [`Acorn3DSpeed`]
 /// * [`AcornAABB`]
-/// * [`AcornIsTrigger`]
 /// * [`AcornIsCollided`]
+/// * [`AcornIsTrigger`]
 pub fn agt_xz_grid_do_slide_collision_include_triggers(
     world: &mut World,
     _zones: &mut AcornZoneContext,
@@ -724,12 +723,12 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР) ---
+                    // touch check via padding for AABB of entity A
                     let ray_padding = 0.2;
                     let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
                     let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
 
-                    // Также проверяем предиктивное положение со смещением на скорость
+                    // future position of entity A to change collision flags of entity B
                     let future_pos_a = trans_a.position + speed_a.speed_value;
                     let a_future_min = future_pos_a + aabb_a.min - Vec3::splat(ray_padding);
                     let a_future_max = future_pos_a + aabb_a.max + Vec3::splat(ray_padding);
@@ -745,24 +744,23 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
                     if touching_now || touching_future {
-                        // Если микролуч дотянулся до сущности B — взводим флаг без всяких "но"
                         collided_b.is_collided = true;
 
-                        // --- ОПРЕДЕЛЕНИЕ ПРИЗЕМЛЕНИЯ (Сущность А стоит над сущностью Б) ---
-                        // Если факт пересечения подтвержден, проверяем, находится ли низ А на уровне или выше верха Б.
+                        // entity A stands above entity B?
                         let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
                         
+                        // change is_collided_bottom for entity A
                         if is_above && !trigger_b.is_trigger {
                             collided_a.is_collided_bottom = true;
                         }
 
-                        // Если это триггер — мы просто взвели флаг касания и скипаем физику слайдинга!
+                        // do not stop entity A if entity B is a trigger
                         if trigger_b.is_trigger {
                             continue;
                         }
                     }
 
-                    // --- СТАНДАРТНАЯ ФИЗИКА СЛАЙДИНГА СТЕН (Выполняется только для твердых стен) ---
+                    // if entity A has zero speed, pass
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
                     // --- TEST X AXIS ---
@@ -816,6 +814,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_y {
+                            // Y velocity is zero
                             speed_a.speed_value.y = 0.0;
                         }
                     }
