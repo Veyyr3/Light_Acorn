@@ -32,7 +32,7 @@ pub struct AcornPlayer3D {
     pub aabb: AcornAABB,
     pub speed: Acorn3DSpeed,
     pub is_grounded: bool,
-    pub is_collided: bool,
+    pub collision: AcornIsCollided,
 }
 
 // ---------------------------- Components ----------------------------
@@ -53,7 +53,7 @@ impl AcornPlayer3D {
         aabb: AcornAABB,
         speed: Acorn3DSpeed,
         is_grounded: bool,
-        is_collided: bool,
+        collision: AcornIsCollided,
     ) -> Self {
         Self {
             position,
@@ -65,7 +65,7 @@ impl AcornPlayer3D {
             aabb,
             speed,
             is_grounded,
-            is_collided,
+            collision,
         }
     }
 }
@@ -87,7 +87,10 @@ impl Default for AcornPlayer3D {
             },
             Acorn3DSpeed { speed_value: Vec3::ZERO },
             false,
-            false
+            AcornIsCollided { 
+                is_collided: false, 
+                is_collided_bottom: false 
+            },
         ) 
     }
 }
@@ -133,7 +136,8 @@ pub fn agt_3d_camera_link_and_meta_to_player(
     if let Some((player_transform, collision)) = query.iter(world).next() {
         // set meta for player
         player.position = player_transform.position; // position
-        player.is_collided = collision.is_collided; // is_collided
+        player.collision.is_collided = collision.is_collided; // is_collided
+        player.collision.is_collided_bottom = collision.is_collided_bottom; // is_collided_bottom
 
         // set position for camera
         camera.position = player.position + player.eye_position;
@@ -283,7 +287,8 @@ pub fn agt_spawn_player(
             is_trigger: false
         },
         AcornIsCollided {
-            is_collided: false
+            is_collided: false,
+            is_collided_bottom: false
         },
         AcornHasGravity,
         AcornIs3DPlayer,

@@ -81,7 +81,8 @@ pub fn spawn_acorns_lvl1(
             is_trigger: false
             },
             AcornIsCollided {
-                is_collided: false
+                is_collided: false,
+                is_collided_bottom: false
             },
         ));
     }
@@ -109,7 +110,8 @@ pub fn spawn_finish(
             is_trigger: true
         },
         AcornIsCollided {
-            is_collided: false
+            is_collided: false,
+            is_collided_bottom: false
         },
         IsFinish,
     ));
@@ -140,7 +142,8 @@ pub fn spawn_coin_lvl1(
             is_trigger: true
         },
         AcornIsCollided {
-            is_collided: false
+            is_collided: false,
+            is_collided_bottom: false
         },
         IsCoin,
     ));
@@ -181,7 +184,8 @@ pub fn update_lvl(
     );
     println!("player {}", player.position);
     println!("player speed {:?}", player.speed);
-    println!("player collide {:?}", player.is_collided);
+    println!("player is_collided {:?}", player.collision.is_collided);
+    println!("player is_collided_bottom {:?}", player.collision.is_collided_bottom);
     println!("finish {}", finish.position);
 
     if is_collide {

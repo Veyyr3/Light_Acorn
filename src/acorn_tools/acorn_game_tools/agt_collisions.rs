@@ -63,7 +63,8 @@ pub struct AcornIsTrigger {
 /// 
 /// You may use them in your own functions to detect the collision and make an event. For example, when a player touches the finish of level.
 pub struct AcornIsCollided{
-    pub is_collided: bool
+    pub is_collided: bool,
+    pub is_collided_bottom: bool,
 }
 
 #[derive(Clone, Copy, Debug, Component)]
