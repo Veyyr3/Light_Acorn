@@ -73,11 +73,11 @@ async fn main() {
         &mut acorn_zone_context, 
         &mut acorn_global_context
     );
-    // spawn_coin_lvl1(
-    //     &mut acorn_ecs.world, 
-    //     &mut acorn_zone_context, 
-    //     &mut acorn_global_context
-    // );
+    spawn_coin_lvl1(
+        &mut acorn_ecs.world, 
+        &mut acorn_zone_context, 
+        &mut acorn_global_context
+    );
     agt_spawn_player( 
         &mut acorn_ecs.world, 
         &mut acorn_zone_context, 
