@@ -81,10 +81,7 @@ pub fn spawn_acorns_lvl1(
             AcornIsTrigger {
             is_trigger: false
             },
-            AcornCollisionFlags {
-                is_collided: false,
-                is_collided_bottom: false
-            },
+            AcornCollisionFlags::FALSE,
         ));
     }
 }
@@ -110,10 +107,7 @@ pub fn spawn_finish(
         AcornIsTrigger {
             is_trigger: true
         },
-        AcornCollisionFlags {
-            is_collided: false,
-            is_collided_bottom: false
-        },
+        AcornCollisionFlags::FALSE,
         IsFinish,
     ));
 }
@@ -143,10 +137,7 @@ pub fn spawn_coin_lvl1(
         AcornIsTrigger {
             is_trigger: true
         },
-        AcornCollisionFlags {
-            is_collided: false,
-            is_collided_bottom: false
-        },
+        AcornCollisionFlags::FALSE,
         IsCoin,
     ));
 }

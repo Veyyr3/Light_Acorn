@@ -65,6 +65,8 @@ pub struct AcornIsTrigger {
 pub struct AcornCollisionFlags{
     pub is_collided: bool,
     pub is_collided_bottom: bool,
+    pub is_collided_x: bool,
+    pub is_collided_z: bool,
 }
 
 #[derive(Clone, Copy, Debug, Component)]
@@ -125,6 +127,15 @@ impl AcornAABB {
         self.min.y <= other.max.y && self.max.y >= other.min.y &&
         self.min.z <= other.max.z && self.max.z >= other.min.z
     }
+}
+
+impl AcornCollisionFlags {
+    pub const FALSE: Self = Self {
+        is_collided: false,
+        is_collided_bottom: false,
+        is_collided_x: false,
+        is_collided_z: false
+    };
 }
 
 // ---------------------------- Default behaviors ----------------------------

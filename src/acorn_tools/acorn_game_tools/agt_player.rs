@@ -83,10 +83,7 @@ impl Default for AcornPlayer3D {
                 max: vec3(1.0, 1.0, 1.0) 
             },
             Acorn3DSpeed { speed_value: Vec3::ZERO },
-            AcornCollisionFlags { 
-                is_collided: false, 
-                is_collided_bottom: false 
-            },
+            AcornCollisionFlags::FALSE,
         ) 
     }
 }
@@ -282,10 +279,7 @@ pub fn agt_spawn_player(
         AcornIsTrigger {
             is_trigger: false
         },
-        AcornCollisionFlags {
-            is_collided: false,
-            is_collided_bottom: false
-        },
+        AcornCollisionFlags::FALSE,
         AcornHasGravity,
         AcornIs3DPlayer,
     )); 
