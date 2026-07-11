@@ -9,6 +9,7 @@ use crate::acorn_settings::{
 use crate::acorn_tools::acorn_game_tools::prelude::*;
 use crate::game_components::*;
 use crate::game_settings::*;
+use macroquad::input::KeyCode::V;
 use macroquad::prelude::*;
 use bevy_ecs::prelude::*;
 
@@ -124,7 +125,8 @@ pub fn spawn_coin_lvl1(
 ) {
     world.spawn((
         AcornEntity3DTransform {
-            position: vec3(35.0, 24.0, 10.0),
+            // position: vec3(35.0, 24.0, 10.0),
+            position: Vec3::ZERO,
             rotation: 0.0,
             scale: vec3(1.0, 1.0, 1.0)
         }, 

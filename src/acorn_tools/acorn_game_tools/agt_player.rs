@@ -237,7 +237,7 @@ pub fn agt_player_fps_speed_control(
         player.speed.speed_value.z = move_dir_z;
 
         // Jump: SPACE
-        if is_key_pressed(KeyCode::Space) && player.is_grounded{
+        if is_key_pressed(KeyCode::Space) && (player.collision.is_collided_bottom || player.position.y == 0.0) {
             speed.speed_value.y = player.jump_force * dt;
             // Apply speed Y for Player in Global State
             player.speed.speed_value.y = player.jump_force * dt;

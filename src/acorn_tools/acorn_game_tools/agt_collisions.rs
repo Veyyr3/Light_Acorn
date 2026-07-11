@@ -596,7 +596,8 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                 let entity_b = entities[j];
 
                 if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
-                    let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
+                    // Теперь забираем mut collided_a для сущности А, чтобы выставить ей приземление
+                    let (trans_a, mut speed_a, aabb_a, mut collided_a, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
                     // entity B coordinates
@@ -604,8 +605,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                     let b_max = trans_b.position + aabb_b.max;
 
                     // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР 0.1) ---
-                    // Проверяем текущее положение, искусственно расширяя AABB на 0.1 во все стороны
-                    let ray_padding = 0.1;
+                    let ray_padding = 0.2;
                     let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
                     let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
 
@@ -625,8 +625,17 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
                     if touching_now || touching_future {
-                        // Если микролуч дотянулся до сущности B — стабильно взводим флаг
+                        // Если микролуч дотянулся до сущности B — стабильно взводим флаг объекту столкновения
                         collided_b.is_collided = true;
+
+                        // --- ОПРЕДЕЛЕНИЕ ПРИЗЕМЛЕНИЯ (Сущность А стоит над сущностью Б) ---
+                        // Мы считаем, что А стоит НА Б, если честный низ А находится на уровне или выше верха Б.
+                        // При этом они гарантированно пересекаются (touching_now или touching_future подтвердили это)
+                        let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+                        
+                        if is_above {
+                            collided_a.is_collided_bottom = true;
+                        }
 
                         // Если это триггер — мы зафиксировали факт касания и завершаем обработку этой пары
                         if trigger_b.is_trigger {
@@ -635,7 +644,6 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                     }
 
                     // --- ЧЕСТНАЯ ФИЗИКА ОСТАНОВКИ ДЛЯ ТВЕРДЫХ СТЕН ---
-                    // Сюда код дойдёт, только если это стена (!trigger_b.is_trigger)
                     if speed_a.speed_value == Vec3::ZERO { continue; }
 
                     // Проверяем строго оригинальный хитбокс без каких-либо зазоров
@@ -710,15 +718,13 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                 let entity_b = entities[j];
 
                 if let Ok([components_a, components_b]) = query.get_many_mut(world, [entity_a, entity_b]) {
-                    let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
+                    let (trans_a, mut speed_a, aabb_a, mut collided_a, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР 0.1) ---
-                    // Проверяем текущее положение игрока, но искусственно расширяем его AABB на 0.1 во все стороны.
-                    // Это эквивалентно тому, что из игрока во все стороны торчат лучи длиной 0.1.
+                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР) ---
                     let ray_padding = 0.2;
                     let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
                     let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
@@ -742,8 +748,15 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         // Если микролуч дотянулся до сущности B — взводим флаг без всяких "но"
                         collided_b.is_collided = true;
 
+                        // --- ОПРЕДЕЛЕНИЕ ПРИЗЕМЛЕНИЯ (Сущность А стоит над сущностью Б) ---
+                        // Если факт пересечения подтвержден, проверяем, находится ли низ А на уровне или выше верха Б.
+                        let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+                        
+                        if is_above {
+                            collided_a.is_collided_bottom = true;
+                        }
+
                         // Если это триггер — мы просто взвели флаг касания и скипаем физику слайдинга!
-                        // Он пролетит насквозь, даже если его скорость равна нулю (стоя на месте).
                         if trigger_b.is_trigger {
                             continue;
                         }
@@ -947,6 +960,7 @@ pub fn agt_clear_collision_triggers(
 
     for mut collided in query.iter_mut(world) {
         collided.is_collided = false;
+        collided.is_collided_bottom = false;
     }
 }
 

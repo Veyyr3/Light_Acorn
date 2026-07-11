@@ -98,8 +98,9 @@ pub const AGT_SLIDE_COLLISION: [AcornFunction; 4] =
 ///     },
 ///     AGT_SIMPLE_COLLISION,
 /// ```
-pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] = 
+pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 5] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_do_simple_collision_include_triggers,
         agt_xz_grid_clear,
@@ -127,8 +128,9 @@ pub const AGT_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] =
 ///     },
 ///     AGT_SLIDE_COLLISION,
 /// ```
-pub const AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 4] = 
+pub const AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 5] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_do_slide_collision_include_triggers,
         agt_xz_grid_clear,
@@ -221,8 +223,9 @@ pub const AGT_DEBUG_SLIDE_COLLISION: [AcornFunction; 6] =
 ///     },
 ///     AGT_SIMPLE_COLLISION,
 /// ```
-pub const AGT_DEBUG_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 6] = 
+pub const AGT_DEBUG_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 7] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_debug_draw,
         agt_debug_entities_aabb_draw,
@@ -252,8 +255,9 @@ pub const AGT_DEBUG_SIMPLE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 6] =
 ///     },
 ///     AGT_SLIDE_COLLISION,
 /// ```
-pub const AGT_DEBUG_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 6] = 
+pub const AGT_DEBUG_SLIDE_COLLISION_INCLUDE_TRIGGERS: [AcornFunction; 7] = 
     [
+        agt_clear_collision_triggers,
         agt_xz_grid_create,
         agt_xz_grid_debug_draw,
         agt_debug_entities_aabb_draw,
