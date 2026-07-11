@@ -492,39 +492,63 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                     let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
-                    // if entity A has 0 speed, pass
-                    if speed_a.speed_value == Vec3::ZERO { continue; }
-
-                    // entity B
+                    // entity B coordinates
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
-                    // future position of entity A
-                    let future_pos_a = trans_a.position + speed_a.speed_value;
-                    let a_future_min = future_pos_a + aabb_a.min;
-                    let a_future_max = future_pos_a + aabb_a.max;
+                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР 0.1) ---
+                    // Проверяем текущее положение, искусственно расширяя AABB на 0.1 во все стороны
+                    let ray_padding = 0.1;
+                    let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
+                    let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
 
-                    // collided?
-                    let will_collide = 
+                    // Также проверяем предиктивное положение со смещением на скорость
+                    let future_pos_a = trans_a.position + speed_a.speed_value;
+                    let a_future_min = future_pos_a + aabb_a.min - Vec3::splat(ray_padding);
+                    let a_future_max = future_pos_a + aabb_a.max + Vec3::splat(ray_padding);
+
+                    let touching_now = 
+                        a_current_min.x <= b_max.x && a_current_max.x >= b_min.x &&
+                        a_current_min.y <= b_max.y && a_current_max.y >= b_min.y &&
+                        a_current_min.z <= b_max.z && a_current_max.z >= b_min.z;
+
+                    let touching_future = 
                         a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
-                    if will_collide {
-                        // ALWAYS raise the detection flag on entity B
+                    if touching_now || touching_future {
+                        // Если микролуч дотянулся до сущности B — стабильно взводим флаг
                         collided_b.is_collided = true;
-                        
-                        // If it's NOT a trigger -> stop entity A
-                        if !trigger_b.is_trigger {
-                            speed_a.speed_value = Vec3::ZERO;
+
+                        // Если это триггер — мы зафиксировали факт касания и завершаем обработку этой пары
+                        if trigger_b.is_trigger {
+                            continue;
                         }
+                    }
+
+                    // --- ЧЕСТНАЯ ФИЗИКА ОСТАНОВКИ ДЛЯ ТВЕРДЫХ СТЕН ---
+                    // Сюда код дойдёт, только если это стена (!trigger_b.is_trigger)
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
+
+                    // Проверяем строго оригинальный хитбокс без каких-либо зазоров
+                    let pure_future_pos_a = trans_a.position + speed_a.speed_value;
+                    let pure_a_future_min = pure_future_pos_a + aabb_a.min;
+                    let pure_a_future_max = pure_future_pos_a + aabb_a.max;
+
+                    let will_collide_pure = 
+                        pure_a_future_min.x <= b_max.x && pure_a_future_max.x >= b_min.x &&
+                        pure_a_future_min.y <= b_max.y && pure_a_future_max.y >= b_min.y &&
+                        pure_a_future_min.z <= b_max.z && pure_a_future_max.z >= b_min.z;
+
+                    if will_collide_pure {
+                        speed_a.speed_value = Vec3::ZERO;
                     }
                 } 
             }
         }
     }
 }
-
 #[allow(dead_code)]
 /// ## Description
 /// Function for collision between 2 entities. This function adds wall sliding. If an entity encounters an obstacle on the X-axis, all of its X-axis velocity is transferred to the Z-axis. And vice versa.
@@ -687,10 +711,44 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                     let (trans_a, mut speed_a, aabb_a, _, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
-                    if speed_a.speed_value == Vec3::ZERO { continue; }
-
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
+
+                    // --- ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА КАСАНИЯ (МИКРОЛУЧИ / ЗАЗОР 0.1) ---
+                    // Проверяем текущее положение игрока, но искусственно расширяем его AABB на 0.1 во все стороны.
+                    // Это эквивалентно тому, что из игрока во все стороны торчат лучи длиной 0.1.
+                    let ray_padding = 0.2;
+                    let a_current_min = trans_a.position + aabb_a.min - Vec3::splat(ray_padding);
+                    let a_current_max = trans_a.position + aabb_a.max + Vec3::splat(ray_padding);
+
+                    // Также проверяем предиктивное положение со смещением на скорость
+                    let future_pos_a = trans_a.position + speed_a.speed_value;
+                    let a_future_min = future_pos_a + aabb_a.min - Vec3::splat(ray_padding);
+                    let a_future_max = future_pos_a + aabb_a.max + Vec3::splat(ray_padding);
+
+                    let touching_now = 
+                        a_current_min.x <= b_max.x && a_current_max.x >= b_min.x &&
+                        a_current_min.y <= b_max.y && a_current_max.y >= b_min.y &&
+                        a_current_min.z <= b_max.z && a_current_max.z >= b_min.z;
+
+                    let touching_future = 
+                        a_future_min.x <= b_max.x && a_future_max.x >= b_min.x &&
+                        a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
+                        a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
+
+                    if touching_now || touching_future {
+                        // Если микролуч дотянулся до сущности B — взводим флаг без всяких "но"
+                        collided_b.is_collided = true;
+
+                        // Если это триггер — мы просто взвели флаг касания и скипаем физику слайдинга!
+                        // Он пролетит насквозь, даже если его скорость равна нулю (стоя на месте).
+                        if trigger_b.is_trigger {
+                            continue;
+                        }
+                    }
+
+                    // --- СТАНДАРТНАЯ ФИЗИКА СЛАЙДИНГА СТЕН (Выполняется только для твердых стен) ---
+                    if speed_a.speed_value == Vec3::ZERO { continue; }
 
                     // --- TEST X AXIS ---
                     if speed_a.speed_value.x != 0.0 {
@@ -703,18 +761,12 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_x {
-                            // ALWAYS raise the detection flag on entity B
-                            collided_b.is_collided = true;
-
-                            // Apply sliding only if entity B is a solid wall
-                            if !trigger_b.is_trigger {
-                                // Add the speed from X to Z.
-                                let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
-                                speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
-                                
-                                // X velocity is zero
-                                speed_a.speed_value.x = 0.0; 
-                            }
+                            // Add the speed from X to Z.
+                            let push_dir_z = if speed_a.speed_value.z >= 0.0 { 1.0 } else { -1.0 };
+                            speed_a.speed_value.z += speed_a.speed_value.x.abs() * push_dir_z;
+                            
+                            // X velocity is zero
+                            speed_a.speed_value.x = 0.0; 
                         }
                     }
 
@@ -729,18 +781,12 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
 
                         if collide_z {
-                            // ALWAYS raise the detection flag on entity B
-                            collided_b.is_collided = true;
-
-                            // Apply sliding only if entity B is a solid wall
-                            if !trigger_b.is_trigger {
-                                // Add the speed from X to Z.
-                                let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
-                                speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
-                                
-                                // Z velocity is zero
-                                speed_a.speed_value.z = 0.0;
-                            }
+                            // Add the speed from X to Z.
+                            let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
+                            speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;
+                            
+                            // Z velocity is zero
+                            speed_a.speed_value.z = 0.0;
                         }
                     }
 
@@ -755,13 +801,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.z + aabb_a.min.z) <= b_max.z && (trans_a.position.z + aabb_a.max.z) >= b_min.z;
 
                         if collide_y {
-                            // ALWAYS raise the detection flag on entity B
-                            collided_b.is_collided = true;
-
-                            // Stop Y speed only if entity B is a solid wall
-                            if !trigger_b.is_trigger {
-                                speed_a.speed_value.y = 0.0;
-                            }
+                            speed_a.speed_value.y = 0.0;
                         }
                     }
                 }
