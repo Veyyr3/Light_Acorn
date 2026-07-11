@@ -31,7 +31,6 @@ pub struct AcornPlayer3D {
     // technical
     pub aabb: AcornAABB,
     pub speed: Acorn3DSpeed,
-    pub is_grounded: bool,
     pub collision: AcornIsCollided,
 }
 
@@ -52,7 +51,6 @@ impl AcornPlayer3D {
         jump_force: f32,
         aabb: AcornAABB,
         speed: Acorn3DSpeed,
-        is_grounded: bool,
         collision: AcornIsCollided,
     ) -> Self {
         Self {
@@ -64,7 +62,6 @@ impl AcornPlayer3D {
             jump_force,
             aabb,
             speed,
-            is_grounded,
             collision,
         }
     }
@@ -86,7 +83,6 @@ impl Default for AcornPlayer3D {
                 max: vec3(1.0, 1.0, 1.0) 
             },
             Acorn3DSpeed { speed_value: Vec3::ZERO },
-            false,
             AcornIsCollided { 
                 is_collided: false, 
                 is_collided_bottom: false 
