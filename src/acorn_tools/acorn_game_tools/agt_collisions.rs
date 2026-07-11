@@ -627,12 +627,14 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                     if touching_now || touching_future {
                         collided_b.is_collided = true;
 
-                        // entity A stands above entity B?
-                        let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
-                        
-                        // change is_collided_bottom for entity A
-                        if is_above && !trigger_b.is_trigger {
-                            collided_a.is_collided_bottom = true;
+                        if !trigger_b.is_trigger {
+                            // entity A stands above entity B?
+                            let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+
+                            // change is_collided_bottom for entity A
+                            if is_above {
+                                collided_a.is_collided_bottom = true;
+                            }
                         }
 
                         // do not stop entity A if entity B is a trigger
@@ -746,12 +748,14 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                     if touching_now || touching_future {
                         collided_b.is_collided = true;
 
-                        // entity A stands above entity B?
-                        let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
-                        
-                        // change is_collided_bottom for entity A
-                        if is_above && !trigger_b.is_trigger {
-                            collided_a.is_collided_bottom = true;
+                        if !trigger_b.is_trigger {
+                            // entity A stands above entity B?
+                            let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+
+                            // change is_collided_bottom for entity A
+                            if is_above {
+                                collided_a.is_collided_bottom = true;
+                            }
                         }
 
                         // do not stop entity A if entity B is a trigger
