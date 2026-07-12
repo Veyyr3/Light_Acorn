@@ -635,7 +635,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
-                    // entity B is a trigger?
+                    // is entity B a trigger?
                     let b_is_trigger: bool = trigger_b.is_trigger;
 
                     if touching_now || touching_future {
@@ -759,7 +759,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
-                    // entity B is a trigger?
+                    // is entity B a trigger?
                     let b_is_trigger: bool = trigger_b.is_trigger;
 
                     if touching_now || touching_future {
