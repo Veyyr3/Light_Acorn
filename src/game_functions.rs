@@ -149,7 +149,7 @@ pub fn rotate_coin(
     _zones: &mut AcornZoneContext, 
     _context: &mut AcornGlobalContext
 ) {
-    // Take all acorns and change rotations
+    // Take all coins and change rotations
     let mut query = 
         world
         .query_filtered::<&mut AcornEntity3DTransform, With<IsCoin>>();
@@ -186,6 +186,27 @@ pub fn update_lvl(
         context.level += 1;
         context.is_new_level = true;
         println!("collide!");
+    }
+}
+
+pub fn touch_coin(
+    world: &mut World, 
+    _zones: &mut AcornZoneContext, 
+    context: &mut AcornGlobalContext
+) {
+    // get context
+    let score = &mut context.score;
+
+    // create query
+    let mut query = 
+        world
+        .query_filtered::<&AcornCollisionFlags, With<IsCoin>>();
+
+    // if player touch coin
+    for collision in query.iter(world) {
+        if collision.is_collided {
+            *score += 10;
+        }   
     }
 }
 
