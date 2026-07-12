@@ -635,10 +635,13 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
+                    // entity B is a trigger?
+                    let b_is_trigger: bool = trigger_b.is_trigger;
+
                     if touching_now || touching_future {
                         collided_b.is_collided = true;
 
-                        if !trigger_b.is_trigger {
+                        if !b_is_trigger {
                             // entity A stands above entity B?
                             let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
 
@@ -649,7 +652,7 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         }
 
                         // do not stop entity A if entity B is a trigger
-                        if trigger_b.is_trigger {
+                        if b_is_trigger {
                             continue;
                         }
                     }
@@ -756,10 +759,13 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         a_future_min.y <= b_max.y && a_future_max.y >= b_min.y &&
                         a_future_min.z <= b_max.z && a_future_max.z >= b_min.z;
 
+                    // entity B is a trigger?
+                    let b_is_trigger: bool = trigger_b.is_trigger;
+
                     if touching_now || touching_future {
                         collided_b.is_collided = true;
 
-                        if !trigger_b.is_trigger {
+                        if !b_is_trigger {
                             // entity A stands above entity B?
                             let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
 
@@ -770,7 +776,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         }
 
                         // do not stop entity A if entity B is a trigger
-                        if trigger_b.is_trigger {
+                        if b_is_trigger {
                             continue;
                         }
                     }
@@ -808,7 +814,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             (trans_a.position.y + aabb_a.min.y) <= b_max.y && (trans_a.position.y + aabb_a.max.y) >= b_min.y &&
                             a_test_min.z <= b_max.z && a_test_max.z >= b_min.z;
 
-                        if collide_z {
+                        if collide_z {                            
                             // Add the speed from X to Z.
                             let push_dir_x = if speed_a.speed_value.x >= 0.0 { 1.0 } else { -1.0 };
                             speed_a.speed_value.x += speed_a.speed_value.z.abs() * push_dir_x;

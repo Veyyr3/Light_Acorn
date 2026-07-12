@@ -179,6 +179,7 @@ pub fn update_lvl(
     println!("player speed {:?}", player.speed);
     println!("player is_collided {:?}", player.collision.is_collided);
     println!("player is_grounded {:?}", player.collision.is_grounded);
+    println!("player is_touching_wall {:?}", player.collision.is_touching_wall);
     println!("finish {}", finish.position);
 
     if is_collide {
