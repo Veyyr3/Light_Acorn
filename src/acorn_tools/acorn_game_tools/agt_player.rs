@@ -130,7 +130,7 @@ pub fn agt_3d_camera_link_and_meta_to_player(
         // set meta for player
         player.position = player_transform.position; // position
         player.collision.is_collided = collision.is_collided; // is_collided
-        player.collision.is_collided_bottom = collision.is_collided_bottom; // is_collided_bottom
+        player.collision.is_grounded = collision.is_grounded; // is_grounded
 
         // set position for camera
         camera.position = player.position + player.eye_position;
@@ -230,7 +230,7 @@ pub fn agt_player_fps_speed_control(
         player.speed.speed_value.z = move_dir_z;
 
         // Jump: SPACE
-        if is_key_pressed(KeyCode::Space) && (player.collision.is_collided_bottom || player.position.y == 0.0) {
+        if is_key_pressed(KeyCode::Space) && (player.collision.is_grounded || player.position.y == 0.0) {
             speed.speed_value.y = player.jump_force * dt;
             // Apply speed Y for Player in Global State
             player.speed.speed_value.y = player.jump_force * dt;

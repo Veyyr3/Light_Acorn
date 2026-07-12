@@ -64,9 +64,9 @@ pub struct AcornIsTrigger {
 /// You may use them in your own functions to detect the collision and make an event. For example, when a player touches the finish of level.
 pub struct AcornCollisionFlags{
     pub is_collided: bool,
-    pub is_collided_bottom: bool,
-    pub is_collided_x: bool,
-    pub is_collided_z: bool,
+    pub is_grounded: bool,
+    pub is_touching_ceiling: bool,
+    pub is_touching_wall: bool,
 }
 
 #[derive(Clone, Copy, Debug, Component)]
@@ -132,9 +132,9 @@ impl AcornAABB {
 impl AcornCollisionFlags {
     pub const FALSE: Self = Self {
         is_collided: false,
-        is_collided_bottom: false,
-        is_collided_x: false,
-        is_collided_z: false
+        is_grounded: false,
+        is_touching_ceiling: false,
+        is_touching_wall: false
     };
 }
 
@@ -642,9 +642,9 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                             // entity A stands above entity B?
                             let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
 
-                            // change is_collided_bottom for entity A
+                            // change is_grounded for entity A
                             if is_above {
-                                collided_a.is_collided_bottom = true;
+                                collided_a.is_grounded = true;
                             }
                         }
 
@@ -763,9 +763,9 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                             // entity A stands above entity B?
                             let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
 
-                            // change is_collided_bottom for entity A
+                            // change is_grounded for entity A
                             if is_above {
-                                collided_a.is_collided_bottom = true;
+                                collided_a.is_grounded = true;
                             }
                         }
 
@@ -974,7 +974,7 @@ pub fn agt_clear_collision_triggers(
 
     for mut collided in query.iter_mut(world) {
         collided.is_collided = false;
-        collided.is_collided_bottom = false;
+        collided.is_grounded = false;
     }
 }
 
