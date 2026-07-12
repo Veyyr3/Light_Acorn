@@ -130,6 +130,10 @@ impl AcornAABB {
 }
 
 impl AcornCollisionFlags {
+    pub fn all_false(&mut self) {
+        *self = Self::FALSE; 
+    }
+
     pub const FALSE: Self = Self {
         is_collided: false,
         is_grounded: false,
@@ -642,12 +646,23 @@ pub fn agt_xz_grid_do_simple_collision_include_triggers(
                         collided_b.is_collided = true;
 
                         if !b_is_trigger {
-                            // entity A stands above entity B?
-                            let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+                            // AABB of entity A
+                            let a_min_y = trans_a.position.y + aabb_a.min.y;
+                            let a_max_y = trans_a.position.y + aabb_a.max.y;
 
-                            // change is_grounded for entity A
+                            // 1. entity A stands above entity B?
+                            let is_above = a_min_y >= (b_max.y - ray_padding);
+                            
+                            // 2. entity A stands under entity B?
+                            let is_below = a_max_y <= (b_min.y + ray_padding);
+
                             if is_above {
                                 collided_a.is_grounded = true;
+                            } else if is_below {
+                                collided_a.is_touching_ceiling = true;
+                            } else {
+                                // enitity A is touching wall
+                                collided_a.is_touching_wall = true;
                             }
                         }
 
@@ -736,6 +751,7 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                     let (trans_a, mut speed_a, aabb_a, mut collided_a, _) = components_a;
                     let (trans_b, _, aabb_b, mut collided_b, trigger_b) = components_b;
 
+                    // Global AABB of entity B
                     let b_min = trans_b.position + aabb_b.min;
                     let b_max = trans_b.position + aabb_b.max;
 
@@ -766,12 +782,23 @@ pub fn agt_xz_grid_do_slide_collision_include_triggers(
                         collided_b.is_collided = true;
 
                         if !b_is_trigger {
-                            // entity A stands above entity B?
-                            let is_above = (trans_a.position.y + aabb_a.min.y) >= (b_max.y - ray_padding);
+                            // AABB of entity A
+                            let a_min_y = trans_a.position.y + aabb_a.min.y;
+                            let a_max_y = trans_a.position.y + aabb_a.max.y;
 
-                            // change is_grounded for entity A
+                            // 1. entity A stands above entity B?
+                            let is_above = a_min_y >= (b_max.y - ray_padding);
+                            
+                            // 2. entity A stands under entity B?
+                            let is_below = a_max_y <= (b_min.y + ray_padding);
+
                             if is_above {
                                 collided_a.is_grounded = true;
+                            } else if is_below {
+                                collided_a.is_touching_ceiling = true;
+                            } else {
+                                // enitity A is touching wall
+                                collided_a.is_touching_wall = true;
                             }
                         }
 
@@ -979,8 +1006,7 @@ pub fn agt_clear_collision_triggers(
     let mut query = world.query::<&mut AcornCollisionFlags>();
 
     for mut collided in query.iter_mut(world) {
-        collided.is_collided = false;
-        collided.is_grounded = false;
+        collided.all_false();
     }
 }
 

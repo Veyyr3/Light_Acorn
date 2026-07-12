@@ -131,6 +131,8 @@ pub fn agt_3d_camera_link_and_meta_to_player(
         player.position = player_transform.position; // position
         player.collision.is_collided = collision.is_collided; // is_collided
         player.collision.is_grounded = collision.is_grounded; // is_grounded
+        player.collision.is_touching_ceiling = collision.is_touching_ceiling; // is_touching_ceiling
+        player.collision.is_touching_wall = collision.is_touching_wall; // s_touching_wall
 
         // set position for camera
         camera.position = player.position + player.eye_position;
