@@ -89,9 +89,10 @@ impl Default for AcornPlayer3D {
 }
 
 // ---------------------------- Acorn Functions ----------------------------
+
 #[allow(dead_code)]
 /// ## Description
-/// Function links camera position to your player.
+/// Function links meta to your player: position, collisions and etc.
 /// 
 /// ## Related other Acorn Functions:
 /// * [`agt_player_fps_speed_control`]
@@ -104,18 +105,17 @@ impl Default for AcornPlayer3D {
 /// let before_2d_zone = zone! {
 ///     AGT_SLIDE_COLLISION_INCLUDE_TRIGGERS, // A Functions Set with Collisions
 ///     location! {
-///         agt_3d_camera_link_to_player, // <-
+///         agt_3d_camera_link_meta_to_player, // <-
 ///     },
 /// }
 /// ```
-pub fn agt_3d_camera_link_and_meta_to_player(
+pub fn agt_3d_camera_link_meta_to_player(
     world: &mut World,
     _zones: &mut AcornZoneContext,
     context: &mut AcornGlobalContext,
 ) {
     // get context
     let player = &mut context.game_base_preset.player;
-    let camera = &mut context.game_base_preset.camera;
     
     // create query (take first entitiy with AcornIs3DPlayer)
     let mut query = 
@@ -133,7 +133,44 @@ pub fn agt_3d_camera_link_and_meta_to_player(
         player.collision.is_grounded = collision.is_grounded; // is_grounded
         player.collision.is_touching_ceiling = collision.is_touching_ceiling; // is_touching_ceiling
         player.collision.is_touching_wall = collision.is_touching_wall; // s_touching_wall
+    }
+}
 
+#[allow(dead_code)]
+/// ## Description
+/// Function links camera position to your player.
+/// 
+/// ## Related other Acorn Functions:
+/// * [`agt_3d_camera_link_meta_to_player`]
+/// 
+/// ## WARNING:
+/// **Put only AFTER function** [`agt_3d_camera_link_meta_to_player`]
+/// 
+/// **Example:**
+/// ```
+/// let before_2d_zone = zone! {
+///     location! {
+///         agt_3d_camera_link_meta_to_player,
+///         agt_3d_camera_link_to_player, // <-
+///     },
+/// }
+/// ```
+pub fn agt_3d_camera_link_to_player(
+    world: &mut World,
+    _zones: &mut AcornZoneContext,
+    context: &mut AcornGlobalContext,
+) {
+    // get context
+    let player = &mut context.game_base_preset.player;
+    let camera = &mut context.game_base_preset.camera;
+    
+    // create query (take first entitiy with AcornIs3DPlayer)
+    let mut query = 
+        world.query_filtered::<(),
+        With<AcornIs3DPlayer>>();
+    
+    // take first entitiy with AcornIs3DPlayer.
+    if let Some(()) = query.iter(world).next() {
         // set position for camera
         camera.position = player.position + player.eye_position;
     }

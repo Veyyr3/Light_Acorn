@@ -44,8 +44,10 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
     let before_2d_zone = zone! {
         // Minor-Location
         location! {
-            agt_3d_camera, // camera should be here first!
             rotate_coin,
+        },
+        location! {
+            agt_3d_camera, // camera should be here first!
             agt_draw_3d_assets, // to draw yours 3d models
             example_game_draw_grid,
         },
@@ -54,8 +56,11 @@ pub fn acorn_zone_setup() -> AcornZoneContext {
             agt_gravity_no_under_ground,
         },
         location! {
+            agt_3d_camera_link_meta_to_player,
+            agt_3d_camera_link_to_player,
+        },
+        location! {
             update_lvl,
-            agt_3d_camera_link_and_meta_to_player,
         }
     };   
 
